@@ -22,14 +22,25 @@ export const anketaListiner = async() => {
       const chatId = query.message.chat.id;
       
       switch (action) {
-        case '/start':
+
+
+        case '/mainNoCard':
             await updateUserByChatId(chatId, { dialoguestatus: '' });
           
             bot.sendMessage(chatId, phrases.mainMenu, {
               reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
             });
-          
+       
           break;
+        case '/mainHaveCard':
+            await updateUserByChatId(chatId, { dialoguestatus: '' });
+            bot.sendMessage(chatId, phrases.isBonusCardMessage, {
+              reply_markup: { keyboard: keyboards.mainMenuWithVerify, resize_keyboard: true, one_time_keyboard: true }
+            });
+        break;  
+
+
+
         case  '/volume':
           await updateUserByChatId(chatId, { units: 'volume' })
           bot.sendMessage(chatId, phrases.chooseVolume, { reply_markup: keyboards.volumeKeyboard })
@@ -157,99 +168,137 @@ export const anketaListiner = async() => {
             break;
         }  
       }
-      if (msg.contact && dialogueStatus === '') {
-        const phone = numberFormatFixing(msg.contact.phone_number);
-        try {
-          await updateUserByChatId(chatId, { phone, dialoguestatus: 'name' });
-          await bot.sendMessage(chatId, `Введіть ПІБ`);
-        } catch (error) {
-          logger.warn(`Cann't update phone number`);
-        }
-      } else if (dialogueStatus === 'name') {
-        await updateUserByChatId(chatId, { firstname: msg.text, dialoguestatus: 'birdaydate' });
-        await bot.sendMessage(chatId, `Введіть дату народження в форматі ДД.ММ.РРРР. Наприклад 05.03.1991`);
-      } else if (dialogueStatus === 'topup') {
-        await updateUserByChatId(chatId, { dialoguestatus: '' });
-        await bot.sendMessage(chatId, `Ви поповнюєте рахунок на ${msg.text} грн.`, {reply_markup: { inline_keyboard: [[{ 
-          text: 'Перейти до оплати',
-          url: `https://easypay.ua/ua/partners/vodoleylviv-card?amount=${msg.text}`,
-        }]] }});
-      } else if (dialogueStatus === 'buyFromAccount') {
-        await updateUserByChatId(chatId, { dialoguestatus: '' });
-        bot.sendMessage(msg.chat.id, phrases.selectGoods, {
-          reply_markup: keyboards.twoWaters
-        });
-      } else if (dialogueStatus === 'birdaydate') {
-        
-        await updateUserByChatId(chatId, { birthdaydate: msg.text, dialoguestatus: '' });
-        await userLogin(chatId);
 
-        console.log(userInfo.phone);
-        console.log(userInfo.firstname);
-        console.log(msg.text);
-        const newUser = await axios.post('http://soliton.net.ua/water/api/user/add/index.php', {
-          phone_number: userInfo.phone,
-          name: userInfo.firstname,
-          date_birth: msg.text,
-          email: 'brys@gmail.com'
-        });
-        const userCard = await axios.get(`http://soliton.net.ua/water/api/user/index.php?phone=${userInfo.phone}`);
-        await updateUserByChatId(chatId, { lastname: JSON.stringify(userCard.data.user) }); 
-        console.log(newUser.data);
-        if (newUser.data.status) {
-          logger.info(`USER_ID: ${chatId} registred`);
-          bot.sendMessage(chatId, phrases.bonusCardQuestion, 
-            {
-            reply_markup: keyboards.isBonusCard
-            },
-            { 
-            reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
-            });  
-        }
-      } else if (dialogueStatus === 'numberlogin') {
-        if (msg.contact.phone_number) {
-          const phone = numberFormatFixing(msg.contact.phone_number);
-          console.log(phone)
-          const userCard = await axios.get(`http://soliton.net.ua/water/api/user/index.php?phone=${phone}`);
-          await updateUserByChatId(chatId, { lastname: JSON.stringify(userCard.data.user) }); 
-          console.log(userCard);
-          console.log(userCard.data.user);
-          userDatafromApi = userCard.data.user;
-          console.log(userDatafromApi);
-        } else {
-          // Handle the case where msg.contact.phone_number is null
-          await bot.sendMessage(msg.chat.id, phrases.mainMenu, {
-              reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
-          });
-          return; // Exit the block if phone number is null
-      };
-         
-        await updateUserByChatId(chatId, { dialoguestatus: 'birthdaylogin' }); 
-        await bot.sendMessage(chatId, `Введіть дату народження у форматі ДД.ММ.РРРР. Наприклад 05.03.1991`);
-      } else if (dialogueStatus === 'birthdaylogin') {
-        if (userDatafromApi.date_birth === msg.text ) {
-          bot.sendMessage(chatId, JSON.stringify(userDatafromApi));
-        }
-        if (msg.text === birthDaydate) {
-          
-          await updateUserByChatId(chatId, { dialoguestatus: '' });
-          await userLogin(chatId);
-          logger.info(`USER_ID: ${chatId} loggin`);  
-          bot.sendMessage(chatId, phrases.congratAuth,
-            { 
-            reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
+
+
+      switch (dialogueStatus) {
+
+        case 'phoneNumber':
+          if (msg.contact) {
+            console.log('contact')
+            const phone = numberFormatFixing(msg.contact.phone_number);
+            try {
+              await updateUserByChatId(chatId, { phone, dialoguestatus: 'name' });
+              await bot.sendMessage(chatId, phrases.nameRequest);
+            } catch (error) {
+              logger.warn(`Cann't update phone number`);
             }
-          );  
-        } else {
-          bot.sendMessage(chatId, `Дата ${msg.text} не відповідає номеру ${userInfo.phone}. Спробуйте ще раз`);
-          // Handle the case where userDatafromApi.date_birth is undefined or null
-          await bot.sendMessage(msg.chat.id, phrases.mainMenu, {
-              reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
-          });
-          return; // Exit the block if date of birth is undefined or null
+          } else if (msg.text) {
+            if (msg.text.length === 9 && !isNaN(parseFloat(msg.text))) {
+              console.log('phone')
+
+              const phone = numberFormatFixing(msg.text);
+              try {
+                await updateUserByChatId(chatId, { phone, dialoguestatus: 'name' });
+                await bot.sendMessage(chatId, phrases.nameRequest);
+              } catch (error) {
+                logger.warn(`Cann't update phone number`);
+              }  
+            } else {
+              await bot.sendMessage(chatId, phrases.wrongPhone);
+            }
+          }  
+    
+        break;
+
+        case 'name': 
+            await updateUserByChatId(chatId, { firstname: msg.text, dialoguestatus: 'birthdaydate' });
+            await bot.sendMessage(chatId, `Введіть дату народження у форматі ДД.ММ.РРРР`);
+
+        break;
+
+        case 'birthdaydate':
+          if (msg.text.length === 10) {
+            await updateUserByChatId(chatId, { birthdaydate: msg.text, dialoguestatus: '' });
+            await userLogin(chatId);
+  
+            console.log(userInfo.phone);
+            console.log(userInfo.firstname);
+            console.log(msg.text);
+            const newUser = await axios.post('http://soliton.net.ua/water/api/user/add/index.php', {
+                phone_number: userInfo.phone,
+                name: userInfo.firstname,
+                date_birth: msg.text,
+                email: 'brys@gmail.com'
+            });
+            const userCard = await axios.get(`http://soliton.net.ua/water/api/user/index.php?phone=${userInfo.phone}`);
+            await updateUserByChatId(chatId, { lastname: JSON.stringify(userCard.data.user) });
+            console.log(newUser.data);
+            if (newUser.data.status) {
+                logger.info(`USER_ID: ${chatId} registered`);
+                bot.sendMessage(chatId, phrases.bonusCardQuestion, {
+                    reply_markup: keyboards.isBonusCard
+                }, {
+                    reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
+                });
+            }  
+          } else {
+            await bot.sendMessage(chatId, phrases.wrongBirthDate);
+          }
+        break;
+
+        case 'numberlogin':
+            console.log(msg.contact.phone_number);
+            if (msg.contact.phone_number) {
+                const phone = numberFormatFixing(msg.contact.phone_number);
+                console.log(phone);
+                const userCard = await axios.get(`http://soliton.net.ua/water/api/user/index.php?phone=${phone}`);
+                await updateUserByChatId(chatId, { lastname: JSON.stringify(userCard.data.user) });
+                console.log(userCard);
+                console.log(userCard.data.user);
+                userDatafromApi = userCard.data.user;
+                console.log(userDatafromApi);
+            } else {
+                // Handle the case where msg.contact.phone_number is null
+                await bot.sendMessage(msg.chat.id, phrases.mainMenu, {
+                    reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
+                });
+                return; // Exit the block if phone number is null
+            }
+            await updateUserByChatId(chatId, { dialoguestatus: 'birthdaylogin' });
+            await bot.sendMessage(chatId, `Введіть дату народження у форматі ДД.ММ.РРРР. Наприклад 05.03.1991`);
+            break;
+
+        case 'birthdaylogin':
+            if (userDatafromApi.date_birth === msg.text) {
+                bot.sendMessage(chatId, JSON.stringify(userDatafromApi));
+            }
+            if (msg.text === birthDaydate) {
+                await updateUserByChatId(chatId, { dialoguestatus: '' });
+                await userLogin(chatId);
+                logger.info(`USER_ID: ${chatId} loggin`);
+                bot.sendMessage(chatId, phrases.congratAuth, {
+                    reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
+                });
+            } else {
+                bot.sendMessage(chatId, `Дата ${msg.text} не відповідає номеру ${userInfo.phone}. Спробуйте ще раз`);
+                // Handle the case where userDatafromApi.date_birth is undefined or null
+                await bot.sendMessage(msg.chat.id, phrases.mainMenu, {
+                    reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
+                });
+            }
+            break;
+
+        case 'topup':
+            await updateUserByChatId(chatId, { dialoguestatus: '' });
+            await bot.sendMessage(chatId, `Ви поповнюєте рахунок на ${msg.text} грн.`, {
+                reply_markup: { inline_keyboard: [[{
+                    text: 'Перейти до оплати',
+                    url: `https://easypay.ua/ua/partners/vodoleylviv-card?amount=${msg.text}`,
+                }]] }
+            });
+            break;
+
+        case 'buyFromAccount':
+            await updateUserByChatId(chatId, { dialoguestatus: '' });
+            bot.sendMessage(msg.chat.id, phrases.selectGoods, {
+                reply_markup: keyboards.twoWaters
+            });
+            break;
+
       }
 
-      } else if (msg.location) {
+      if (msg.location) {
         logger.info(`USER_ID: ${chatId} share location`);
         const locations = await axios.get('http://soliton.net.ua/water/api/devices');
         const targetCoordinate = {lat: msg.location.latitude, lon: msg.location.longitude};
@@ -263,6 +312,7 @@ export const anketaListiner = async() => {
       }
 
       switch (msg.text) {
+        
         case '/start':
           if(userInfo) await updateUserByChatId(chatId, { dialoguestatus: '' });
           if (isAuthenticated) 
@@ -271,24 +321,16 @@ export const anketaListiner = async() => {
             });
           else {
             logger.info(`USER_ID: ${chatId} join BOT`);
+            await createNewUserByChatId(chatId);
+            await updateUserByChatId(chatId, { dialoguestatus: 'phoneNumber' });
             bot.sendMessage(msg.chat.id, phrases.greetings, {
-              reply_markup: { keyboard: keyboards.login, resize_keyboard: true, one_time_keyboard: true }
+              reply_markup: { keyboard: keyboards.contactRequest, resize_keyboard: true, one_time_keyboard: true }
             });  
+
           }
           break;
-        case '/isBonusCard':
-            if(userInfo) await updateUserByChatId(chatId, { dialoguestatus: '' });
-            if (isAuthenticated) 
-              bot.sendMessage(msg.chat.id, phrases.isBonusCardMessage, {
-                reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
-              });
-            else {
-              logger.info(`USER_ID: ${chatId} join BOT`);
-              bot.sendMessage(msg.chat.id, phrases.greetings, {
-                reply_markup: { keyboard: keyboards.login, resize_keyboard: true, one_time_keyboard: true }
-              });  
-            }
-          break;  
+
+
         case 'Повернутися до головного меню':
         case 'До головного меню':
           if (isAuthenticated) {

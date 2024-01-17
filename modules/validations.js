@@ -1,5 +1,4 @@
 export const numberFormatFixing = (phone) => {
-    console.log(phone.length)
     if (phone.length == 12) {
         return phone;
     } else if (phone.length == 13) {
