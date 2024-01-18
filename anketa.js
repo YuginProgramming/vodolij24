@@ -132,6 +132,7 @@ export const anketaListiner = async() => {
         let dialogueStatus;
         let isAuthenticated;
         let birthDaydate;
+        let tempData;
         let userDatafromApi;
         if (userInfo) {
           dialogueStatus = userInfo.dialoguestatus;
@@ -140,6 +141,9 @@ export const anketaListiner = async() => {
           if (userInfo.hasOwnProperty("lastname")) {
             const data = JSON.parse(userInfo.lastname);
             userDatafromApi = data;
+          }
+          if (userInfo.hasOwnProperty("fathersname")) {
+            tempData = userInfo.fathersname;
           }
           
         }
@@ -236,7 +240,7 @@ export const anketaListiner = async() => {
             await bot.sendMessage(chatId, phrases.wrongBirthDate);
           }
         break;
-
+/*
         case 'numberlogin':
             console.log(msg.contact.phone_number);
             if (msg.contact.phone_number) {
@@ -278,7 +282,7 @@ export const anketaListiner = async() => {
                 });
             }
             break;
-
+*/
         case 'topup':
             await updateUserByChatId(chatId, { dialoguestatus: '' });
             await bot.sendMessage(chatId, `Ви поповнюєте рахунок на ${msg.text} грн.`, {
@@ -288,14 +292,32 @@ export const anketaListiner = async() => {
                 }]] }
             });
             break;
+        
 
-        case 'buyFromAccount':
-            await updateUserByChatId(chatId, { dialoguestatus: '' });
-            bot.sendMessage(msg.chat.id, phrases.selectGoods, {
-                reply_markup: keyboards.twoWaters
+
+
+
+        case 'buyWater':
+            await updateUserByChatId(chatId, { dialoguestatus: 'vendorConfirmation', fathersname: msg.text });
+            bot.sendMessage(chatId, `Це автомат "${msg.text}" "${msg.text}"?`, {
+              reply_markup: { keyboard: keyboards.binarKeys, resize_keyboard: true, one_time_keyboard: true }
             });
             break;
 
+        case 'vendorConfirmation': 
+            if (msg.text === 'Так') {
+              bot.sendMessage(msg.chat.id, `Покупка води на автоматі "${tempData}" за адресою "${tempData}". Оберіть спосіб оплати`, {
+                reply_markup: { keyboard: keyboards.paymantMethod, resize_keyboard: true, one_time_keyboard: true }
+              });
+              await updateUserByChatId(chatId, { dialoguestatus: 'vendorConfirmation', fathersname: '' });
+              //чи вести далі
+            } else {
+              bot.sendMessage(chatId, phrases.chooseVendor, {
+                reply_markup: { keyboard: keyboards.chooseVendor, resize_keyboard: true, one_time_keyboard: true }
+              });
+              await updateUserByChatId(chatId, { dialoguestatus: 'buyWater' });
+            }
+        break;
       }
 
       if (msg.location) {
@@ -424,12 +446,17 @@ export const anketaListiner = async() => {
         case 'Ні, я введу номер вручну':
           bot.sendMessage(msg.chat.id, phrases.phoneRules);
           break;
+
+
+
         case '⛽️ Купити воду': 
-          bot.sendMessage(msg.chat.id, phrases.chooseVendor, {
+          bot.sendMessage(chatId, phrases.chooseVendor, {
             reply_markup: { keyboard: keyboards.chooseVendor, resize_keyboard: true, one_time_keyboard: true }
           });
-          await updateUserByChatId(chatId, { dialoguestatus: 'buyFromAccount' });
+          await updateUserByChatId(chatId, { dialoguestatus: 'buyWater' });
           break;
+
+
         case 'Ввести номер автомата': 
           bot.sendMessage(msg.chat.id, phrases.enterVendorNum);
           break;
