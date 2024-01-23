@@ -494,7 +494,7 @@ export const anketaListiner = async() => {
           if(!isNaN(msg.text)) {
             const balanceAmount = balance - msg.text;
             if (balanceAmount >= 0) {
-              bot.sendMessage(chatId, phrases.orderFromBalanceInstruction);
+              bot.sendMessage(chatId, phrases.orderFromBalanceInstruction, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
               await updateUserByChatId(chatId, { goods: balanceAmount });
             } else {
               bot.sendMessage(chatId, phrases.lowBalance, { reply_markup:  { keyboard: keyboards.lowBalance, resize_keyboard: true, one_time_keyboard: false } });
