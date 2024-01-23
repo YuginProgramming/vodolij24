@@ -450,7 +450,7 @@ export const anketaListiner = async() => {
 
 
         case '⛽️ Купити воду': 
-          bot.sendMessage(chatId, phrases.chooseVendor, {
+          await bot.sendMessage(chatId, phrases.chooseVendor, {
             reply_markup: { keyboard: keyboards.chooseVendor, resize_keyboard: true, one_time_keyboard: true }
           });
           await updateUserByChatId(chatId, { dialoguestatus: 'buyWater' });
