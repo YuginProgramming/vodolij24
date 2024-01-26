@@ -24,14 +24,24 @@ export const anketaListiner = async() => {
       switch (action) {
         case '/mainNoCard':
             await userLogin(chatId);
-            await updateUserByChatId(chatId, { dialoguestatus: '' });          
+            await updateUserByChatId(chatId, { dialoguestatus: '',  units: chatId, lastname: JSON.stringify({
+              CardGroup: 'Demo',
+              WaterQty: 356,
+              AllQty: 1245,
+              Discount: 90,
+            })});          
             bot.sendMessage(chatId, phrases.welcomeNoCard, {
               reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
             });       
           break;
         case '/mainHaveCard':
             await userLogin(chatId);
-            await updateUserByChatId(chatId, { dialoguestatus: '' });
+            await updateUserByChatId(chatId, { dialoguestatus: '', units: chatId, lastname: JSON.stringify({
+              CardGroup: 'Demo',
+              WaterQty: 356,
+              AllQty: 1245,
+              Discount: 90,
+            })});
             bot.sendMessage(chatId, phrases.welcomeHaveCard, {
               reply_markup: { keyboard: keyboards.mainMenuWithVerify, resize_keyboard: true, one_time_keyboard: true }
             });
@@ -44,7 +54,7 @@ export const anketaListiner = async() => {
       
         const userInfo = await findUserByChatId(chatId);
 
-        let dialogueStatus, isAuthenticated, birthDaydate, tempData, userDatafromApi, balance, cardNumber;
+        let dialogueStatus, isAuthenticated, birthDaydate, tempData, userDatafromApi, balance, cardNumber, firstname;
 
         if (userInfo) {
           dialogueStatus = userInfo.dialoguestatus;
@@ -63,6 +73,9 @@ export const anketaListiner = async() => {
           }
           if (userInfo.hasOwnProperty("units")) {
             cardNumber = userInfo.units;
+          }
+          if (userInfo.hasOwnProperty("firstname")) {
+            firstname = userInfo.firstname;
           }
           
         }
@@ -104,30 +117,52 @@ export const anketaListiner = async() => {
 
         
         case 'Готівкою':
-          bot.sendMessage(chatId, phrases.vendorActivation, {
-            reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
-          });
+          if (dialogueStatus === 'cardBalanceRefil') {
 
-          setTimeout(() => {
-            bot.sendMessage(chatId, phrases.bonusNotification);
-          }, 30000);
+          } else {
+            bot.sendMessage(chatId, phrases.vendorActivation, {
+              reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
+            });
+  
+            setTimeout(() => {
+              bot.sendMessage(chatId, phrases.bonusNotification);
+            }, 30000);
+  
+          }
           
         break;
 
         case 'Картка Visa/Mastercard':
+          if (dialogueStatus === 'cardBalanceRefil') {
+
+          } else {
           bot.sendMessage(chatId, phrases.countType, {
             reply_markup: { keyboard: keyboards.countType, resize_keyboard: true, one_time_keyboard: true }
           }); 
+          }
         break;
         case 'Ввести суму в літрах':
+          if (dialogueStatus === 'cardBalanceRefil') {
+            bot.sendMessage(chatId, phrases.litrRules, {
+              reply_markup: { keyboard: keyboards.litrRules, resize_keyboard: true, one_time_keyboard: true }
+            });
+            await updateUserByChatId(chatId, { dialoguestatus: 'volumeLink' });   
+          } else {          
           bot.sendMessage(chatId, phrases.litrRules, {
             reply_markup: { keyboard: keyboards.litrRules, resize_keyboard: true, one_time_keyboard: true }
           });
           await updateUserByChatId(chatId, { dialoguestatus: 'volume' }); 
+          }
         break;
         case 'Ввести суму в грн':
+          if (dialogueStatus === 'cardBalanceRefil') {
+            bot.sendMessage(chatId, phrases.litrRules);
+            await updateUserByChatId(chatId, { dialoguestatus: 'amountLink' });   
+          } else {
+
           bot.sendMessage(chatId, phrases.amountRules);
           await updateUserByChatId(chatId, { dialoguestatus: 'amount' }); 
+          }
         break;
 
         
@@ -213,14 +248,14 @@ export const anketaListiner = async() => {
           });
           break;
         case 'Мій профіль':
-          /* Оновлювати актуальну інформацію
-          const userCard = await axios.get(`http://soliton.net.ua/water/api/user/index.php?phone=${userInfo.phone}`);
-          await updateUserByChatId(chatId, { lastname: JSON.stringify(userCard.data.user) }); 
-          */
+          
+          //const userCard = await axios.get(`http://soliton.net.ua/water/api/user/index.php?phone=${userInfo.phone}`);
+          //await updateUserByChatId(chatId, { lastname: JSON.stringify(userCard.data.user) }); 
+          
           let currentTime = DateTime.now().toFormat('yy-MM-dd HH:mm:ss');
 
-          console.log(userDatafromApi.card[0]);
-
+          //console.log(userDatafromApi.card[0]);
+/*
           if (!userDatafromApi.card[0]) {
             const cardData = 
               {
@@ -232,32 +267,32 @@ export const anketaListiner = async() => {
             
             userDatafromApi.card.push(cardData);
           }
-
+*/
           console.log(userDatafromApi);
-
+          
           const balanceMessage = `
-            ${userDatafromApi.name}
+            ${firstname}
           ${currentTime}
-          Тип карти: ${userDatafromApi.card[0].CardGroup}
+          Тип карти: ${userDatafromApi.CardGroup}
 
           💰 Поточний баланс:
           
-          ${userDatafromApi.card[0].WaterQty} БОНУСНИХ грн.
+          ${userDatafromApi.WaterQty} БОНУСНИХ грн.
 
           🔄 Оборот коштів:
-          ${userDatafromApi.card[0].AllQty} БОНУСНИХ грн.
+          ${userDatafromApi.AllQty} БОНУСНИХ грн.
 
-          Знижка: ${userDatafromApi.card[0].Discount}%
+          Знижка: ${userDatafromApi.Discount}%
           `
-          bot.sendMessage(msg.chat.id, balanceMessage, /*{
-            reply_markup: { keyboard: keyboards.accountStatus, resize_keyboard: true, one_time_keyboard: true }
-          }*/);
+          bot.sendMessage(msg.chat.id, balanceMessage, {
+            reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
+          });
           break;
         case '💸 Поповнити картку':
-          bot.sendMessage(msg.chat.id, phrases.enterTopupAmount, {
-            reply_markup: { keyboard: keyboards.returnToBalance, resize_keyboard: true, one_time_keyboard: true }
+          bot.sendMessage(msg.chat.id, phrases.choosePaymantWay, {
+            reply_markup: { keyboard: keyboards.choosePaymantWay, resize_keyboard: true, one_time_keyboard: true }
           });
-          await updateUserByChatId(chatId, { dialoguestatus: 'topup' });
+          await updateUserByChatId(chatId, { dialoguestatus: 'cardBalanceRefil' });
           break;
         case '⭐️ Бонуси': 
           let userBonusAcc = phrases.userBonusAcc;
@@ -377,15 +412,6 @@ export const anketaListiner = async() => {
             await bot.sendMessage(chatId, phrases.wrongBirthDate);
           }
         break;
-        case 'topup':
-            await updateUserByChatId(chatId, { dialoguestatus: '' });
-            await bot.sendMessage(chatId, `Ви поповнюєте рахунок на ${msg.text} грн.`, {
-                reply_markup: { inline_keyboard: [[{
-                    text: 'Перейти до оплати',
-                    url: `https://easypay.ua/ua/partners/vodoleylviv-card?amount=${msg.text}`,
-                }]] }
-            });
-        break;
 
         case 'buyWater':
             await updateUserByChatId(chatId, { dialoguestatus: 'vendorConfirmation', fathersname: msg.text });
@@ -490,6 +516,84 @@ export const anketaListiner = async() => {
             bot.sendMessage(chatId, phrases.readCard, { reply_markup:  { keyboard: keyboards.readCard, resize_keyboard: true, one_time_keyboard: false } });
           } else {
 
+          }
+        break;
+
+
+        case 'cardBalanceRefil':
+          if (msg.text === 'Готівка') {
+            bot.sendMessage(chatId, phrases.chooseVendorRefil, { reply_markup:  { keyboard: keyboards.chooseVendor, resize_keyboard: true, one_time_keyboard: false}});
+
+          }
+          if (msg.text === 'Картка Visa/Mastercard') {
+            bot.sendMessage(chatId, phrases.cardRefilCard(cardNumber), { reply_markup:  { keyboard: keyboards.countType, resize_keyboard: true, one_time_keyboard: false}});
+
+          }
+          if(!isNaN(msg.text)) {
+          await updateUserByChatId(chatId, { fathersname: msg.text });
+          bot.sendMessage(chatId, `Це автомат "${msg.text}" "${msg.text}"?`, {
+            reply_markup: { keyboard: keyboards.binarKeys, resize_keyboard: true, one_time_keyboard: true }
+          });
+          }
+          if (msg.text === 'Так') {
+            bot.sendMessage(chatId, phrases.readCardRefil, { reply_markup:  { keyboard: keyboards.readCardRefil, resize_keyboard: true, one_time_keyboard: false } });
+          }
+          if (msg.text === 'Ні') {
+            bot.sendMessage(msg.chat.id, phrases.choosePaymantWay, {
+              reply_markup: { keyboard: keyboards.choosePaymantWay, resize_keyboard: true, one_time_keyboard: true }
+            });
+          }
+          if (msg.text === `на екрані автомату з'явився напис: "на балансі картки х літрів"`) {
+            bot.sendMessage(msg.chat.id, phrases.cashRequest, {
+              reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
+            });
+            setTimeout(() => {
+              bot.sendMessage(chatId, phrases.bonusNotificationCard);
+            }, 30000);
+          }
+          if (msg.text === `Пройшло понад 30 секунд, але напис на екрані автомату так і не з'явився`) {
+            bot.sendMessage(msg.chat.id, phrases.choosePaymantWay, {
+              reply_markup: { keyboard: keyboards.choosePaymantWay, resize_keyboard: true, one_time_keyboard: true }
+            });
+          }
+
+
+        break;
+        case 'volumeLink':
+          if(!isNaN(msg.text)) {
+            const amount = Math.round(msg.text * 1.5);
+            const link = `https://easypay.ua/ua/partners/vodoleylviv-card=${cardNumber}?amount=${amount}`;
+            await bot.sendMessage(chatId, `Поповнення картки номер "${cardNumber}".`, {
+              reply_markup: { inline_keyboard: [[{
+                  text: 'Оплатити',
+                  url: link,
+                }]] 
+              } 
+            });
+            await bot.sendMessage(chatId, phrases.refilInfo, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
+            setTimeout(() => {
+              bot.sendMessage(chatId, phrases.bonusNotificationCard);
+            }, 30000);
+          } else {
+            bot.sendMessage(chatId, phrases.wrongNumber);
+          }
+        break;
+        case 'amountLink':
+          if(!isNaN(msg.text)) {
+            const link = `https://easypay.ua/ua/partners/vodoleylviv-card=${cardNumber}?amount=${msg.text}`;
+            await bot.sendMessage(chatId, `Поповнення картки номер "${cardNumber}".`, {
+              reply_markup: { inline_keyboard: [[{
+                  text: 'Оплатити',
+                  url: link,
+                }]] 
+              } 
+            });
+            await bot.sendMessage(chatId, phrases.refilInfo, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
+            setTimeout(() => {
+              bot.sendMessage(chatId, phrases.bonusNotificationCard);
+            }, 30000);
+          } else {
+            bot.sendMessage(chatId, phrases.wrongNumber);
           }
         break;
       }
