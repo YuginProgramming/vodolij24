@@ -397,9 +397,10 @@ export const anketaListiner = async() => {
                 date_birth: msg.text,
                 email: 'brys@gmail.com'
             });
+            console.log(newUser.data);
+
             const userCard = await axios.get(`http://soliton.net.ua/water/api/user/index.php?phone=${userInfo.phone}`);
             await updateUserByChatId(chatId, { lastname: JSON.stringify(userCard.data.user) });
-            console.log(newUser.data);
             if (newUser.data.status) {
                 logger.info(`USER_ID: ${chatId} registered`);
                 bot.sendMessage(chatId, phrases.bonusCardQuestion, {
@@ -414,15 +415,44 @@ export const anketaListiner = async() => {
         break;
 
         case 'buyWater':
-            await updateUserByChatId(chatId, { dialoguestatus: 'vendorConfirmation', fathersname: msg.text });
-            bot.sendMessage(chatId, `Це автомат "${msg.text}" "${msg.text}"?`, {
-              reply_markup: { keyboard: keyboards.binarKeys, resize_keyboard: true, one_time_keyboard: true }
-            });
+            console.log(msg.text)
+            if (msg.location) {
+              logger.info(`USER_ID: ${chatId} share location`);
+              const locations = await axios.get('http://soliton.net.ua/water/api/devices');
+              const targetCoordinate = {lat: msg.location.latitude, lon: msg.location.longitude};
+              console.log(locations.data.devices);
+              const nearest = findNearestCoordinate(locations.data.devices, targetCoordinate);
+              //bot.sendMessage(chatId, `${msg.location.latitude} , ${msg.location.longitude}`);
+              await updateUserByChatId(chatId, { dialoguestatus: 'vendorConfirmation', fathersname: JSON.stringify(nearest) });
+  
+      
+              bot.sendLocation(chatId, nearest.lat, nearest.lon);
+              bot.sendMessage(chatId, `Це автомат "${nearest.id}" "${nearest.name}"?`, {
+                reply_markup: { keyboard: keyboards.binarKeys, resize_keyboard: true, one_time_keyboard: true }
+              });  
+            }
+  
+            if (!isNaN(msg.text)) {
+              const locations = await axios.get('http://soliton.net.ua/water/api/devices');
+              const currentVendor = locations.data.devices.find(device => device.id == msg.text);
+              if (!currentVendor) {
+                //Що робити коли помилковий номер
+              }
+              await updateUserByChatId(chatId, { dialoguestatus: 'vendorConfirmation', fathersname: JSON.stringify(currentVendor) });
+  
+              bot.sendMessage(chatId, `Це автомат "${currentVendor.id}" "${currentVendor.name}"?`, {
+                reply_markup: { keyboard: keyboards.binarKeys, resize_keyboard: true, one_time_keyboard: true }
+              });  
+            } else {
+              bot.sendMessage(chatId, phrases.wrongNumber);
+            }
         break;
 
         case 'vendorConfirmation': 
+            const deviceData = JSON.parse(tempData)
+
             if (msg.text === 'Так' || msg.text === 'Вибрати інший спосіб оплати') {
-              bot.sendMessage(msg.chat.id, `Покупка води на автоматі "${tempData}" за адресою "${tempData}". Оберіть спосіб оплати`, {
+              bot.sendMessage(msg.chat.id, `Покупка води на автоматі "${deviceData.name}" за адресою "${deviceData.id}". Оберіть спосіб оплати`, {
                 reply_markup: { keyboard: keyboards.paymantMethod, resize_keyboard: true, one_time_keyboard: true }
               });
               await updateUserByChatId(chatId, { dialoguestatus: '' });
@@ -496,15 +526,24 @@ export const anketaListiner = async() => {
             console.log(locations.data.devices);
             const nearest = findNearestCoordinate(locations.data.devices, targetCoordinate);
             //bot.sendMessage(chatId, `${msg.location.latitude} , ${msg.location.longitude}`);
-    
-            bot.sendMessage(chatId, `${nearest.name}`);
+            await updateUserByChatId(chatId, { dialoguestatus: 'verificationConfirmation', fathersname: JSON.stringify(nearest) });
+
     
             bot.sendLocation(chatId, nearest.lat, nearest.lon);
+            bot.sendMessage(chatId, `Це автомат "${nearest.id}" "${nearest.name}"?`, {
+              reply_markup: { keyboard: keyboards.binarKeys, resize_keyboard: true, one_time_keyboard: true }
+            });  
           }
 
           if (!isNaN(msg.text)) {
-            await updateUserByChatId(chatId, { dialoguestatus: 'verificationConfirmation', fathersname: msg.text });
-            bot.sendMessage(chatId, `Це автомат "${msg.text}" "${msg.text}"?`, {
+            const locations = await axios.get('http://soliton.net.ua/water/api/devices');
+            const currentVendor = locations.data.devices.find(device => device.id == msg.text);
+            if (!currentVendor) {
+              //Що робити коли помилковий номер
+            }
+            await updateUserByChatId(chatId, { dialoguestatus: 'verificationConfirmation', fathersname: JSON.stringify(currentVendor) });
+
+            bot.sendMessage(chatId, `Це автомат "${currentVendor.id}" "${currentVendor.name}"?`, {
               reply_markup: { keyboard: keyboards.binarKeys, resize_keyboard: true, one_time_keyboard: true }
             });  
           } else {
@@ -597,19 +636,18 @@ export const anketaListiner = async() => {
           }
         break;
       }
-
+/*
       if (msg.location) {
         logger.info(`USER_ID: ${chatId} share location`);
         const locations = await axios.get('http://soliton.net.ua/water/api/devices');
         const targetCoordinate = {lat: msg.location.latitude, lon: msg.location.longitude};
         console.log(locations.data.devices);
         const nearest = findNearestCoordinate(locations.data.devices, targetCoordinate);
-        //bot.sendMessage(chatId, `${msg.location.latitude} , ${msg.location.longitude}`);
 
-        bot.sendMessage(chatId, `${nearest.name}`);
+        bot.sendMessage(chatId, `${nearest.name} LOLOLC`);
 
         bot.sendLocation(chatId, nearest.lat, nearest.lon);
       }
-
+*/
   });
 };
