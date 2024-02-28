@@ -1,7 +1,6 @@
 import { bot } from "./app.js";
 import { phrases, keyboards } from './language_ua.js';
-import { logger } from './logger/index.js';
-import { DateTime } from "luxon";
+ import { DateTime } from "luxon";
 import { 
   updateUserByChatId,
   userLogin,
@@ -15,7 +14,6 @@ import { findNearestCoordinate } from './modules/locations.js';
 import { numberFormatFixing } from './modules/validations.js';
 
 export const anketaListiner = async() => {
-  
     bot.on("callback_query", async (query) => {
 
       const action = query.data;
