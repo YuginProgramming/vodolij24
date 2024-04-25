@@ -8,10 +8,12 @@ import {
   findUserByChatId,
   createNewUserByChatId
 } from './models/users.js';
+import { findBalanceByChatId } from './models/bonuses.js'
 //import { generateKeyboard } from './src/plugins.mjs';
 import axios from 'axios';
 import { findNearestCoordinate } from './modules/locations.js';
 import { numberFormatFixing } from './modules/validations.js';
+import checkPaymentRecursively from './modules/checkpaymant.js';
 
 export const anketaListiner = async() => {
     bot.on("callback_query", async (query) => {
@@ -118,13 +120,15 @@ export const anketaListiner = async() => {
           if (dialogueStatus === 'cardBalanceRefil') {
 
           } else {
+            const deviceData = JSON.parse(tempData);
+
+            console.log(deviceData)
+
             bot.sendMessage(chatId, phrases.vendorActivation, {
               reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
             });
   
-            setTimeout(() => {
-              bot.sendMessage(chatId, phrases.bonusNotification);
-            }, 30000);
+            checkPaymentRecursively(0, chatId, deviceData.id);
   
           }
           
@@ -265,17 +269,23 @@ export const anketaListiner = async() => {
             
             userDatafromApi.card.push(cardData);
           }
-*/
+*/        
           console.log(userDatafromApi);
+
+          const bonusBalace = await findBalanceByChatId(chatId);
           
           const balanceMessage = `
-            ${firstname}
+          ${firstname}
           ${currentTime}
           Тип карти: ${userDatafromApi.CardGroup}
 
           💰 Поточний баланс:
           
-          ${userDatafromApi.WaterQty} БОНУСНИХ грн.
+          ${userDatafromApi.WaterQty} грн.
+
+          ! ${bonusBalace} БОНУСНИХ літрів
+
+          
 
           🔄 Оборот коштів:
           ${userDatafromApi.AllQty} БОНУСНИХ грн.
@@ -453,7 +463,7 @@ export const anketaListiner = async() => {
             const deviceData = JSON.parse(tempData);
 
             if (msg.text === 'Так' || msg.text === 'Вибрати інший спосіб оплати') {
-              bot.sendMessage(msg.chat.id, `Покупка води на автоматі "${deviceData.name}" за адресою "${deviceData.id}". Оберіть спосіб оплати`, {
+              bot.sendMessage(msg.chat.id, `Покупка води на автоматі "${deviceData.id}" за адресою "${deviceData.name}". Оберіть спосіб оплати`, {
                 reply_markup: { keyboard: keyboards.paymantMethod, resize_keyboard: true, one_time_keyboard: true }
               });
               await updateUserByChatId(chatId, { dialoguestatus: '' });
@@ -493,9 +503,16 @@ export const anketaListiner = async() => {
               } 
             });
             await bot.sendMessage(chatId, phrases.pressStart, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
+
+                     
+            checkPaymentRecursively(msg.text, chatId, deviceData.id);
+
+            
+            /*
             setTimeout(() => {
               bot.sendMessage(chatId, phrases.bonusNotification);
             }, 30000);
+            */
           } else {
             bot.sendMessage(chatId, phrases.wrongNumber);
           }
@@ -513,9 +530,16 @@ export const anketaListiner = async() => {
               } 
             });
             await bot.sendMessage(chatId, phrases.pressStart, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
+
+            if (userInfo) console.log(userInfo)
+            
+
+            checkPaymentRecursively(msg.text, chatId, deviceData.id);
+            /*
             setTimeout(() => {
               bot.sendMessage(chatId, phrases.bonusNotification);
             }, 30000);
+            */
           } else {
             bot.sendMessage(chatId, phrases.wrongNumber);
           }
@@ -674,3 +698,4 @@ export const anketaListiner = async() => {
 
   });
 };
+
