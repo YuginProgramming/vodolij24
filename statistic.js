@@ -88,7 +88,7 @@ const getStatistic = async () => {
             const string = `${today}
                 Мережа Водолій налічує  автоматів  ${devicesQuantity},
                 Кількість налитої води за добу: ${sum} літрів.`; 
-            return string; 
+            logger.info(string);
         }
     }    
 };
