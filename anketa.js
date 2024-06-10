@@ -14,45 +14,18 @@ import axios from 'axios';
 import { findNearestCoordinate } from './modules/locations.js';
 import { numberFormatFixing } from './modules/validations.js';
 import checkPaymentRecursively from './modules/checkpaymant.js';
+import { logger } from "./logger/index.js";
+import { findApiUserByChatId, createNewApiUser, updateApiUserByChatId } from './models/api-users.js';
+import { createCard, findCardById, updateCardById } from "./models/cards.js";
+import { getCardData, checkBalanceChange } from './modules/checkcardAPI.js';
 
 export const anketaListiner = async() => {
     bot.on("callback_query", async (query) => {
 
       const action = query.data;
       const chatId = query.message.chat.id;
-      
-      switch (action) {
-        case '/mainNoCard':
-            await userLogin(chatId);
-            await updateUserByChatId(chatId, { dialoguestatus: '',  units: chatId, lastname: JSON.stringify({
-              CardGroup: 'Demo',
-              WaterQty: 356,
-              AllQty: 1245,
-              Discount: 90,
-            })});          
-            bot.sendMessage(chatId, phrases.welcomeNoCard, {
-              reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
-            });       
-          break;
-        case '/mainHaveCard':
-            await userLogin(chatId);
-            await updateUserByChatId(chatId, { dialoguestatus: '', units: chatId, lastname: JSON.stringify({
-              CardGroup: 'Demo',
-              WaterQty: 356,
-              AllQty: 1245,
-              Discount: 90,
-            })});
-            bot.sendMessage(chatId, phrases.welcomeHaveCard, {
-              reply_markup: { keyboard: keyboards.mainMenuWithVerify, resize_keyboard: true, one_time_keyboard: true }
-            });
-        break;  
-      }
-    });
-    
-    bot.on('message', async (msg) => {
-      const chatId = msg.chat.id;
-      
-        const userInfo = await findUserByChatId(chatId);
+
+      const userInfo = await findUserByChatId(chatId);
 
         let dialogueStatus, isAuthenticated, birthDaydate, tempData, userDatafromApi, balance, cardNumber, firstname;
 
@@ -73,6 +46,93 @@ export const anketaListiner = async() => {
           }
           if (userInfo.hasOwnProperty("units")) {
             cardNumber = userInfo.units;
+          }
+          if (userInfo.hasOwnProperty("firstname")) {
+            firstname = userInfo.firstname;
+          }          
+        }
+      
+      switch (action) {
+        case '/mainNoCard':
+            await userLogin(chatId);
+            const userData = await findApiUserByChatId(chatId)
+            const url = 'https://soliton.net.ua/water/api/card/link/index.php'; // Replace with the actual URL
+            const requestData = {
+                user_id: userData.user_id,
+                card_id: userData.phone,
+            };
+            const response = await axios.post(url, requestData);
+
+            if(response.data.status === 'success' || response.data.error === 'card already linked to user') {
+              const userCard = await axios.get(`http://soliton.net.ua/water/api/user/index.php?phone=${userInfo.phone}`);
+
+              const virtualCard = userCard.data.user.card[0]
+
+              await updateApiUserByChatId(chatId, { cards: virtualCard.ID });
+
+              await createCard({
+                cardId: virtualCard.ID,
+                Number: virtualCard.Number,
+                Card: virtualCard.Card,
+                Type: virtualCard.Type,
+                CardGroup: virtualCard.CardGroup,
+                WaterQty: virtualCard.WaterQty,
+                AllQty: virtualCard.AllQty,
+                MoneyPerMonth: virtualCard.MoneyPerMonth,
+                LitersPerDay: virtualCard.LitersPerDay,
+                Discount:  virtualCard.Discount,
+                status: virtualCard.status
+              })
+            }
+
+            bot.sendMessage(chatId, phrases.welcomeNoCard, {
+              reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
+            });       
+          break;
+
+        case '/mainHaveCard':
+            await userLogin(chatId);
+            await updateUserByChatId(chatId, { dialoguestatus: '', units: chatId, lastname: JSON.stringify({
+              CardGroup: 'Demo',
+              WaterQty: 356,
+              AllQty: 1245,
+              Discount: 90,
+            })});
+            bot.sendMessage(chatId, phrases.welcomeHaveCard, {
+              reply_markup: { keyboard: keyboards.mainMenuWithVerify, resize_keyboard: true, one_time_keyboard: true }
+            });
+        break;  
+      }
+    });
+    
+    bot.on('message', async (msg) => {
+      const chatId = msg.chat.id;
+      
+        const userInfo = await findUserByChatId(chatId);
+
+        const apiData = await findApiUserByChatId(chatId); 
+        
+        const card = await findCardById(apiData?.cards);
+
+        let dialogueStatus, isAuthenticated, birthDaydate, tempData, userDatafromApi, balance, cardNumber, firstname;
+
+        if (userInfo) {
+          dialogueStatus = userInfo.dialoguestatus;
+          isAuthenticated = userInfo.isAuthenticated;
+          birthDaydate = userInfo.birthdaydate;
+
+          if (userInfo.hasOwnProperty("lastname")) {
+            const data = JSON.parse(userInfo.lastname);
+            userDatafromApi = data;
+          }
+          if (userInfo.hasOwnProperty("fathersname")) {
+            tempData = userInfo.fathersname;
+          }
+          if (userInfo.hasOwnProperty("goods")) {
+            balance = userInfo.goods;
+          }
+          if (card.hasOwnProperty("Number")) {
+            cardNumber = card?.Number;
           }
           if (userInfo.hasOwnProperty("firstname")) {
             firstname = userInfo.firstname;
@@ -250,47 +310,42 @@ export const anketaListiner = async() => {
           });
           break;
         case 'Мій профіль':
-          
-          //const userCard = await axios.get(`http://soliton.net.ua/water/api/user/index.php?phone=${userInfo.phone}`);
-          //await updateUserByChatId(chatId, { lastname: JSON.stringify(userCard.data.user) }); 
+
+        const cardId = apiData?.cards;
+
+        const card = await getCardData(userDatafromApi, cardId)
+
+          await updateCardById( cardId,
+            {
+              WaterQty: card.WaterQty,
+              AllQty: card.AllQty,
+              MoneyPerMonth: card.MoneyPerMonth,
+              LitersPerDay: card.LitersPerDay,
+              Discount:  card.Discount,
+            }
+          )
           
           let currentTime = DateTime.now().toFormat('yy-MM-dd HH:mm:ss');
-
-          //console.log(userDatafromApi.card[0]);
-/*
-          if (!userDatafromApi.card[0]) {
-            const cardData = 
-              {
-                CardGroup: 'Demo',
-                WaterQty: 356,
-                AllQty: 1245,
-                Discount: 90,
-              }
-            
-            userDatafromApi.card.push(cardData);
-          }
-*/        
-          console.log(userDatafromApi);
-
+          
           const bonusBalace = await findBalanceByChatId(chatId);
           
           const balanceMessage = `
-          ${firstname}
+          ${apiData?.name}
           ${currentTime}
-          Тип карти: ${userDatafromApi.CardGroup}
+          Тип карти: ${card.CardGroup}
 
           💰 Поточний баланс:
           
-          ${userDatafromApi.WaterQty} грн.
+          ${card.WaterQty} грн.
 
-          ! ${bonusBalace} БОНУСНИХ літрів
+          ${bonusBalace} БОНУСНИХ літрів
 
           
 
           🔄 Оборот коштів:
-          ${userDatafromApi.AllQty} БОНУСНИХ грн.
+          ${card.AllQty} БОНУСНИХ грн.
 
-          Знижка: ${userDatafromApi.Discount}%
+          Знижка: ${card.Discount}%
           `
           bot.sendMessage(msg.chat.id, balanceMessage, {
             reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
@@ -398,19 +453,39 @@ export const anketaListiner = async() => {
           if (msg.text.length === 10) {
             await updateUserByChatId(chatId, { birthdaydate: msg.text, dialoguestatus: '' });
   
-            console.log(userInfo.phone);
-            console.log(userInfo.firstname);
-            console.log(msg.text);
+            const name = userInfo.firstname.split(' ');
             const newUser = await axios.post('http://soliton.net.ua/water/api/user/add/index.php', {
                 phone_number: userInfo.phone,
-                name: userInfo.firstname,
+                first_name: name[0],
+                last_name: name[1] ? name[1] : 'не вказано',
                 date_birth: msg.text,
-                email: 'brys@gmail.com'
+                email: 'example@gmail.com'
             });
             console.log(newUser.data);
 
             const userCard = await axios.get(`http://soliton.net.ua/water/api/user/index.php?phone=${userInfo.phone}`);
-            await updateUserByChatId(chatId, { lastname: JSON.stringify(userCard.data.user) });
+
+            console.log(userCard.data.user)
+
+            await updateUserByChatId(chatId, { lastname: userCard.data.user.uid });
+
+            const apiUser = await findApiUserByChatId(chatId);
+            
+            apiUser ? await updateApiUserByChatId(chatId, {
+              user_id: userCard.data.user.uid,
+              name: userCard.data.user.name,
+              birthdaydate: userCard.data.user.date_birth,
+              phone: userCard.data.user.phone,
+              cards: userCard.data.user.card[0]?.ID          
+            }) : 
+            await createNewApiUser({
+              user_id: userCard.data.user.uid,
+              chat_id: chatId,
+              name: userCard.data.user.name,
+              birthdaydate: userCard.data.user.date_birth,
+              phone: userCard.data.user.phone,              
+            })
+
             if (newUser.data.status) {
                 logger.info(`USER_ID: ${chatId} registered`);
                 bot.sendMessage(chatId, phrases.bonusCardQuestion, {
@@ -659,9 +734,9 @@ export const anketaListiner = async() => {
               } 
             });
             await bot.sendMessage(chatId, phrases.refilInfo, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
-            setTimeout(() => {
-              bot.sendMessage(chatId, phrases.bonusNotificationCard);
-            }, 30000);
+            
+            await checkBalanceChange(chatId, userDatafromApi, apiData?.cards);
+
           } else {
             bot.sendMessage(chatId, phrases.wrongNumber);
           }
@@ -677,9 +752,10 @@ export const anketaListiner = async() => {
               } 
             });
             await bot.sendMessage(chatId, phrases.refilInfo, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
-            setTimeout(() => {
-              bot.sendMessage(chatId, phrases.bonusNotificationCard);
-            }, 30000);
+
+            await checkBalanceChange(chatId, userDatafromApi, apiData?.cards)
+
+
           } else {
             bot.sendMessage(chatId, phrases.wrongNumber);
           }
