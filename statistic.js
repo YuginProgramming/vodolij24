@@ -24,11 +24,11 @@ function getCurrentDateFormatted() {
 
 
 
-const getTransactions = async (device) => {
+const getTransactions = async (device, substract) => {
     console.log(device)
     const currentTime = moment();
     const endTime = currentTime.format('YYYY-MM-DD HH:mm:ss');
-    const startTime = currentTime.subtract(1440, 'minutes').format('YYYY-MM-DD HH:mm:ss');
+    const startTime = currentTime.subtract(substract, 'minutes').format('YYYY-MM-DD HH:mm:ss');
 
     const url = 'https://soliton.net.ua/water/api/water/index.php'; // Replace with the actual URL
     const requestData = {
@@ -81,7 +81,7 @@ const getStatistic = async () => {
     const devices = locations.data.devices;
     const devicesQuantity = devices.length - 4;
     for (let i = 4; i < devices.length; i++) {
-        await getTransactions(devices[i].id);
+        await getTransactions(devices[i].id, 1440);
         if (i === devices.length - 1) {
             const sum = await getWaterTotalbyTheDay();
             const today = getCurrentDateFormatted();

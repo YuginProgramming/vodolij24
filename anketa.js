@@ -13,7 +13,7 @@ import { findBalanceByChatId } from './models/bonuses.js'
 import axios from 'axios';
 import { findNearestCoordinate } from './modules/locations.js';
 import { numberFormatFixing } from './modules/validations.js';
-import checkPaymentRecursively from './modules/checkpaymant.js';
+import checkPayment from './modules/checkpaymant.js';
 import { logger } from "./logger/index.js";
 import { findApiUserByChatId, createNewApiUser, updateApiUserByChatId } from './models/api-users.js';
 import { createCard, findCardById, updateCardById } from "./models/cards.js";
@@ -188,7 +188,7 @@ export const anketaListiner = async() => {
               reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
             });
   
-            checkPaymentRecursively(0, chatId, deviceData.id);
+            checkPayment(chatId, deviceData.id, apiData?.cards);
   
           }
           
@@ -580,7 +580,7 @@ export const anketaListiner = async() => {
             await bot.sendMessage(chatId, phrases.pressStart, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
 
                      
-            checkPaymentRecursively(msg.text, chatId, deviceData.id);
+            checkPayment(chatId, deviceData.id, apiData?.cards);
 
             
             /*
@@ -609,14 +609,12 @@ export const anketaListiner = async() => {
             if (userInfo) console.log(userInfo)
             
 
-            checkPaymentRecursively(msg.text, chatId, deviceData.id);
-            /*
-            setTimeout(() => {
-              bot.sendMessage(chatId, phrases.bonusNotification);
-            }, 30000);
-            */
+            checkPayment(chatId, deviceData.id, apiData?.cards);
+
           } else {
+
             bot.sendMessage(chatId, phrases.wrongNumber);
+
           }
         break;
 
@@ -693,12 +691,13 @@ export const anketaListiner = async() => {
             });
           }
           if (msg.text === `на екрані автомату з'явився напис: "на балансі картки х літрів"`) {
+            
             bot.sendMessage(msg.chat.id, phrases.cashRequest, {
               reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
             });
-            setTimeout(() => {
-              bot.sendMessage(chatId, phrases.bonusNotificationCard);
-            }, 30000);
+
+            await checkBalanceChange(chatId, userDatafromApi, apiData?.cards);
+
           }
           if (msg.text === `Пройшло понад 30 секунд, але напис на екрані автомату так і не з'явився`) {
             bot.sendMessage(msg.chat.id, phrases.choosePaymantWay, {

@@ -3,10 +3,10 @@ import moment from 'moment';
 import { createNewTransaction } from './models/transactions.js'
 import { logger } from './logger/index.js';
 
-const getTransactions = async (device) => {
+const getTransactions = async (device, substract, cardId) => {
     const currentTime = moment();
     const endTime = currentTime.format('YYYY-MM-DD HH:mm:ss');
-    const startTime = currentTime.subtract(1, 'minutes').format('YYYY-MM-DD HH:mm:ss');
+    const startTime = currentTime.subtract(substract, 'minutes').format('YYYY-MM-DD HH:mm:ss');
 
     const url = 'https://soliton.net.ua/water/api/water/index.php'; // Replace with the actual URL
     const requestData = {
@@ -32,7 +32,7 @@ const getTransactions = async (device) => {
             if (response.data?.log === undefined) return;
             const log = response.data?.log
             if (log.length > 0) {
-                const lastTransaction = log[log.length - 1];
+                const lastTransaction = log.find(item => item.cardid == cardId);
 
                 const transactionData = {
                     device,

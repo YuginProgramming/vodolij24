@@ -1,36 +1,30 @@
-import { logger } from '../logger/index.js';
+import { phrases } from "../language_ua.js";
 import { bot } from "../app.js";
 import getTransaction from '../transactions.js';
 import { createNewBonus } from '../models/bonuses.js'
 
-const checkPaymentRecursively = async (amount, chatID, deviceId, attempts = 0) => {
-    if (attempts >= 5) {
-        logger.info(`Haven't completed payment: ${chatID}`);
-        bot.sendMessage(chatID, `Ваш платіж не пройшов, бонуси не нараховано. Зверніться, будь ласка, в підтримку, якщо ви завершили платіж.`);
-        return;
-    }
+const checkPayment = async (chatID, deviceId, cardId) => {
 
-    if (attempts === 0) {
-        setTimeout(async () => {
-            await checkPaymentRecursively(amount, chatID, deviceId, attempts + 1);
-        }, 60 * 1000);
-        return;
-    }
+    setTimeout(async () => {
 
-    const transaction = await getTransaction(deviceId);
-    console.log(transaction)
+        const transaction = await getTransaction(deviceId, 7, cardId);
+        console.log(transaction)
 
-    if (transaction) {
-        await createNewBonus(chatID, transaction.waterFullfilled * 0.1, 'нарахування бонусів')
-        logger.info(`User: ${chatID} completed payment ${transaction.waterFullfilled}`);
-        bot.sendMessage(chatID, `Дякуємо за покупку, на картку нараховано ${transaction.waterFullfilled * 0.1} бонусних літрів`);
-    } else {
-        setTimeout(async () => {
-            await checkPaymentRecursively(amount, chatID, deviceId, attempts + 1);
-        }, 60 * 1000);
-    }
+        if (transaction) {
+
+            const bonus = transaction.waterFullfilled * 0.2
+
+            await createNewBonus(chatID, bonus, 'нарахування бонусів')
+
+            bot.sendMessage(chatID, `Дякуємо за покупку, на картку нараховано ${bonus} бонусних літрів`);
+
+        } else {
+            bot.sendMessage(chatID, phrases.bonusNotificationCardError);
+        }
+    }, 60 * 1000 * 7);
+    
 };
 
 
-export default checkPaymentRecursively;
+export default checkPayment;
 
