@@ -112,12 +112,12 @@ export const anketaListiner = async() => {
 
         const apiData = await findApiUserByChatId(chatId); 
         
-        let card
+        let card = {};
         
         if (apiData?.cards) {
 
           card = await findCardById(apiData?.cards);
-          
+
         }
         
 
