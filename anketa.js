@@ -110,9 +110,13 @@ export const anketaListiner = async() => {
       const chatId = msg.chat.id;       
           
       const apiData = await findApiUserByChatId(chatId); 
-        
-      const card = await findCardById(apiData?.cards);
 
+      let card = {};
+
+      if (apiData?.cards) {
+        card = await findCardById(apiData?.cards);
+      }
+        
       const userInfo = await findUserByChatId(chatId);
         
 
