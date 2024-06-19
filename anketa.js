@@ -18,6 +18,7 @@ import { logger } from "./logger/index.js";
 import { findApiUserByChatId, createNewApiUser, updateApiUserByChatId } from './models/api-users.js';
 import { createCard, findCardById, updateCardById } from "./models/cards.js";
 import { getCardData, checkBalanceChange } from './modules/checkcardAPI.js';
+import activateDevice from "./modules/activate-device.js";
 
 export const anketaListiner = async() => {
     bot.on("callback_query", async (query) => {
@@ -106,24 +107,18 @@ export const anketaListiner = async() => {
     });
     
     bot.on('message', async (msg) => {
-      const chatId = msg.chat.id;
-      
-        const userInfo = await findUserByChatId(chatId);
-
-        const apiData = await findApiUserByChatId(chatId); 
+      const chatId = msg.chat.id;       
+          
+      const apiData = await findApiUserByChatId(chatId); 
         
-        let card = {};
-        
-        if (apiData?.cards) {
+      const card = await findCardById(apiData?.cards);
 
-          card = await findCardById(apiData?.cards);
-
-        }
+      const userInfo = await findUserByChatId(chatId);
         
 
-        let dialogueStatus, isAuthenticated, birthDaydate, tempData, userDatafromApi, balance, cardNumber, firstname;
+      let dialogueStatus, isAuthenticated, birthDaydate, tempData, userDatafromApi, balance, cardNumber, firstname, cardCard;
 
-        if (userInfo) {
+      if (userInfo) {
           dialogueStatus = userInfo.dialoguestatus;
           isAuthenticated = userInfo.isAuthenticated;
           birthDaydate = userInfo.birthdaydate;
@@ -144,8 +139,11 @@ export const anketaListiner = async() => {
           if (userInfo.hasOwnProperty("firstname")) {
             firstname = userInfo.firstname;
           }
+          if (card.hasOwnProperty("Card")) {
+            cardCard = card.Card;
+          }
           
-        }
+      }
   
       switch (msg.text) {
         
@@ -189,14 +187,23 @@ export const anketaListiner = async() => {
           } else {
             const deviceData = JSON.parse(tempData);
 
-            console.log(deviceData)
+            const deviceActivated = await activateDevice(deviceData.id, cardCard);
 
-            bot.sendMessage(chatId, phrases.vendorActivation, {
-              reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
-            });
+            if (deviceActivated) {
+
+              bot.sendMessage(chatId, phrases.vendorActivation, {
+                reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
+              });
+    
+              checkPayment(chatId, deviceData.id, apiData?.cards);
   
-            checkPayment(chatId, deviceData.id, apiData?.cards);
-  
+            } else {
+
+              bot.sendMessage(chatId, phrases.activationError, {
+                reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
+              });
+
+            }  
           }
           
         break;
@@ -690,7 +697,13 @@ export const anketaListiner = async() => {
             }
           }
           if (msg.text === 'Так') {
+
+            const deviceData = JSON.parse(tempData);
+            
+            await activateDevice(deviceData.id, cardCard);
+
             bot.sendMessage(chatId, phrases.readCardRefil, { reply_markup:  { keyboard: keyboards.readCardRefil, resize_keyboard: true, one_time_keyboard: false } });
+
           }
           if (msg.text === 'Ні') {
             bot.sendMessage(msg.chat.id, phrases.choosePaymantWay, {
