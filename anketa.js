@@ -248,10 +248,33 @@ export const anketaListiner = async() => {
         
 
         case 'Балансом картки Водолій':
+
+          const deviceData = JSON.parse(tempData);
+
+          const deviceActivated = await activateDevice(deviceData.id, cardCard);
+
+          if (deviceActivated) {
+
+            bot.sendMessage(chatId, phrases.useCard, {
+              reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
+            });
+
+
+          } else {
+
+            bot.sendMessage(chatId, phrases.activationError, {
+              reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
+            });
+
+          }          
+
+          /*
           bot.sendMessage(chatId, phrases.amountFromBalance, {
             reply_markup: { keyboard: keyboards.litrRules, resize_keyboard: true, one_time_keyboard: true }
           });
           await updateUserByChatId(chatId, { dialoguestatus: 'amountFromBalance' }); 
+          */
+
 
         break;
 
