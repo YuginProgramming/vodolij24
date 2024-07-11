@@ -144,7 +144,7 @@ export const anketaListiner = async() => {
             firstname = userInfo.firstname;
           }
           if (card.hasOwnProperty("Card")) {
-            cardCard = card.Card;
+            cardCard = card.cardId;
           }
           
       }
@@ -190,6 +190,7 @@ export const anketaListiner = async() => {
 
           } else {
             const deviceData = JSON.parse(tempData);
+
 
             const deviceActivated = await activateDevice(deviceData.id, cardCard);
 
@@ -250,6 +251,8 @@ export const anketaListiner = async() => {
         case 'Балансом картки Водолій':
 
           const deviceData = JSON.parse(tempData);
+
+          console.log(cardCard)
 
           const deviceActivated = await activateDevice(deviceData.id, cardCard);
 
@@ -355,6 +358,8 @@ export const anketaListiner = async() => {
         const cardId = apiData?.cards;
 
         const card = await getCardData(userDatafromApi, cardId)
+
+        console.log(card)
 
           await updateCardById( cardId,
             {
@@ -532,7 +537,11 @@ export const anketaListiner = async() => {
                 bot.sendMessage(chatId, phrases.bonusCardQuestion, {
                     reply_markup: keyboards.isBonusCard
                 }, {
-                    reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
+                    reply_markup: { keyboard: [
+                      ['Готівкою'],
+                      ['Картка Visa/Mastercard'],
+                      ['Балансом картки Водолій']
+                    ], resize_keyboard: true, one_time_keyboard: true }
                 });
             }  
           } else {
@@ -726,6 +735,8 @@ export const anketaListiner = async() => {
           if (msg.text === 'Так') {
 
             const deviceData = JSON.parse(tempData);
+
+            console.log(cardCard)
             
             await activateDevice(deviceData.id, cardCard);
 
