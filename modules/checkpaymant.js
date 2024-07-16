@@ -8,7 +8,10 @@ const checkPayment = async (chatID, deviceId, cardId) => {
     setTimeout(async () => {
 
         const transaction = await getTransaction(deviceId, 7, cardId);
-        console.log(transaction)
+        console.log(transaction);
+        const paymantAmount = transaction.cashPaymant||transaction.cardPaymant||transaction.onlinePaymant||'null';
+        const boughtVolume = (paymantAmount/1.2).toFixed(2);
+        const bonus = transaction.waterFullfilled - boughtVolume;
 
         if (transaction) {
 
@@ -16,7 +19,7 @@ const checkPayment = async (chatID, deviceId, cardId) => {
 
             await createNewBonus(chatID, bonus, 'нарахування бонусів')
 
-            bot.sendMessage(chatID, `Дякуємо за покупку, на картку нараховано ${bonus} бонусних літрів`);
+            bot.sendMessage(chatID, `Внесено: ${paymantAmount} грн, куплено: ${boughtVolume} літра за ціною 1,2 грн/літр + бонус ${bonus} літра= ${transaction.waterFullfilled} л разом 💧`);
 
         } else {
             bot.sendMessage(chatID, phrases.bonusNotificationCardError);
