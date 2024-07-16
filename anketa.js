@@ -385,12 +385,12 @@ export const anketaListiner = async() => {
           
           const balanceMessage = `
           Клієнт: ${apiData?.name}          
-          Тип картки: ${card.CardGroup}
-          💰 Поточний баланс:
-          ${card.WaterQty} літрів
-          ✅ Бонусний профіль: ${card.Discount} %
-          До наступного бонусного профілю залишилося придбати: ${nextLevel(card.Discount, card.AllQty)}
-          🔄 Всього через картку придбано: ${card.AllQty} літрів
+Тип картки: ${card.CardGroup}
+💰 Поточний баланс:
+${card.WaterQty} літрів
+✅ Бонусний профіль: ${card.Discount} %
+До наступного бонусного профілю залишилося придбати: ${nextLevel(card.Discount, card.AllQty)}
+🔄 Всього через картку придбано: ${card.AllQty} літрів
           `
           bot.sendMessage(msg.chat.id, balanceMessage, {
             reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
@@ -412,8 +412,8 @@ export const anketaListiner = async() => {
           bot.sendMessage(msg.chat.id, 'Шановні клієнти, служба підтримки працює за графіком: Пн-Пт з 8:00 до 22:00, Сб-Нд з 9:00 до 20:00', {
             reply_markup: {
               inline_keyboard: [
-                  [{ text: 'Подзвонити', url: 'tel:+380975148884' }],
-                  [{ text: 'Написати в Телеграм', url: 'https://t.me/your_support_username' }]
+                [{ text: 'Подзвонити', callback_data: 'call_support' }],
+                [{ text: 'Написати в Телеграм', url: 'https://t.me/your_support_username' }]
               ]
             }
           });
