@@ -3,7 +3,7 @@ import { logger } from "../logger/index.js";
 
 const activateDevice = async (device_id, card_id) => {
     try {
-        const response = await axios.post('https://soliton.net.ua/water/api/card/query/index.php/card/send/index.php',
+        const response = await axios.post('https://soliton.net.ua/water/api/card/send/index.php/card/send/index.php',
             {
                 device_id,
                 card_id
