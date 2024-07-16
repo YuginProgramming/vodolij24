@@ -817,7 +817,8 @@ ${card.WaterQty} літрів
             });
             await bot.sendMessage(chatId, phrases.refilInfo, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
 
-            await checkBalanceChange(chatId, userDatafromApi, apiData?.cards)
+            // await checkBalanceChange(chatId, userDatafromApi, apiData?.cards);
+            await checkPayment(chatId, userDatafromApi, apiData?.cards);
 
 
           } else {
