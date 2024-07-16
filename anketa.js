@@ -103,6 +103,9 @@ export const anketaListiner = async() => {
               reply_markup: { keyboard: keyboards.mainMenuWithVerify, resize_keyboard: true, one_time_keyboard: true }
             });
         break;  
+        case 'call_support':
+          bot.sendMessage(chatId, 'Будь ласка, подзвоніть за номером: +380975148884');
+        break;
       }
     });
     
@@ -413,7 +416,7 @@ ${card.WaterQty} літрів
             reply_markup: {
               inline_keyboard: [
                 [{ text: 'Подзвонити', callback_data: 'call_support' }],
-                [{ text: 'Написати в Телеграм', url: 'https://t.me/your_support_username' }]
+                [{ text: 'Написати в Телеграм', url: 'https://t.me/GamerX86' }]
               ]
             }
           });
