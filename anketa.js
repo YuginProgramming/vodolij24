@@ -390,10 +390,10 @@ export const anketaListiner = async() => {
           Клієнт: ${apiData?.name}          
 Тип картки: ${card.CardGroup}
 💰 Поточний баланс:
-${card.WaterQty} літрів
+${card.WaterQty/10} літрів
 ✅ Бонусний профіль: ${card.Discount} %
 До наступного бонусного профілю залишилося придбати: ${nextLevel(card.Discount, card.AllQty)}
-🔄 Всього через картку придбано: ${card.AllQty} літрів
+🔄 Всього через картку придбано: ${card.AllQty/10} літрів
           `
           bot.sendMessage(msg.chat.id, balanceMessage, {
             reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
@@ -578,12 +578,14 @@ ${card.WaterQty} літрів
             if (!isNaN(msg.text)) {
               const locations = await axios.get('http://soliton.net.ua/water/api/devices');
               const currentVendor = locations.data.devices.find(device => device.id == msg.text);
+              console.log(locations.data.devices)
               if (!currentVendor) {
-                //Що робити коли помилковий номер
+                bot.sendMessage(chatId, phrases.wrongNumber);
+                return;
               }
               await updateUserByChatId(chatId, { dialoguestatus: 'vendorConfirmation', fathersname: JSON.stringify(currentVendor) });
   
-              bot.sendMessage(chatId, `Це автомат "${currentVendor.id}" "${currentVendor.name}"?`, {
+              bot.sendMessage(chatId, `Це автомат "${currentVendor?.id}" "${currentVendor?.name}"?`, {
                 reply_markup: { keyboard: keyboards.binarKeys, resize_keyboard: true, one_time_keyboard: true }
               });  
             } else {
@@ -815,10 +817,12 @@ ${card.WaterQty} літрів
                 }]] 
               } 
             });
-            await bot.sendMessage(chatId, phrases.refilInfo, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
+            
 
-            // await checkBalanceChange(chatId, userDatafromApi, apiData?.cards);
-            await checkPayment(chatId, userDatafromApi, apiData?.cards);
+            await checkBalanceChange(chatId, userDatafromApi, apiData?.cards);
+
+            await bot.sendMessage(chatId, phrases.refilInfo, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
+       
 
 
           } else {

@@ -3,7 +3,7 @@ import { bot } from "../app.js";
 import { phrases } from "../language_ua.js";
 import { createNewBonus } from "../models/bonuses.js";
 
-const waterPrice = 1.5;
+const waterPrice = 1.2;
 
 const getCardData = async (user_id, card_id) => {
     const url = 'https://soliton.net.ua/water/api/card/query/index.php'; 
@@ -22,13 +22,14 @@ const checkBalanceChange = async (chatId, user_id, card_id) => {
     const beforeWater = currentBalance.WaterQty;
         setTimeout(async () => {
             const balance = await getCardData(user_id, card_id);
+            console.log(balance)
             const afterWater = balance.WaterQty;
             console.log(beforeWater)
             if (beforeWater !== afterWater) {
     
                 const balanceChange = afterWater - beforeWater;
     
-                sendResult(chatId, balanceChange);
+                sendResult(chatId, balanceChange, balance.Discount);
     
             } else {
                 setTimeout(async () => {
@@ -39,7 +40,7 @@ const checkBalanceChange = async (chatId, user_id, card_id) => {
     
                         const balanceChange = afterWater - beforeWater;
     
-                        sendResult(chatId, balanceChange);
+                        sendResult(chatId, balanceChange, balance.Discount);
     
                     } else {
     
@@ -53,19 +54,22 @@ const checkBalanceChange = async (chatId, user_id, card_id) => {
     
 };
 
-const sendResult = async (chatId, balanceChange) => {    
+const sendResult = async (chatId, balanceChange, discount) => {    
 
     if (balanceChange > 0) {
+        console.log(balanceChange);
 
         const liters = (balanceChange / 10).toFixed(2);   
         
-        const bonusAmount = (liters * 0.2).toFixed(2)
+        const bonusAmount = (liters * discount/100).toFixed(2);
         
         const bonus = await createNewBonus(chatId, bonusAmount, 'нарахування бонусів');
 
-        const price = (liters * waterPrice).toFixed(2)
+        const price = (liters * waterPrice).toFixed(0);
 
-        bot.sendMessage(chatId, phrases.bonusNotificationCard(liters, price, bonus.transactionAmount));
+        const total = (liters * 1 + bonusAmount * 1).toFixed(2);
+
+        bot.sendMessage(chatId, phrases.bonusNotificationCard(liters, price, bonus.transactionAmount, waterPrice, total));
     
     };
 }

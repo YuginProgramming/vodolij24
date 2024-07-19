@@ -9,9 +9,9 @@ const checkPayment = async (chatID, deviceId, cardId) => {
 
         const transaction = await getTransaction(deviceId, 7, cardId);
         console.log(transaction);
-        const paymantAmount = transaction.cashPaymant||transaction.cardPaymant||transaction.onlinePaymant||'null';
+        const paymantAmount = transaction?.cashPaymant||transaction?.cardPaymant||transaction?.onlinePaymant||'null';
         const boughtVolume = (paymantAmount/1.2).toFixed(2);
-        const bonus = transaction.waterFullfilled - boughtVolume;
+        const bonus = transaction?.waterFullfilled - boughtVolume;
 
         if (transaction) {
 
