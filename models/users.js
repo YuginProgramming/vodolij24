@@ -85,7 +85,7 @@ const updateUserByChatId = async (chat_id, updateParams) => {
     if (res[0]) {
         const data = await findUserByChatId(chat_id);
         if (data) {
-            logger.info(`User ${data.chat_id} updated`);
+            //logger.info(`User ${data.chat_id} updated`);
             return data;
         }
         logger.info(`User ${chat_id} updated, but can't read result data`);

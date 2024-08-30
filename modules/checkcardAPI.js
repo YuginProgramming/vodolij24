@@ -2,6 +2,7 @@ import axios from "axios";
 import { bot } from "../app.js";
 import { phrases } from "../language_ua.js";
 import { createNewBonus } from "../models/bonuses.js";
+import { logger } from "../logger/index.js";
 
 const waterPrice = 1.2;
 
@@ -57,7 +58,6 @@ const checkBalanceChange = async (chatId, user_id, card_id) => {
 const sendResult = async (chatId, balanceChange, discount) => {    
 
     if (balanceChange > 0) {
-        console.log(balanceChange);
 
         const liters = (balanceChange / 10).toFixed(2);   
         
@@ -68,6 +68,8 @@ const sendResult = async (chatId, balanceChange, discount) => {
         const price = (liters * waterPrice).toFixed(0);
 
         const total = (liters * 1 + bonusAmount * 1).toFixed(2);
+
+        logger.info(`Внесено: ${litersPrice} грн, куплено: ${litersChange} літра`)
 
         bot.sendMessage(chatId, phrases.bonusNotificationCard(liters, price, bonus.transactionAmount, waterPrice, total));
     

@@ -2,6 +2,7 @@ import { phrases } from "../language_ua.js";
 import { bot } from "../app.js";
 import getTransaction from '../transactions.js';
 import { createNewBonus } from '../models/bonuses.js'
+import { logger } from "../logger/index.js";
 
 const checkPayment = async (chatID, deviceId, cardId) => {
 
@@ -20,6 +21,8 @@ const checkPayment = async (chatID, deviceId, cardId) => {
             await createNewBonus(chatID, bonus, 'нарахування бонусів')
 
             bot.sendMessage(chatID, `Внесено: ${paymantAmount} грн, куплено: ${boughtVolume} літра за ціною 1,2 грн/літр + бонус ${bonus} літра= ${transaction.waterFullfilled} л разом 💧`);
+            
+            logger.info(`${chatID} Внесено: ${paymantAmount} грн, куплено: ${boughtVolume} літра за ціною 1,2 грн/літр + бонус ${bonus} літра= ${transaction.waterFullfilled} л разом 💧`)
 
         } else {
             bot.sendMessage(chatID, phrases.bonusNotificationCardError);

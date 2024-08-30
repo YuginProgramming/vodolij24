@@ -1,6 +1,5 @@
 import { bot } from "./app.js";
 import { phrases, keyboards } from './language_ua.js';
- import { DateTime } from "luxon";
 import { 
   updateUserByChatId,
   userLogin,
@@ -9,7 +8,6 @@ import {
   createNewUserByChatId
 } from './models/users.js';
 import { findBalanceByChatId } from './models/bonuses.js'
-//import { generateKeyboard } from './src/plugins.mjs';
 import axios from 'axios';
 import { findNearestCoordinate } from './modules/locations.js';
 import { numberFormatFixing } from './modules/validations.js';
@@ -19,6 +17,7 @@ import { findApiUserByChatId, createNewApiUser, updateApiUserByChatId } from './
 import { createCard, findCardById, updateCardById } from "./models/cards.js";
 import { getCardData, checkBalanceChange } from './modules/checkcardAPI.js';
 import activateDevice from "./modules/activate-device.js";
+import createCardApi from "./modules/createCard.js";
 
 export const anketaListiner = async() => {
     bot.on("callback_query", async (query) => {
@@ -55,40 +54,8 @@ export const anketaListiner = async() => {
       
       switch (action) {
         case '/mainNoCard':
-            await userLogin(chatId);
-            const userData = await findApiUserByChatId(chatId)
-            const url = 'https://soliton.net.ua/water/api/card/link/index.php'; // Replace with the actual URL
-            const requestData = {
-                user_id: userData.user_id,
-                card_id: userData.phone,
-            };
-            const response = await axios.post(url, requestData);
+          await createCardApi(chatId, userInfo.phone);
 
-            if(response.data.status === 'success' || response.data.error === 'card already linked to user') {
-              const userCard = await axios.get(`http://soliton.net.ua/water/api/user/index.php?phone=${userInfo.phone}`);
-
-              const virtualCard = userCard.data.user.card[0]
-
-              await updateApiUserByChatId(chatId, { cards: virtualCard.ID });
-
-              await createCard({
-                cardId: virtualCard.ID,
-                Number: virtualCard.Number,
-                Card: virtualCard.Card,
-                Type: virtualCard.Type,
-                CardGroup: virtualCard.CardGroup,
-                WaterQty: virtualCard.WaterQty,
-                AllQty: virtualCard.AllQty,
-                MoneyPerMonth: virtualCard.MoneyPerMonth,
-                LitersPerDay: virtualCard.LitersPerDay,
-                Discount:  virtualCard.Discount,
-                status: virtualCard.status
-              })
-            }
-
-            bot.sendMessage(chatId, phrases.welcomeNoCard, {
-              reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
-            });       
           break;
 
         case '/mainHaveCard':
@@ -151,6 +118,18 @@ export const anketaListiner = async() => {
           }
           
       }
+
+      if (msg.text) {
+        const command = msg.text.split('%');
+
+        if (command && command[0] === 'linkCard') {
+  
+          await createCardApi(command[1], command[2]);
+  
+        }
+      }
+
+      
   
       switch (msg.text) {
         
@@ -170,7 +149,6 @@ export const anketaListiner = async() => {
 
           }
         break;
-
 
         case 'Повернутися до головного меню':
         case 'До головного меню':
@@ -540,16 +518,11 @@ ${card.WaterQty/10} літрів
             })
 
             if (newUser.data.status) {
+
                 logger.info(`USER_ID: ${chatId} registered`);
-                bot.sendMessage(chatId, phrases.bonusCardQuestion, {
-                    reply_markup: keyboards.isBonusCard
-                }, {
-                    reply_markup: { keyboard: [
-                      ['Готівкою'],
-                      ['Картка Visa/Mastercard'],
-                      ['Балансом картки Водолій']
-                    ], resize_keyboard: true, one_time_keyboard: true }
-                });
+
+                await createCardApi(chatId, userInfo.phone);
+
             }  
           } else {
             await bot.sendMessage(chatId, phrases.wrongBirthDate);
@@ -637,16 +610,9 @@ ${card.WaterQty/10} літрів
               } 
             });
             await bot.sendMessage(chatId, phrases.pressStart, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
-
                      
             checkPayment(chatId, deviceData.id, apiData?.cards);
-
             
-            /*
-            setTimeout(() => {
-              bot.sendMessage(chatId, phrases.bonusNotification);
-            }, 30000);
-            */
           } else {
             bot.sendMessage(chatId, phrases.wrongNumber);
           }

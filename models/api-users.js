@@ -61,7 +61,7 @@ const updateApiUserByChatId = async (chat_id, updateParams) => {
     if (res[0]) {
         const data = await findApiUserByChatId(chat_id);
         if (data) {
-            logger.info(`Api user ${data.chat_id} updated`);
+            //logger.info(`Api user ${data.chat_id} updated`);
             return data;
         }
         logger.info(`Api user ${chat_id} updated, but can't read result data`);
@@ -89,4 +89,4 @@ export {
     updateApiUserByChatId,
     findApiUserByUserId,
     findApiUserByChatId,
-};   
+};

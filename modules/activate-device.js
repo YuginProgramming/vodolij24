@@ -15,6 +15,7 @@ const activateDevice = async (device_id, card_id) => {
 
         switch (result.status) {
             case 'success': 
+                logger.info(`Card ${card_id} cannt activated device ${device_id}`);
                 return true;
 
             case 'error':

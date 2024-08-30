@@ -77,7 +77,7 @@ const updateCardById = async (cardId, updateParams) => {
     if (res[0]) {
         const data = await findCardById(cardId);
         if (data) {
-            logger.info(`Card ${cardId} updated`);
+            //logger.info(`Card ${cardId} updated`);
             return data;
         }
         logger.info(`Card ${cardId} updated, but can't read result data`);
