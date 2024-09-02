@@ -1,7 +1,7 @@
 import axios from "axios";
 import { keyboards, phrases } from "../language_ua.js";
 import { findApiUserByChatId, updateApiUserByChatId } from "../models/api-users.js";
-import { createCard } from "../models/cards.js";
+import { createCard, findCardById } from "../models/cards.js";
 import { updateUserByChatId, userLogin } from "../models/users.js";
 import { bot } from "../app.js";
 
@@ -23,8 +23,10 @@ const createCardApi = async (chatId, phone) => {
 
         await updateApiUserByChatId(chatId, { cards: virtualCard.ID });
 
+        let cardDataId;
+
         const card = await createCard({
-            cardId: virtualCard.ID,
+                cardId: virtualCard.ID,
                 Number: virtualCard.Number,
                 Card: virtualCard.Card,
                 Type: virtualCard.Type,
@@ -35,9 +37,21 @@ const createCardApi = async (chatId, phone) => {
                 LitersPerDay: virtualCard.LitersPerDay,
                 Discount:  virtualCard.Discount,
                 status: virtualCard.status
-        })
+        });
 
-        await updateUserByChatId (chatId, { lastname: card.id })
+
+        if (!card) {
+
+            const card = await findCardById(virtualCard.ID);
+            cardDataId = card.id;
+
+        } else {
+
+            cardDataId = card.id;
+
+        }
+
+        await updateUserByChatId (chatId, { lastname: cardDataId })
     }
 
     bot.sendMessage(chatId, phrases.welcomeNoCard, {
