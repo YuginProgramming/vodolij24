@@ -76,6 +76,12 @@ const findApiUserByUserId = async (user_id) => {
     return;
 };
 
+const findAllUsers = async () => {
+    const res = await Apiuser.findAll({ where: {  } });
+    if (res.length > 0) return res.map(el => el.dataValues);
+    return;
+};
+
 
 const findApiUserByChatId = async (chat_id) => {
     const res = await Apiuser.findOne({ where: { chat_id: chat_id } });
@@ -89,4 +95,5 @@ export {
     updateApiUserByChatId,
     findApiUserByUserId,
     findApiUserByChatId,
+    findAllUsers
 };

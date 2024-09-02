@@ -2,7 +2,7 @@ import axios from "axios";
 import { keyboards, phrases } from "../language_ua.js";
 import { findApiUserByChatId, updateApiUserByChatId } from "../models/api-users.js";
 import { createCard } from "../models/cards.js";
-import { userLogin } from "../models/users.js";
+import { updateUserByChatId, userLogin } from "../models/users.js";
 import { bot } from "../app.js";
 
 const createCardApi = async (chatId, phone) => {
@@ -23,7 +23,7 @@ const createCardApi = async (chatId, phone) => {
 
         await updateApiUserByChatId(chatId, { cards: virtualCard.ID });
 
-        await createCard({
+        const card = await createCard({
             cardId: virtualCard.ID,
                 Number: virtualCard.Number,
                 Card: virtualCard.Card,
@@ -36,6 +36,8 @@ const createCardApi = async (chatId, phone) => {
                 Discount:  virtualCard.Discount,
                 status: virtualCard.status
         })
+
+        await updateUserByChatId (chatId, { lastname: card.id })
     }
 
     bot.sendMessage(chatId, phrases.welcomeNoCard, {
