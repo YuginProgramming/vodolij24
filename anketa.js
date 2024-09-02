@@ -340,6 +340,8 @@ export const anketaListiner = async() => {
 
         const cardId = apiData?.cards;
 
+        console.log(`user Data API ${userDatafromApi}, card ID ${cardId}`)
+
         const card = await getCardData(userDatafromApi, cardId)
 
         console.log(card)
