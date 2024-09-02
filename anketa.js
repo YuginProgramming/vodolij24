@@ -98,7 +98,9 @@ export const anketaListiner = async() => {
           birthDaydate = userInfo.birthdaydate;
 
           if (userInfo.hasOwnProperty("lastname")) {
+            console.log(userInfo.lastname)
             const data = JSON.parse(userInfo.lastname);
+            console.log(data)
             userDatafromApi = data;
           }
           if (userInfo.hasOwnProperty("fathersname")) {

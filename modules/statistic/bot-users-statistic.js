@@ -1,3 +1,4 @@
+import { logger } from "../../logger/index.js";
 import { findAllUsers } from "../../models/api-users.js";
 
 const getWaterTotalbyTheDay = async (cardId) => {
@@ -39,15 +40,25 @@ const botUsersStatistic = async () => {
 
     const usersQuantity = users.lenght;
 
+    let usersWaterTotal;
+
     for (let user of users) {
+
        const cardId = user?.cards;
 
        if (cardId) {
+
         const userTotal = await getWaterTotalbyTheDay(cardId);
-       }
+
+        usersWaterTotal + userTotal;
+
+       }      
 
     }
 
+    const string = `Користувачів боту ${usersQuantity},
+                Кількість налитої води за добу: ${usersWaterTotal} літрів.`; 
+    logger.info(string);
 
 }
 
