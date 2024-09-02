@@ -81,6 +81,8 @@ export const anketaListiner = async() => {
           
       const apiData = await findApiUserByChatId(chatId); 
 
+      console.log(`apiData ${apiData}`)
+
       let card = {};
 
       if (apiData?.cards) {
