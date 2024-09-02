@@ -23,7 +23,6 @@ const createCardApi = async (chatId, phone) => {
 
         await updateApiUserByChatId(chatId, { cards: virtualCard.ID });
 
-        let cardDataId;
 
         const card = await createCard({
                 cardId: virtualCard.ID,
@@ -40,18 +39,8 @@ const createCardApi = async (chatId, phone) => {
         });
 
 
-        if (!card) {
 
-            const card = await findCardById(virtualCard.ID);
-            cardDataId = card.id;
-
-        } else {
-
-            cardDataId = card.id;
-
-        }
-
-        await updateUserByChatId (chatId, { lastname: cardDataId })
+        await updateUserByChatId (chatId, { lastname: userData.user_id })
     }
 
     bot.sendMessage(chatId, phrases.welcomeNoCard, {
