@@ -77,7 +77,9 @@ export const anketaListiner = async() => {
     });
     
     bot.on('message', async (msg) => {
-      const chatId = msg.chat.id;       
+      const chatId = msg.chat.id; 
+      
+      console.log(`chat ID ${chatId}`)
           
       const apiData = await findApiUserByChatId(chatId); 
 
