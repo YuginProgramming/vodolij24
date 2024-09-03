@@ -38,9 +38,8 @@ const createCardApi = async (chatId, phone) => {
                 status: virtualCard.status
         });
 
-
-
-        await updateUserByChatId (chatId, { lastname: userData.user_id })
+        await updateUserByChatId (chatId, { lastname: userData.user_id });
+        
     }
 
     bot.sendMessage(chatId, phrases.welcomeNoCard, {

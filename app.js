@@ -6,6 +6,7 @@ import { sequelize } from './models/sequelize.js';
 import { logger } from './logger/index.js';
 import getStatistic from './statistic.js';
 import cron from 'node-cron';
+import botUsersStatistic from './modules/statistic/bot-users-statistic.js';
 
 const bot = new TelegramBot(dataBot.telegramBotToken, { polling: true });
 
@@ -38,8 +39,11 @@ main();
 anketaListiner();
 decodeQR();
 
+
+
 cron.schedule('0 0 * * *', () => {
     getStatistic();
+    botUsersStatistic();
 }, {
     scheduled: true,
     timezone: 'Europe/Kiev' 

@@ -1,63 +1,39 @@
 import { logger } from "../../logger/index.js";
 import { findAllUsers } from "../../models/api-users.js";
+import { getUsersTotalbyTheDay } from "../../models/transactions.js";
 
-const getWaterTotalbyTheDay = async (cardId) => {
-    let res;
-    
-    const today = new Date();
-    
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    const todayString = today.toISOString().split('T')[0];
-    
-    const yesterdayString = yesterday.toISOString().split('T')[0];
-    
-    try {
-        const totalWaterFulfilled = await Transaction.sum('waterFullfilled', {
-            where: {
 
-                cardId,
-
-                date: {
-                    [Op.between]: [yesterdayString, todayString]
-                }
-
-            }
-        });
-
-        return totalWaterFulfilled;
-    
-    } catch (err) {
-        logger.error(`Impossible to request sum: ${err}`);
-    }
-    return res;
-};
 
 
 const botUsersStatistic = async () => {
 
     const users = await findAllUsers();
 
-    const usersQuantity = users.lenght;
+    const usersQuantity = users.length;
 
-    let usersWaterTotal;
+    let usersWaterTotal = 0;
 
     for (let user of users) {
 
        const cardId = user?.cards;
 
+       console.log(cardId)
+
        if (cardId) {
 
-        const userTotal = await getWaterTotalbyTheDay(cardId);
+        const userTotal = await getUsersTotalbyTheDay(cardId);
 
-        usersWaterTotal + userTotal;
+        console.log(userTotal)
+
+        usersWaterTotal += userTotal;
 
        }      
 
     }
 
     const string = `Користувачів боту ${usersQuantity},
-                Кількість налитої води за добу: ${usersWaterTotal} літрів.`; 
+                Кількість налитої води, користувачами боту, за добу: ${usersWaterTotal} літрів.`; 
+
     logger.info(string);
 
 }

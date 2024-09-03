@@ -101,11 +101,51 @@ const getWaterTotalbyTheDay = async () => {
     return res;
 };
 
+const getUsersTotalbyTheDay = async (cardId) => {
+    let res = 0;
+    
+    const today = new Date();
+    
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    /*
+    const todayString = today.toISOString().split('T')[0];
+    
+    const yesterdayString = yesterday.toISOString().split('T')[0];
+    */
+
+     // Get the start of yesterday
+     const startOfYesterday = new Date(yesterday.setHours(0, 0, 0, 0));
+    
+     // Get the end of yesterday
+     const endOfYesterday = new Date(yesterday.setHours(23, 59, 59, 999));
+    
+    try {
+        const totalWaterFulfilled = await Transaction.sum('waterFullfilled', {
+            where: {
+
+                cardId,
+
+                date: {
+                    [Op.between]: [startOfYesterday, endOfYesterday]
+                }
+
+            }
+        });
+
+        return totalWaterFulfilled || 0; 
+    
+    } catch (err) {
+        logger.error(`Impossible to request sum: ${err}`);
+    }
+    return res;
+};
 
 
 export {
     Transaction,
     createNewTransaction,
-    getWaterTotalbyTheDay
+    getWaterTotalbyTheDay,
+    getUsersTotalbyTheDay
 };   
 
