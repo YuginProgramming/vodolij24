@@ -4,7 +4,7 @@ import { phrases } from "../language_ua.js";
 import { createNewBonus } from "../models/bonuses.js";
 import { logger } from "../logger/index.js";
 
-const waterPrice = 1.2;
+const waterPrice = 1.5;
 
 const getCardData = async (user_id, card_id) => {
     const url = 'https://soliton.net.ua/water/api/card/query/index.php'; 
@@ -63,17 +63,15 @@ const sendResult = async (chatId, balanceChange, discount) => {
 
         const liters = (balanceChange / 10).toFixed(2);   
         
-        const bonusAmount = (liters * discount/100).toFixed(2);
+        const bonusAmount = (liters / discount/100).toFixed(2);
+
+        const totalWithoutBonus = (liters - bonusAmount);
         
-        const bonus = await createNewBonus(chatId, bonusAmount, 'нарахування бонусів');
+        const litersPrice = (totalWithoutBonus * waterPrice).toFixed(0);        
 
-        const price = (liters * waterPrice).toFixed(0);
+        logger.info(`Внесено: ${litersPrice} грн, куплено: ${liters} літра`)
 
-        const total = (liters * 1 + bonusAmount * 1).toFixed(2);
-
-        logger.info(`Внесено: ${litersPrice} грн, куплено: ${litersChange} літра`)
-
-        bot.sendMessage(chatId, phrases.bonusNotificationCard(liters, price, bonus.transactionAmount, waterPrice, total));
+        bot.sendMessage(chatId, phrases.bonusNotificationCard(totalWithoutBonus, litersPrice, bonusAmount, waterPrice, liters));
     
     };
 }
