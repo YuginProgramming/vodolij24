@@ -765,7 +765,7 @@ ${card.WaterQty/10} літрів
         case 'volumeLink':
           if(!isNaN(msg.text)) {
             const amount = Math.round(msg.text * 1.5);
-            const link = `https://easypay.ua/ua/partners/vodoleylviv-card=${cardNumber}?amount=${amount}`;
+            const link = `https://easypay.ua/ua/partners/vodoleylviv-card?account=${cardNumber}&amount=${amount}`;
             await bot.sendMessage(chatId, `Поповнення картки номер "${cardNumber}".`, {
               reply_markup: { inline_keyboard: [[{
                   text: 'Оплатити',
@@ -783,7 +783,7 @@ ${card.WaterQty/10} літрів
         break;
         case 'amountLink':
           if(!isNaN(msg.text)) {
-            const link = `https://easypay.ua/ua/partners/vodoleylviv-card=${cardNumber}?amount=${msg.text}`;
+            const link = `https://easypay.ua/ua/partners/vodoleylviv-card?account=${cardNumber}&amount=${msg.text}`;
             await bot.sendMessage(chatId, `Поповнення картки номер "${cardNumber}".`, {
               reply_markup: { inline_keyboard: [[{
                   text: 'Оплатити',
