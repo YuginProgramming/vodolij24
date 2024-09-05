@@ -62,12 +62,12 @@ const sendResult = async (chatId, balanceChange, discount) => {
     if (balanceChange > 0) {
 
         const liters = (balanceChange / 10).toFixed(2);   
-        
-        const bonusAmount = (liters / discount/100).toFixed(2);
+
+        const bonusAmount = (liters * (discount/100)).toFixed(2);
 
         const totalWithoutBonus = (liters - bonusAmount);
         
-        const litersPrice = (totalWithoutBonus * waterPrice).toFixed(0);        
+        const litersPrice = (totalWithoutBonus * waterPrice).toFixed(0);  
 
         logger.info(`Внесено: ${litersPrice} грн, куплено: ${liters} літра`)
 

@@ -258,13 +258,6 @@ export const anketaListiner = async() => {
 
           }          
 
-          /*
-          bot.sendMessage(chatId, phrases.amountFromBalance, {
-            reply_markup: { keyboard: keyboards.litrRules, resize_keyboard: true, one_time_keyboard: true }
-          });
-          await updateUserByChatId(chatId, { dialoguestatus: 'amountFromBalance' }); 
-          */
-
 
         break;
 
@@ -379,7 +372,7 @@ export const anketaListiner = async() => {
 ${card.WaterQty/10} літрів
 ✅ Бонусний профіль: ${card.Discount} %
 До наступного бонусного профілю залишилося придбати: ${nextLevel(card.Discount, card.AllQty)}
-🔄 Всього через картку придбано: ${card.AllQty/10} літрів
+🔄 Всього через картку придбано: ${card.AllQty} літрів
           `
           bot.sendMessage(msg.chat.id, balanceMessage, {
             reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
