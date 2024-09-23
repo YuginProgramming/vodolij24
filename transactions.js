@@ -7,7 +7,8 @@ const getTransactions = async (device, substract, cardId) => {
     const currentTime = moment();
     const endTime = currentTime.format('YYYY-MM-DD HH:mm:ss');
     const startTime = currentTime.subtract(substract, 'minutes').format('YYYY-MM-DD HH:mm:ss');
-
+    console.log(startTime);
+    console.log(endTime)
     const url = 'https://soliton.net.ua/water/api/water/index.php'; // Replace with the actual URL
     const requestData = {
         device_id: device,
@@ -17,7 +18,7 @@ const getTransactions = async (device, substract, cardId) => {
             
     try {
         const response = await axios.post(url, requestData);
-
+        
               
         if (response.data.status === 'error') {
             if (response.data.descr === 'date invalid') {
@@ -31,6 +32,8 @@ const getTransactions = async (device, substract, cardId) => {
         if (response.data.status === 'success') {
             if (response.data?.log === undefined) return;
             const log = response.data?.log
+
+            console.log(log)
             if (log.length > 0) {
                 const lastTransaction = log.find(item => item.cardid == cardId);
 
@@ -56,5 +59,6 @@ const getTransactions = async (device, substract, cardId) => {
         logger.warn(`Transaction reqest unknown error`)
     }
 };
-            
+        const transactions = await getTransactions(316, 2840 ,21756)    
+        console.log(transactions)
 export default getTransactions       

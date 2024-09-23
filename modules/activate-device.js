@@ -1,7 +1,7 @@
 import axios from "axios";  
 import { logger } from "../logger/index.js";
 
-const activateDevice = async (device_id, card_id) => {
+const activateDevice = async (device_id, card_id, phone) => {
     try {
         const response = await axios.post('https://soliton.net.ua/water/api/card/send/index.php/card/send/index.php',
             {
@@ -15,19 +15,19 @@ const activateDevice = async (device_id, card_id) => {
 
         switch (result.status) {
             case 'success': 
-                logger.info(`Card ${card_id} cannt activated device ${device_id}`);
+                logger.info(`Card ${card_id} successfully activated ${device_id}. Phone ${phone}`);
                 return true;
 
             case 'error':
                 switch (result.descr) {
                     case 'no card id':
-                        logger.info(`Cannt activate device ${device_id}. No card id`);
+                        logger.info(`Cannt activate device ${device_id}. No card id. Phone ${phone}`);
                         return false;
                     case 'no device id':
-                        logger.info(`Card ${card_id} cannt activate device. No device id`);
+                        logger.info(`Card ${card_id} cannt activate device. No device id. Phone ${phone}`);
                         return false;
                     case 'database error':
-                        logger.info(`Card ${card_id} cannt activate device ${device_id}. Database error`);
+                        logger.info(`Card ${card_id} cannt activate device ${device_id}. Database error. Phone ${phone}`);
                         return false;
                 }
                 
