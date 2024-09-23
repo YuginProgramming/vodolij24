@@ -603,7 +603,7 @@ ${card.WaterQty/10} літрів
           if(!isNaN(msg.text)) {
             const deviceData = JSON.parse(tempData);
             const deviceActivated = await activateDevice(deviceData.id, cardCard, cardNumber);
-            const link = `https://easypay.ua/ua/partners/vodoleylviv?account=${cardNumber}&amount=${msg.text}`;
+            const link = `https://easypay.ua/ua/partners/vodoleylviv-card?account=${cardNumber}&amount=${amount}`;
             await bot.sendMessage(chatId, `Ви купуєте ${msg.text} л води в автоматі №${deviceData.id}.`, {
               reply_markup: { inline_keyboard: [[{
                   text: 'Оплатити',
@@ -625,7 +625,7 @@ ${card.WaterQty/10} літрів
           if(!isNaN(msg.text)) {
             const deviceData = JSON.parse(tempData);
             const deviceActivated = await activateDevice(deviceData.id, cardCard, cardNumber);
-            const link = `https://easypay.ua/ua/partners/vodoleylviv?account=${cardNumber}&amount=${msg.text}`;
+            const link = `https://easypay.ua/ua/partners/vodoleylviv-card?account=${cardNumber}&amount=${amount}`;
             console.log(link);
             await bot.sendMessage(chatId, `Ви купуєте воду на ${msg.text} грн в автоматі №${deviceData.id}.`, {
               reply_markup: { inline_keyboard: [[{
