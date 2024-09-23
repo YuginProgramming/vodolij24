@@ -773,7 +773,7 @@ ${card.WaterQty/10} літрів
             });
             await bot.sendMessage(chatId, phrases.refilInfo, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
             
-            await checkBalanceChange(chatId, userDatafromApi, apiData?.cards);
+            checkBalanceChange(chatId, userDatafromApi, apiData?.cards);
 
           } else {
             bot.sendMessage(chatId, phrases.wrongNumber);
@@ -791,7 +791,7 @@ ${card.WaterQty/10} літрів
             });
             
 
-            await checkBalanceChange(chatId, userDatafromApi, apiData?.cards);
+            checkBalanceChange(chatId, userDatafromApi, apiData?.cards);
 
             await bot.sendMessage(chatId, phrases.refilInfo, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
        
