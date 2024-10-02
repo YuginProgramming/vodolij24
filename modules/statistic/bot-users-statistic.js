@@ -36,6 +36,6 @@ const botUsersStatistic = async () => {
 
     logger.info(string);
 
-}
+};
 
 export default botUsersStatistic;

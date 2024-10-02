@@ -4,12 +4,17 @@ import { createNewTransaction } from './models/transactions.js'
 import { logger } from './logger/index.js';
 
 const getTransactions = async (device, substract, cardId) => {
+    
     const currentTime = moment();
+
     const endTime = currentTime.format('YYYY-MM-DD HH:mm:ss');
     const startTime = currentTime.subtract(substract, 'minutes').format('YYYY-MM-DD HH:mm:ss');
+
     console.log(startTime);
-    console.log(endTime)
-    const url = 'https://soliton.net.ua/water/api/water/index.php'; // Replace with the actual URL
+    console.log(endTime);
+
+    const url = 'https://soliton.net.ua/water/api/water/index.php';
+    
     const requestData = {
         device_id: device,
         ds: startTime,
@@ -56,7 +61,7 @@ const getTransactions = async (device, substract, cardId) => {
             }
         }
     } catch (error) {
-        logger.warn(`Transaction reqest unknown error`)
+        logger.warn(`Transaction reqest unknown error ${error}`)
     }
 };
         const transactions = await getTransactions(316, 2840 ,21756)    
