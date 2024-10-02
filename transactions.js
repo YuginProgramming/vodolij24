@@ -4,7 +4,7 @@ import { createNewTransaction } from './models/transactions.js'
 import { logger } from './logger/index.js';
 
 const getTransactions = async (device, substract, cardId) => {
-    
+
     const currentTime = moment();
 
     const endTime = currentTime.format('YYYY-MM-DD HH:mm:ss');
@@ -64,6 +64,6 @@ const getTransactions = async (device, substract, cardId) => {
         logger.warn(`Transaction reqest unknown error ${error}`)
     }
 };
-        const transactions = await getTransactions(316, 2840 ,21756)    
-        console.log(transactions)
+      //  const transactions = await getTransactions(316, 2840 ,21756)    
+     //   console.log(transactions)
 export default getTransactions       
