@@ -7,6 +7,8 @@ import { logger } from './logger/index.js';
 import getStatistic from './statistic.js';
 import cron from 'node-cron';
 import botUsersStatistic from './modules/statistic/bot-users-statistic.js';
+import mainMenu from './menus/main.js';
+import introduction from './menus/introduction.js';
 
 const bot = new TelegramBot(dataBot.telegramBotToken, { polling: true });
 
@@ -38,6 +40,8 @@ main();
 
 anketaListiner();
 decodeQR();
+mainMenu();
+introduction();
 
 
 

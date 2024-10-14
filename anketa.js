@@ -2,24 +2,22 @@ import { bot } from "./app.js";
 import { phrases, keyboards } from './language_ua.js';
 import { 
   updateUserByChatId,
-  userLogin,
   userLogout,
   findUserByChatId,
-  createNewUserByChatId
 } from './models/users.js';
 import { findBalanceByChatId } from './models/bonuses.js'
 import axios from 'axios';
 import { findNearestCoordinate } from './modules/locations.js';
-import { numberFormatFixing } from './modules/validations.js';
 import checkPayment from './modules/checkpaymant.js';
 import { logger } from "./logger/index.js";
-import { findApiUserByChatId, createNewApiUser, updateApiUserByChatId } from './models/api-users.js';
-import { createCard, findCardById, updateCardById } from "./models/cards.js";
+import { findApiUserByChatId } from './models/api-users.js';
+import { findCardById, updateCardById } from "./models/cards.js";
 import { getCardData, checkBalanceChange } from './modules/checkcardAPI.js';
 import activateDevice from "./modules/activate-device.js";
 import createCardApi from "./modules/createCard.js";
 
 export const anketaListiner = async() => {
+  /*
     bot.on("callback_query", async (query) => {
 
       const action = query.data;
@@ -75,15 +73,11 @@ export const anketaListiner = async() => {
         break;
       }
     });
-    
+    */
     bot.on('message', async (msg) => {
       const chatId = msg.chat.id; 
-      
-      console.log(`chat ID ${chatId}`)
           
       const apiData = await findApiUserByChatId(chatId); 
-
-      console.log(`apiData ${apiData}`)
 
       let card = {};
 
@@ -92,14 +86,11 @@ export const anketaListiner = async() => {
       }
         
       const userInfo = await findUserByChatId(chatId);
-        
 
-      let dialogueStatus, isAuthenticated, birthDaydate, tempData, userDatafromApi, balance, cardNumber, firstname, cardCard;
+      let dialogueStatus, tempData, userDatafromApi, balance, cardNumber, cardCard;
 
       if (userInfo) {
           dialogueStatus = userInfo.dialoguestatus;
-          isAuthenticated = userInfo.isAuthenticated;
-          birthDaydate = userInfo.birthdaydate;
 
           if (userInfo.hasOwnProperty("lastname")) {
             console.log(userInfo.lastname)
@@ -115,17 +106,16 @@ export const anketaListiner = async() => {
           }
           if (card.hasOwnProperty("Number")) {
             cardNumber = card?.Number;
-          }
-          if (userInfo.hasOwnProperty("firstname")) {
-            firstname = userInfo.firstname;
-          }
+          }          
           if (card.hasOwnProperty("Card")) {
             cardCard = card.cardId;
           }
           
       }
+      //Незрозуміло чи це працюючий код закоментю 
 
       if (msg.text) {
+        
         const command = msg.text.split('%');
 
         if (command && command[0] === 'linkCard') {
@@ -136,9 +126,9 @@ export const anketaListiner = async() => {
       }
 
       
-  
+      
       switch (msg.text) {
-        
+       /* 
         case '/start':
           if(userInfo) await updateUserByChatId(chatId, { dialoguestatus: '' });
           if (isAuthenticated) 
@@ -170,7 +160,7 @@ export const anketaListiner = async() => {
             });  
           }
         break;
-
+        */
         
         case 'Готівкою':
           if (dialogueStatus === 'cardBalanceRefil') {
@@ -279,6 +269,7 @@ export const anketaListiner = async() => {
             logger.warn(`Can't loggout`)
           }
           break;
+          /*
         case 'Авторизуватись':
           if(userInfo) {
             await updateUserByChatId(chatId, { dialoguestatus: 'numberlogin' });
@@ -306,15 +297,19 @@ export const anketaListiner = async() => {
             });  
           }
           break;
+          */
+         /*
         case 'Відсканувати QR-код': 
           bot.sendMessage(msg.chat.id, phrases.photoRequest, {
             reply_markup: { keyboard: keyboards.contactRequest, resize_keyboard: true, one_time_keyboard: true }
           });
           break;
+          */
+         /*
         case 'Ні, я введу номер вручну':
           bot.sendMessage(msg.chat.id, phrases.phoneRules);
           break;
-
+          */
 
 
         case '⛽️ Купити воду': 
@@ -390,6 +385,7 @@ ${card.WaterQty/10} літрів
             reply_markup: { keyboard: keyboards.accountStatus, resize_keyboard: true, one_time_keyboard: true }
           });
         break;
+        /*
         case 'Служба підтримки': 
           bot.sendMessage(msg.chat.id, 'Шановні клієнти, служба підтримки працює за графіком: Пн-Пт з 8:00 до 22:00, Сб-Нд з 9:00 до 20:00', {
             reply_markup: {
@@ -400,13 +396,14 @@ ${card.WaterQty/10} літрів
             }
           });
         break;
+        */
         case '📊 Історія операцій':
           bot.sendMessage(msg.chat.id, phrases.userHistory, {
             reply_markup: { keyboard: keyboards.historyMenu, resize_keyboard: true, one_time_keyboard: true }
           });
         break;
 
-
+          /*  Від цього відмовились
         case 'Верифікувати картку':
           bot.sendMessage(msg.chat.id, phrases.verifyRules, {
             reply_markup: { keyboard: keyboards.verifyRules, resize_keyboard: true, one_time_keyboard: true }
@@ -442,11 +439,12 @@ ${card.WaterQty/10} літрів
 
 
         break;
+        */
       };
 
 
       switch (dialogueStatus) {
-
+        /*
         case 'phoneNumber':
           if (msg.contact) {
             console.log('contact')
@@ -529,7 +527,7 @@ ${card.WaterQty/10} літрів
             await bot.sendMessage(chatId, phrases.wrongBirthDate);
           }
         break;
-
+          */
         case 'buyWater':
             console.log(msg.text)
             if (msg.location) {

@@ -1,4 +1,6 @@
-export const numberFormatFixing = (phone) => {
+
+const numberFormatFixing = (phone) => {
+
     if (phone.length == 12) {
         return phone;
     } else if (phone.length == 13) {
@@ -14,5 +16,7 @@ export const numberFormatFixing = (phone) => {
         const fixedNumber = '3' + phone;
         return fixedNumber;
     }
+
 }
 
+export default numberFormatFixing;

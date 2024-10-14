@@ -48,6 +48,10 @@ User.init({
         allowNull: true,
         defaultValue: ''
     },
+    favoriteDevice: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
 
 }, {
     freezeTableName: false,
