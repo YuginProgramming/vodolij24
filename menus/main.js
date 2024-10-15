@@ -11,6 +11,8 @@ const mainMenu = async () => {
         const chatId = msg.chat.id; 
           
         const userInfo = await findUserByChatId(chatId);
+
+        console.log(userInfo)
   
         let isAuthenticated;
 

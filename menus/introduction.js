@@ -1,3 +1,4 @@
+import axios from "axios";
 import { bot } from "../app.js";
 import { phrases } from "../language_ua.js";
 import { logger } from "../logger/index.js";
