@@ -6,12 +6,12 @@ import { logger } from '../logger/index.js';
 class Apiuser extends Model {}
 Apiuser.init({
     user_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BIGINT,
         allowNull: false,
         unique: true
     },
     chat_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BIGINT,
         allowNull: false,
         unique: true
     },

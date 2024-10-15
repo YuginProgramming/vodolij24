@@ -6,7 +6,7 @@ import { logger } from '../logger/index.js';
 class User extends Model {}
 User.init({
     chat_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BIGINT,
         allowNull: false,
         unique: true
     },

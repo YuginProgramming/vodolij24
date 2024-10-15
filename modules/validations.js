@@ -19,4 +19,4 @@ const numberFormatFixing = (phone) => {
 
 }
 
-export default numberFormatFixing;
+ 

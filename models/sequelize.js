@@ -1,12 +1,9 @@
 import { Sequelize } from 'sequelize';
-import path from 'path';
-
-const _dirname = process.cwd();
-const dbpath = path.join(_dirname, 'db.db');
 
 
-export const sequelize = new Sequelize({
-    storage: dbpath,
-    dialect: 'sqlite',
-    logging: false
+export const sequelize = new Sequelize('vodolijdb', 'vodolij', '09vodolij@4516', {
+    host: '49.13.142.186',
+    dialect: 'postgres',
+    port: 5432,  // Default port for PostgreSQL
+    logging: false,  // Disable logging
 });
