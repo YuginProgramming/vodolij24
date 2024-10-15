@@ -64,20 +64,6 @@ const mainMenu = async () => {
                 }
             break;
 
-            case 'Авторизуватись':
-                if(userInfo) {
-                    await updateUserByChatId(chatId, { dialoguestatus: 'numberlogin' });
-                    await bot.sendMessage(msg.chat.id, phrases.contactRequest, {
-                    reply_markup: { keyboard: keyboards.contactRequest, resize_keyboard: true, one_time_keyboard: true }
-                    });
-                        
-                } else {
-                    await bot.sendMessage(msg.chat.id, phrases.registerRequest, {
-                    reply_markup: { keyboard: keyboards.login, resize_keyboard: true, one_time_keyboard: true }
-                    });
-                };
-            break;
-
             case 'Зареєструватись':
             case '/register':
 

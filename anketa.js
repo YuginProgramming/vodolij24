@@ -8,7 +8,6 @@ import {
 import { findBalanceByChatId } from './models/bonuses.js'
 import axios from 'axios';
 import { findNearestCoordinate } from './modules/locations.js';
-import checkPayment from './modules/checkpaymant.js';
 import { logger } from "./logger/index.js";
 import { findApiUserByChatId } from './models/api-users.js';
 import { findCardById, updateCardById } from "./models/cards.js";
@@ -161,7 +160,7 @@ export const anketaListiner = async() => {
           }
         break;
         */
-        
+        /*
         case 'Готівкою':
           if (dialogueStatus === 'cardBalanceRefil') {
 
@@ -189,7 +188,8 @@ export const anketaListiner = async() => {
           }
           
         break;
-
+        */
+          /*
         case 'Картка Visa/Mastercard':
           if (dialogueStatus === 'cardBalanceRefil') {
 
@@ -199,6 +199,8 @@ export const anketaListiner = async() => {
           }); 
           }
         break;
+        */
+       /*
         case 'Ввести суму в літрах':
           if (dialogueStatus === 'cardBalanceRefil') {
             bot.sendMessage(chatId, phrases.litrRules, {
@@ -222,9 +224,8 @@ export const anketaListiner = async() => {
           await updateUserByChatId(chatId, { dialoguestatus: 'amount' }); 
           }
         break;
-
-        
-
+        */
+        /*
         case 'Балансом картки Водолій':
 
           const deviceData = JSON.parse(tempData);
@@ -250,7 +251,7 @@ export const anketaListiner = async() => {
 
 
         break;
-
+*/
         case 'Ввести номер автомата': 
           bot.sendMessage(msg.chat.id, phrases.selectGoods, {
             reply_markup: keyboards.twoWaters
@@ -310,7 +311,7 @@ export const anketaListiner = async() => {
           bot.sendMessage(msg.chat.id, phrases.phoneRules);
           break;
           */
-
+          /*
 
         case '⛽️ Купити воду': 
           await bot.sendMessage(chatId, phrases.chooseVendor, {
@@ -319,7 +320,7 @@ export const anketaListiner = async() => {
           await updateUserByChatId(chatId, { dialoguestatus: 'buyWater' });
           break;
 
-
+*/
         case 'Ввести номер автомата': 
           bot.sendMessage(msg.chat.id, phrases.enterVendorNum);
           break;
@@ -528,6 +529,7 @@ ${card.WaterQty/10} літрів
           }
         break;
           */
+         /*
         case 'buyWater':
             console.log(msg.text)
             if (msg.location) {
@@ -563,8 +565,8 @@ ${card.WaterQty/10} літрів
             } else {
               bot.sendMessage(chatId, phrases.wrongNumber);
             }
-        break;
-
+        break;*/
+/*
         case 'vendorConfirmation': 
             const deviceData = JSON.parse(tempData);
 
@@ -581,7 +583,7 @@ ${card.WaterQty/10} літрів
               await updateUserByChatId(chatId, { dialoguestatus: 'buyWater' });
             }
         break;
-
+*/
         case 'amountFromBalance':
           if(!isNaN(msg.text)) {
             const balanceAmount = balance - msg.text;
@@ -679,6 +681,7 @@ ${card.WaterQty/10} літрів
             if (!msg.location) bot.sendMessage(chatId, /*phrases.wrongNumber*/ `WRONG`);            
           }
         break;
+        /*
         case 'verificationConfirmation':
           if (msg.text === 'Так') {
             bot.sendMessage(chatId, phrases.readCard, { reply_markup:  { keyboard: keyboards.readCard, resize_keyboard: true, one_time_keyboard: false } });
@@ -686,6 +689,7 @@ ${card.WaterQty/10} літрів
 
           }
         break;
+        */
 
 
         case 'cardBalanceRefil':
@@ -758,6 +762,7 @@ ${card.WaterQty/10} літрів
 
 
         break;
+        /*
         case 'volumeLink':
           if(!isNaN(msg.text)) {
             const amount = Math.round(msg.text * 1.5);
@@ -799,6 +804,7 @@ ${card.WaterQty/10} літрів
             bot.sendMessage(chatId, phrases.wrongNumber);
           }
         break;
+        */
       }
 
       if (msg.location) {

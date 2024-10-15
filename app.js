@@ -9,6 +9,7 @@ import cron from 'node-cron';
 import botUsersStatistic from './modules/statistic/bot-users-statistic.js';
 import mainMenu from './menus/main.js';
 import introduction from './menus/introduction.js';
+import buyWater from './menus/buyWater.js';
 
 const bot = new TelegramBot(dataBot.telegramBotToken, { polling: true });
 
@@ -42,6 +43,7 @@ anketaListiner();
 decodeQR();
 mainMenu();
 introduction();
+buyWater();
 
 
 
