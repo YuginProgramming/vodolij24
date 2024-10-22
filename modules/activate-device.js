@@ -1,5 +1,6 @@
 import axios from "axios";  
 import { logger } from "../logger/index.js";
+import { bot } from "../app.js";
 
 const activateDevice = async (device_id, card_id, phone) => {
     try {
@@ -16,6 +17,7 @@ const activateDevice = async (device_id, card_id, phone) => {
         switch (result.status) {
             case 'success': 
                 logger.info(`Card ${card_id} successfully activated ${device_id}. Phone ${phone}`);
+               
                 return true;
 
             case 'error':

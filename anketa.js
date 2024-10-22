@@ -5,7 +5,7 @@ import {
   userLogout,
   findUserByChatId,
 } from './models/users.js';
-import { findBalanceByChatId } from './models/bonuses.js'
+import { findBalanceByChatId } from './models/bonuses.js';
 import axios from 'axios';
 import { findNearestCoordinate } from './modules/locations.js';
 import { logger } from "./logger/index.js";
@@ -257,7 +257,7 @@ export const anketaListiner = async() => {
             reply_markup: keyboards.twoWaters
           });
         break;
-
+/*
         case '/logout':
         case 'Вийти з акаунту':
           try {
@@ -270,6 +270,7 @@ export const anketaListiner = async() => {
             logger.warn(`Can't loggout`)
           }
           break;
+          */
           /*
         case 'Авторизуватись':
           if(userInfo) {
@@ -329,7 +330,7 @@ export const anketaListiner = async() => {
             reply_markup: { keyboard: keyboards.accountStatus, resize_keyboard: true, one_time_keyboard: true }
           });
           break;
-        case 'Мій профіль':
+        case '👤 Мій профіль':
 
         const cardId = apiData?.cards;
 
@@ -359,8 +360,7 @@ export const anketaListiner = async() => {
             }
           }
           
-          const bonusBalace = await findBalanceByChatId(chatId);
-          
+         
           const balanceMessage = `
           Клієнт: ${apiData?.name}          
 Тип картки: ${card.CardGroup}
@@ -693,11 +693,11 @@ ${card.WaterQty/10} літрів
 
 
         case 'cardBalanceRefil':
-          if (msg.text === 'Готівка') {
+          if (msg.text === '💳Готівка') {
             bot.sendMessage(chatId, phrases.chooseVendorRefil, { reply_markup:  { keyboard: keyboards.chooseVendor, resize_keyboard: true, one_time_keyboard: false}});
 
           }
-          if (msg.text === 'Картка Visa/Mastercard') {
+          if (msg.text === '💸 Картка Visa/Mastercard') {
             bot.sendMessage(chatId, phrases.cardRefilCard(cardNumber), { reply_markup:  { keyboard: keyboards.countType, resize_keyboard: true, one_time_keyboard: false}});
 
           }

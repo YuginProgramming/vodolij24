@@ -9,46 +9,57 @@ Transaction.init({
     user_id: {
         type: DataTypes.INTEGER,
         allowNull: true,
+        unique: false
     },
     device: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        unique: false
     },
     date: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: false
     },
     waterRequested: {
         type: DataTypes.FLOAT,
-        allowNull: true
+        allowNull: true,
+        unique: false
     },
     waterFullfilled: {
         type: DataTypes.FLOAT,
-        allowNull: true
+        allowNull: true,
+        unique: false
     },
     cashPaymant: {
         type: DataTypes.FLOAT,
-        allowNull: true
+        allowNull: true,
+        unique: false
     },
     cardPaymant: {
         type: DataTypes.FLOAT,
-        allowNull: true
+        allowNull: true,
+        unique: false
     },
     onlinePaymant: {
         type: DataTypes.FLOAT,
-        allowNull: true
+        allowNull: true,
+        unique: false
     },
     paymantChange: {
         type: DataTypes.FLOAT,
-        allowNull: true
+        allowNull: true,
+        unique: false
     },
     isAutorized: {
         type: DataTypes.BOOLEAN,
-        allowNull: true
+        allowNull: true,
+        unique: false
     },
     cardId: {
         type: DataTypes.INTEGER,
-        allowNull: true
+        allowNull: true,
+        unique: false
     }
 
 }, {
@@ -77,14 +88,14 @@ const getWaterTotalbyTheDay = async () => {
     
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
-    // Отримуємо сьогоднішню дату у форматі 'YYYY-MM-DD'
+
     const todayString = today.toISOString().split('T')[0];
     
-    // Отримуємо вчорашню дату у форматі 'YYYY-MM-DD'
+
     const yesterdayString = yesterday.toISOString().split('T')[0];
     
     try {
-        // Знаходимо всі транзакції, де дата є між вчорашньою і сьогоднішньою датами
+
         const totalWaterFulfilled = await Transaction.sum('waterFullfilled', {
             where: {
                 date: {
@@ -108,17 +119,8 @@ const getUsersTotalbyTheDay = async (cardId) => {
     
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
-    /*
-    const todayString = today.toISOString().split('T')[0];
-    
-    const yesterdayString = yesterday.toISOString().split('T')[0];
-    */
-
-     // Get the start of yesterday
-     const startOfYesterday = new Date(yesterday.setHours(0, 0, 0, 0));
-    
-     // Get the end of yesterday
-     const endOfYesterday = new Date(yesterday.setHours(23, 59, 59, 999));
+    const startOfYesterday = new Date(yesterday.setHours(0, 0, 0, 0));
+    const endOfYesterday = new Date(yesterday.setHours(23, 59, 59, 999));
     
     try {
         const totalWaterFulfilled = await Transaction.sum('waterFullfilled', {

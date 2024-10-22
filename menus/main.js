@@ -5,6 +5,25 @@ import { createNewUserByChatId, findUserByChatId, updateUserByChatId } from "../
 
 
 const mainMenu = async () => {
+    bot.on("callback_query", async (msg) => {
+
+        const chatId = msg.message.chat.id;
+
+        const callback_data = msg.data;
+
+        if (callback_data === 'get_phone') {
+
+            bot.sendMessage(chatId, 'Ось наш номер: +380975148884');
+
+        };
+
+    })
+
+    bot.on("sticker", async (sticker) => {
+        const stickerID = sticker.sticker.file_id;
+
+        console.log(stickerID)
+    })
 
     bot.on('message', async (msg) => {
 
@@ -45,20 +64,21 @@ const mainMenu = async () => {
                
             break;
      
-            case 'Повернутися до головного меню':                
+            case '🏠 Повернутися до головного меню':                
             case 'До головного меню':
 
                 await updateUserByChatId(chatId, { dialoguestatus: '' });
 
                 if (isAuthenticated) {
+                    bot.sendSticker(chatId, 'CAACAgIAAxkBAAIDKmcXrxAqFyMHGYtAw0ZUuDJpjMb-AAKmAANSiZEja7kqEI23x7w2BA');
 
-                    bot.sendMessage(msg.chat.id, phrases.mainMenu, {
-                        reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
+                    bot.sendMessage(chatId, phrases.mainMenu, {
+                        reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: false }
                     });  
                     return;
 
                 } else {
-                    bot.sendMessage(msg.chat.id, 'Ви не авторизовані', {
+                    bot.sendMessage(chatId, 'Ви не авторизовані', {
                         reply_markup: { keyboard: keyboards.login, resize_keyboard: true, one_time_keyboard: true }
                     });  
                 }
@@ -83,12 +103,15 @@ const mainMenu = async () => {
 
             break;
             
-            case 'Служба підтримки': 
-                bot.sendMessage(msg.chat.id, 'Шановні клієнти, служба підтримки працює за графіком: Пн-Пт з 8:00 до 22:00, Сб-Нд з 9:00 до 20:00', {
+            case '💬 Служба підтримки':
+
+                bot.sendSticker(chatId, 'CAACAgIAAxkBAAIDQGcXsA9C246bIHxqWBMR0VzdEvCcAAK0AANSiZEjLSU_B-Skc_o2BA');
+
+                bot.sendMessage(chatId, 'Шановні клієнти, служба підтримки працює за графіком: Пн-Пт з 8:00 до 22:00, Сб-Нд з 9:00 до 20:00', {
                     reply_markup: {
                         inline_keyboard: [
-                        [{ text: 'Подзвонити', callback_data: 'call_support' }],
-                        [{ text: 'Написати в Телеграм', url: 'https://t.me/GamerX86' }]
+                        [{ text: '☎️ Подзвонити', callback_data: 'get_phone' }],
+                        [{ text: '📝 Написати в Телеграм', url: 'https://t.me/vodolij_support' }]
                         ]
                     }
                 });

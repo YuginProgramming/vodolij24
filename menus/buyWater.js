@@ -125,7 +125,7 @@ const buyWater = () => {
 
       break;
 
-      case 'Балансом картки Водолій':
+      case '🚰 Балансом картки Водолій':
 
         const deviceData = JSON.parse(tempData);
     
@@ -147,7 +147,7 @@ const buyWater = () => {
 
       break;
 
-      case 'Картка Visa/Mastercard':
+      case '💳 Картка Visa/Mastercard':
         if (dialogueStatus === 'cardBalanceRefil') {
     
         } else {
@@ -160,7 +160,7 @@ const buyWater = () => {
 
       break;
 
-      case 'Готівкою':
+      case '💸 Готівкою':
 
         if (dialogueStatus === 'cardBalanceRefil') {
 
