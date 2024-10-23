@@ -107,7 +107,12 @@ const buyWater = () => {
 
           }
 
-          bot.sendMessage(chatId, `Ваш автомат "${currentVendor?.id}" "${currentVendor?.name}"`, {
+          bot.sendMessage(chatId, `
+            💧 Ваш автомат:
+№ ${currentVendor?.id}
+📍 Адреса: ${currentVendor?.name}
+
+⭐ Це автомат, який ви регулярно використовуєте!`, {
             reply_markup: { keyboard: keyboards.paymantMethodFavorite, resize_keyboard: true, one_time_keyboard: true }
           }); 
 
