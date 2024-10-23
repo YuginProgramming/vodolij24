@@ -93,7 +93,7 @@ const getStatistic = async () => {
     }    
 };
 
-getStatistic();
+//getStatistic();
 
 export default getStatistic;
 
