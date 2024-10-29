@@ -8,6 +8,7 @@ import activateDevice from "../modules/activate-device.js";
 import checkPayment from "../modules/checkpaymant.js";
 import { findNearestCoordinate } from "../modules/locations.js";
 import { checkBalanceChange } from "../modules/checkcardAPI.js";
+import { logger } from "../logger/index.js";
 
 const buyWater = () => {
 
