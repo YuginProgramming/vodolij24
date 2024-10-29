@@ -79,7 +79,7 @@ const createNewUserByChatId = async (chat_id) => {
         res = res.dataValues;
         logger.info(`Created user with id: ${res.id}`);
     } catch (err) {
-        logger.error(`Impossible to create user: ${err}`);
+        logger.error(`Impossible to create user: ${err}. Chat id ${chat_id}`);
     }
     return res;
 };
