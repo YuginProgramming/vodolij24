@@ -47,7 +47,7 @@ const checkBalanceChange = async (chatId, user_id, card_id) => {
     
                         bot.sendMessage(chatId, phrases.bonusNotificationCardError);
 
-                        logger.warn(`${chatId} не вдалося поповнити рахунок ${user_id, card_id}`)
+                        logger.warn(`id користувача ${chatId} не завершив оплату  ${user_id, card_id}`)
                     }
 
                 }, 60000 * 2);
