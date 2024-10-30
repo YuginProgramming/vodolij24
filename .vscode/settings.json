@@ -1,0 +1,14 @@
+{
+    "editor.tokenColorCustomizations": {
+    "textMateRules": [
+        {
+            "scope": "entity.name.function",
+            "settings": {
+                "foreground": "#FF0000", // Колір для невизначених функцій
+                "fontStyle": "underline"
+            }
+        }
+    ]
+}
+
+}
