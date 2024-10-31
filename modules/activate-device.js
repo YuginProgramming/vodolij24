@@ -1,6 +1,5 @@
 import axios from "axios";  
 import { logger } from "../logger/index.js";
-import { bot } from "../app.js";
 
 const activateDevice = async (device_id, card_id, phone) => {
     try {

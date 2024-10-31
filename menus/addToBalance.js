@@ -1,14 +1,17 @@
+import axios from "axios";
+import { bot } from "../app.js";
+import { keyboards, phrases } from "../language_ua.js";
+import { findApiUserByChatId } from "../models/api-users.js";
+import { findCardById } from "../models/cards.js";
+import { findUserByChatId, updateUserByChatId } from "../models/users.js";
+import activateDevice from "../modules/activate-device.js";
 
 
-const mainMenu = async () => {
+const addToBalance = async () => {
     bot.on('message', async (msg) => {
         const chatId = msg.chat.id; 
-        
-        console.log(`chat ID ${chatId}`)
             
         const apiData = await findApiUserByChatId(chatId); 
-  
-        console.log(`apiData ${apiData}`)
   
         let card = {};
   
@@ -17,32 +20,21 @@ const mainMenu = async () => {
         }
           
         const userInfo = await findUserByChatId(chatId);
-          
   
-        let dialogueStatus, isAuthenticated, birthDaydate, tempData, userDatafromApi, balance, cardNumber, firstname, cardCard;
+        let dialogueStatus, tempData, userDatafromApi, cardNumber, cardCard;
 
         if (userInfo) {
             dialogueStatus = userInfo.dialoguestatus;
-            isAuthenticated = userInfo.isAuthenticated;
-            birthDaydate = userInfo.birthdaydate;
   
             if (userInfo.hasOwnProperty("lastname")) {
-              console.log(userInfo.lastname)
               const data = JSON.parse(userInfo.lastname);
-              console.log(data)
               userDatafromApi = data;
             }
             if (userInfo.hasOwnProperty("fathersname")) {
               tempData = userInfo.fathersname;
             }
-            if (userInfo.hasOwnProperty("goods")) {
-              balance = userInfo.goods;
-            }
             if (card.hasOwnProperty("Number")) {
               cardNumber = card?.Number;
-            }
-            if (userInfo.hasOwnProperty("firstname")) {
-              firstname = userInfo.firstname;
             }
             if (card.hasOwnProperty("Card")) {
               cardCard = card.cardId;
@@ -52,40 +44,94 @@ const mainMenu = async () => {
 
         switch (msg.text) {
             
-             case '/start':
-               if(userInfo) await updateUserByChatId(chatId, { dialoguestatus: '' });
-               if (isAuthenticated) 
-                 bot.sendMessage(msg.chat.id, phrases.mainMenu, {
-                   reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
-                 });
-               else {
-                 logger.info(`USER_ID: ${chatId} join BOT`);
-                 await createNewUserByChatId(chatId);
-                 await updateUserByChatId(chatId, { dialoguestatus: 'phoneNumber' });
-                 bot.sendMessage(msg.chat.id, phrases.greetings, {
-                   reply_markup: { keyboard: keyboards.contactRequest, resize_keyboard: true, one_time_keyboard: true }
-                 });  
-     
-               }
-             break;
-     
-             case 'Повернутися до головного меню':
-             case 'До головного меню':
-               await updateUserByChatId(chatId, { dialoguestatus: '' });
-               if (isAuthenticated) {
-                 bot.sendMessage(msg.chat.id, phrases.mainMenu, {
-                   reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
-                 });  
-                 return;
-               } else {
-                 bot.sendMessage(msg.chat.id, 'Ви не авторизовані', {
-                   reply_markup: { keyboard: keyboards.login, resize_keyboard: true, one_time_keyboard: true }
-                 });  
-               }
-             break;
+          case '💸 Поповнити картку':
+            bot.sendMessage(chatId, phrases.choosePaymantWay, {
+              reply_markup: { keyboard: keyboards.choosePaymantWay, resize_keyboard: true, one_time_keyboard: true }
+            });
+            await updateUserByChatId(chatId, { dialoguestatus: 'cardBalanceRefil' });
+            break;
+
+        }
+
+        switch (dialogueStatus) {
+
+          case 'cardBalanceRefil':
+            if (msg.text === '💸 Готівка') {
+              console.log("GOTIVKA")
+              bot.sendMessage(chatId, phrases.chooseVendorRefil, { reply_markup:  { keyboard: keyboards.chooseVendor, resize_keyboard: true, one_time_keyboard: false}});
+  
+            }
+            if (msg.text === '💳 Картка Visa/Mastercard') {
+              bot.sendMessage(chatId, phrases.cardRefilCard(cardNumber), { reply_markup:  { keyboard: keyboards.countType, resize_keyboard: true, one_time_keyboard: false}});
+  
+            }
+            if(!isNaN(msg.text)) {
+            const locations = await axios.get('http://soliton.net.ua/water/api/devices');
+            const currentVendor = locations.data.devices.find(device => device.id == msg.text);
+              if (currentVendor) {
+                await updateUserByChatId(chatId, { fathersname: JSON.stringify(currentVendor) });
+                bot.sendMessage(chatId, `Це автомат "${currentVendor.id}" "${currentVendor.name}"?`, {
+                  reply_markup: { keyboard: keyboards.binarKeys, resize_keyboard: true, one_time_keyboard: true }
+                }); 
+              } else {
+                bot.sendMessage(chatId, `Автомата з ID: "${msg.text}" не знайдено`, {
+                  reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
+                }); 
+              }
+            }
+            if (msg.text === 'Так') {
+  
+              const deviceData = JSON.parse(tempData);
+              
+              await activateDevice(deviceData.id, cardCard, cardNumber);
+  
+              bot.sendMessage(chatId, phrases.readCardRefil, { reply_markup:  { keyboard: keyboards.readCardRefil, resize_keyboard: true, one_time_keyboard: false } });
+  
+            }
+            if (msg.text === 'Ні') {
+
+              bot.sendMessage(chatId, phrases.choosePaymantWay, {
+                reply_markup: { keyboard: keyboards.choosePaymantWay, resize_keyboard: true, one_time_keyboard: true }
+              });
+
+            }
+            if (msg.text === `на екрані автомату з'явився напис: "на балансі картки х літрів"`) {
+              
+              bot.sendMessage(chatId, phrases.cashRequest, {
+                reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
+              });
+  
+              await checkBalanceChange(chatId, userDatafromApi, apiData?.cards);
+  
+            }
+            if (msg.text === `Пройшло понад 30 секунд, але напис на екрані автомату так і не з'явився`) {
+
+              bot.sendMessage(msg.chat.id, phrases.choosePaymantWay, {
+                reply_markup: { keyboard: keyboards.choosePaymantWay, resize_keyboard: true, one_time_keyboard: true }
+              });
+
+            }
+            if (msg.location) {
+
+              logger.info(`USER_ID: ${chatId} share location`);
+              const locations = await axios.get('http://soliton.net.ua/water/api/devices');
+              const targetCoordinate = {lat: msg.location.latitude, lon: msg.location.longitude};
+              const nearest = findNearestCoordinate(locations.data.devices, targetCoordinate);
+              await updateUserByChatId(chatId, { fathersname: JSON.stringify(nearest) });
+  
+      
+              bot.sendLocation(chatId, nearest.lat, nearest.lon);
+              bot.sendMessage(chatId, `Це автомат "${nearest.id}" "${nearest.name}"?`, {
+                reply_markup: { keyboard: keyboards.binarKeys, resize_keyboard: true, one_time_keyboard: true }
+              });
+              return;
+
+            }  
+  
+          break;
         }
     });
 
 };
 
-export default mainMenu;
+export default addToBalance;

@@ -10,6 +10,7 @@ import botUsersStatistic from './modules/statistic/bot-users-statistic.js';
 import mainMenu from './menus/main.js';
 import introduction from './menus/introduction.js';
 import buyWater from './menus/buyWater.js';
+import addToBalance from './menus/addToBalance.js';
 
 const bot = new TelegramBot(dataBot.telegramBotToken, { polling: true });
 
@@ -44,6 +45,7 @@ decodeQR();
 mainMenu();
 introduction();
 buyWater();
+addToBalance();
 
 
 

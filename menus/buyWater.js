@@ -154,9 +154,7 @@ const buyWater = () => {
       break;
 
       case '💳 Картка Visa/Mastercard':
-        if (dialogueStatus === 'cardBalanceRefil') {
-    
-        } else {
+        if (dialogueStatus != 'cardBalanceRefil') {
 
           bot.sendMessage(chatId, phrases.countType, {
             reply_markup: { keyboard: keyboards.countType, resize_keyboard: true, one_time_keyboard: true }
@@ -168,9 +166,7 @@ const buyWater = () => {
 
       case '💸 Готівкою':
 
-        if (dialogueStatus === 'cardBalanceRefil') {
-
-        } else {
+        if (dialogueStatus != 'cardBalanceRefil') {
 
           const deviceData = JSON.parse(tempData);
 

@@ -2,10 +2,8 @@ import { bot } from "./app.js";
 import { phrases, keyboards } from './language_ua.js';
 import { 
   updateUserByChatId,
-  userLogout,
   findUserByChatId,
 } from './models/users.js';
-import { findBalanceByChatId } from './models/bonuses.js';
 import axios from 'axios';
 import { findNearestCoordinate } from './modules/locations.js';
 import { logger } from "./logger/index.js";
@@ -374,12 +372,14 @@ ${card.WaterQty/10} літрів
             reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
           });
           break;
+          /*
         case '💸 Поповнити картку':
           bot.sendMessage(msg.chat.id, phrases.choosePaymantWay, {
             reply_markup: { keyboard: keyboards.choosePaymantWay, resize_keyboard: true, one_time_keyboard: true }
           });
           await updateUserByChatId(chatId, { dialoguestatus: 'cardBalanceRefil' });
           break;
+          */
         case '⭐️ Бонуси': 
           let userBonusAcc = phrases.userBonusAcc;
           bot.sendMessage(msg.chat.id, userBonusAcc, {
@@ -691,7 +691,7 @@ ${card.WaterQty/10} літрів
         break;
         */
 
-
+/*
         case 'cardBalanceRefil':
           if (msg.text === '💳Готівка') {
             bot.sendMessage(chatId, phrases.chooseVendorRefil, { reply_markup:  { keyboard: keyboards.chooseVendor, resize_keyboard: true, one_time_keyboard: false}});
@@ -762,6 +762,7 @@ ${card.WaterQty/10} літрів
 
 
         break;
+        */
         /*
         case 'volumeLink':
           if(!isNaN(msg.text)) {
