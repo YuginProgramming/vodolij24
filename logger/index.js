@@ -9,7 +9,7 @@ const DEBUG = true;
 const logger = {
     now() {
         return DateTime.now().toFormat('yy-MM-dd HH:mm:ss');
-    },   
+    },
 
     async createNewLog(channelId, description) {
         let res;
@@ -26,7 +26,7 @@ const logger = {
 
     async info(desc) {
         const channel = dataBot.loggerId || -1;
-        const log = `🏂 ${this.now} ${desc}`;
+        const log = `🏂 ${this.now()} ${desc}`;
         const res = await this.createNewLog(channel, log);
         if (res && DEBUG) {
             console.log(`🏂 ${this.now()} ${desc}`);
@@ -51,5 +51,8 @@ const logger = {
         }
     },
 }
+
+export { logger };
+
 
 export { logger };
