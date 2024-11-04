@@ -64,6 +64,4 @@ const getTransactions = async (device, substract, cardId) => {
         logger.warn(`Transaction reqest unknown error ${error}`)
     }
 };
-      //  const transactions = await getTransactions(316, 2840 ,21756)    
-     //   console.log(transactions)
 export default getTransactions       

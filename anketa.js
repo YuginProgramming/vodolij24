@@ -14,63 +14,7 @@ import activateDevice from "./modules/activate-device.js";
 import createCardApi from "./modules/createCard.js";
 
 export const anketaListiner = async() => {
-  /*
-    bot.on("callback_query", async (query) => {
 
-      const action = query.data;
-      const chatId = query.message.chat.id;
-
-      const userInfo = await findUserByChatId(chatId);
-
-        let dialogueStatus, isAuthenticated, birthDaydate, tempData, userDatafromApi, balance, cardNumber, firstname;
-
-        if (userInfo) {
-          dialogueStatus = userInfo.dialoguestatus;
-          isAuthenticated = userInfo.isAuthenticated;
-          birthDaydate = userInfo.birthdaydate;
-
-          if (userInfo.hasOwnProperty("lastname")) {
-            const data = JSON.parse(userInfo.lastname);
-            userDatafromApi = data;
-          }
-          if (userInfo.hasOwnProperty("fathersname")) {
-            tempData = userInfo.fathersname;
-          }
-          if (userInfo.hasOwnProperty("goods")) {
-            balance = userInfo.goods;
-          }
-          if (userInfo.hasOwnProperty("units")) {
-            cardNumber = userInfo.units;
-          }
-          if (userInfo.hasOwnProperty("firstname")) {
-            firstname = userInfo.firstname;
-          }          
-        }
-      
-      switch (action) {
-        case '/mainNoCard':
-          await createCardApi(chatId, userInfo.phone);
-
-          break;
-
-        case '/mainHaveCard':
-            await userLogin(chatId);
-            await updateUserByChatId(chatId, { dialoguestatus: '', units: chatId, lastname: JSON.stringify({
-              CardGroup: 'Demo',
-              WaterQty: 356,
-              AllQty: 1245,
-              Discount: 90,
-            })});
-            bot.sendMessage(chatId, phrases.welcomeHaveCard, {
-              reply_markup: { keyboard: keyboards.mainMenuWithVerify, resize_keyboard: true, one_time_keyboard: true }
-            });
-        break;  
-        case 'call_support':
-          bot.sendMessage(chatId, 'Будь ласка, подзвоніть за номером: +380975148884');
-        break;
-      }
-    });
-    */
     bot.on('message', async (msg) => {
       const chatId = msg.chat.id; 
           
@@ -125,201 +69,11 @@ export const anketaListiner = async() => {
       
       
       switch (msg.text) {
-       /* 
-        case '/start':
-          if(userInfo) await updateUserByChatId(chatId, { dialoguestatus: '' });
-          if (isAuthenticated) 
-            bot.sendMessage(msg.chat.id, phrases.mainMenu, {
-              reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
-            });
-          else {
-            logger.info(`USER_ID: ${chatId} join BOT`);
-            await createNewUserByChatId(chatId);
-            await updateUserByChatId(chatId, { dialoguestatus: 'phoneNumber' });
-            bot.sendMessage(msg.chat.id, phrases.greetings, {
-              reply_markup: { keyboard: keyboards.contactRequest, resize_keyboard: true, one_time_keyboard: true }
-            });  
-
-          }
-        break;
-
-        case 'Повернутися до головного меню':
-        case 'До головного меню':
-          await updateUserByChatId(chatId, { dialoguestatus: '' });
-          if (isAuthenticated) {
-            bot.sendMessage(msg.chat.id, phrases.mainMenu, {
-              reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
-            });  
-            return;
-          } else {
-            bot.sendMessage(msg.chat.id, 'Ви не авторизовані', {
-              reply_markup: { keyboard: keyboards.login, resize_keyboard: true, one_time_keyboard: true }
-            });  
-          }
-        break;
-        */
-        /*
-        case 'Готівкою':
-          if (dialogueStatus === 'cardBalanceRefil') {
-
-          } else {
-            const deviceData = JSON.parse(tempData);
-
-
-            const deviceActivated = await activateDevice(deviceData.id, cardCard, cardNumber);
-
-            if (deviceActivated) {
-
-              bot.sendMessage(chatId, phrases.vendorActivation, {
-                reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
-              });
-    
-              checkPayment(chatId, deviceData.id, apiData?.cards, cardNumber);
-  
-            } else {
-
-              bot.sendMessage(chatId, phrases.activationError, {
-                reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
-              });
-
-            }  
-          }
-          
-        break;
-        */
-          /*
-        case 'Картка Visa/Mastercard':
-          if (dialogueStatus === 'cardBalanceRefil') {
-
-          } else {
-          bot.sendMessage(chatId, phrases.countType, {
-            reply_markup: { keyboard: keyboards.countType, resize_keyboard: true, one_time_keyboard: true }
-          }); 
-          }
-        break;
-        */
-       /*
-        case 'Ввести суму в літрах':
-          if (dialogueStatus === 'cardBalanceRefil') {
-            bot.sendMessage(chatId, phrases.litrRules, {
-              reply_markup: { keyboard: keyboards.litrRules, resize_keyboard: true, one_time_keyboard: true }
-            });
-            await updateUserByChatId(chatId, { dialoguestatus: 'volumeLink' });   
-          } else {          
-          bot.sendMessage(chatId, phrases.litrRules, {
-            reply_markup: { keyboard: keyboards.litrRules, resize_keyboard: true, one_time_keyboard: true }
-          });
-          await updateUserByChatId(chatId, { dialoguestatus: 'volume' }); 
-          }
-        break;
-        case 'Ввести суму в грн':
-          if (dialogueStatus === 'cardBalanceRefil') {
-            bot.sendMessage(chatId, phrases.litrRules);
-            await updateUserByChatId(chatId, { dialoguestatus: 'amountLink' });   
-          } else {
-
-          bot.sendMessage(chatId, phrases.amountRules);
-          await updateUserByChatId(chatId, { dialoguestatus: 'amount' }); 
-          }
-        break;
-        */
-        /*
-        case 'Балансом картки Водолій':
-
-          const deviceData = JSON.parse(tempData);
-
-          console.log(cardCard)
-
-          const deviceActivated = await activateDevice(deviceData.id, cardCard, cardNumber);
-
-          if (deviceActivated) {
-
-            bot.sendMessage(chatId, phrases.useCard, {
-              reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
-            });
-
-
-          } else {
-
-            bot.sendMessage(chatId, phrases.activationError, {
-              reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
-            });
-
-          }          
-
-
-        break;
-*/
         case 'Ввести номер автомата': 
           bot.sendMessage(msg.chat.id, phrases.selectGoods, {
             reply_markup: keyboards.twoWaters
           });
         break;
-/*
-        case '/logout':
-        case 'Вийти з акаунту':
-          try {
-            await userLogout(chatId);
-            logger.info(`USER_ID: ${chatId} logged out`);
-            bot.sendMessage(chatId, phrases.logout, {
-              reply_markup: { keyboard: keyboards.login, resize_keyboard: true },
-            });  
-          } catch (error) {
-            logger.warn(`Can't loggout`)
-          }
-          break;
-          */
-          /*
-        case 'Авторизуватись':
-          if(userInfo) {
-            await updateUserByChatId(chatId, { dialoguestatus: 'numberlogin' });
-            await bot.sendMessage(msg.chat.id, phrases.contactRequest, {
-              reply_markup: { keyboard: keyboards.contactRequest, resize_keyboard: true, one_time_keyboard: true }
-            });
-             
-          } else {
-            await bot.sendMessage(msg.chat.id, phrases.registerRequest, {
-              reply_markup: { keyboard: keyboards.login, resize_keyboard: true, one_time_keyboard: true }
-            });
-          };
-          break;  
-        case 'Зареєструватись':
-        case '/register':
-          if(userInfo) {
-            bot.sendMessage(chatId, `Ви вже зареєстровані, будь ласка, авторизуйтесь`,{
-              reply_markup: { keyboard: keyboards.login, resize_keyboard: true, one_time_keyboard: true }
-            });
-          } else {
-            
-            await createNewUserByChatId(chatId);
-            bot.sendMessage(msg.chat.id, phrases.contactRequest, {
-              reply_markup: { keyboard: keyboards.contactRequest, resize_keyboard: true, one_time_keyboard: true }
-            });  
-          }
-          break;
-          */
-         /*
-        case 'Відсканувати QR-код': 
-          bot.sendMessage(msg.chat.id, phrases.photoRequest, {
-            reply_markup: { keyboard: keyboards.contactRequest, resize_keyboard: true, one_time_keyboard: true }
-          });
-          break;
-          */
-         /*
-        case 'Ні, я введу номер вручну':
-          bot.sendMessage(msg.chat.id, phrases.phoneRules);
-          break;
-          */
-          /*
-
-        case '⛽️ Купити воду': 
-          await bot.sendMessage(chatId, phrases.chooseVendor, {
-            reply_markup: { keyboard: keyboards.chooseVendor, resize_keyboard: true, one_time_keyboard: true }
-          });
-          await updateUserByChatId(chatId, { dialoguestatus: 'buyWater' });
-          break;
-
-*/
         case 'Ввести номер автомата': 
           bot.sendMessage(msg.chat.id, phrases.enterVendorNum);
           break;
@@ -372,218 +126,21 @@ ${card.WaterQty/10} літрів
             reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
           });
           break;
-          /*
-        case '💸 Поповнити картку':
-          bot.sendMessage(msg.chat.id, phrases.choosePaymantWay, {
-            reply_markup: { keyboard: keyboards.choosePaymantWay, resize_keyboard: true, one_time_keyboard: true }
-          });
-          await updateUserByChatId(chatId, { dialoguestatus: 'cardBalanceRefil' });
-          break;
-          */
         case '⭐️ Бонуси': 
           let userBonusAcc = phrases.userBonusAcc;
           bot.sendMessage(msg.chat.id, userBonusAcc, {
             reply_markup: { keyboard: keyboards.accountStatus, resize_keyboard: true, one_time_keyboard: true }
           });
         break;
-        /*
-        case 'Служба підтримки': 
-          bot.sendMessage(msg.chat.id, 'Шановні клієнти, служба підтримки працює за графіком: Пн-Пт з 8:00 до 22:00, Сб-Нд з 9:00 до 20:00', {
-            reply_markup: {
-              inline_keyboard: [
-                [{ text: 'Подзвонити', callback_data: 'call_support' }],
-                [{ text: 'Написати в Телеграм', url: 'https://t.me/GamerX86' }]
-              ]
-            }
-          });
-        break;
-        */
         case '📊 Історія операцій':
           bot.sendMessage(msg.chat.id, phrases.userHistory, {
             reply_markup: { keyboard: keyboards.historyMenu, resize_keyboard: true, one_time_keyboard: true }
           });
         break;
-
-          /*  Від цього відмовились
-        case 'Верифікувати картку':
-          bot.sendMessage(msg.chat.id, phrases.verifyRules, {
-            reply_markup: { keyboard: keyboards.verifyRules, resize_keyboard: true, one_time_keyboard: true }
-          });  
-          
-        case 'Ні':
-          if (dialogueStatus === 'verificationConfirmation') {
-            bot.sendMessage(msg.chat.id, phrases.verifyRules, {
-              reply_markup: { keyboard: keyboards.verifyRules, resize_keyboard: true, one_time_keyboard: true }
-            });  
-          }
-        break;
-
-        case 'Продовжити верифікацію':
-          await updateUserByChatId(chatId, { dialoguestatus: 'verifyAddress' });
-          bot.sendMessage(msg.chat.id, phrases.chooseVendor, {
-            reply_markup: { keyboard: keyboards.chooseVendor, resize_keyboard: true, one_time_keyboard: true }
-          });
-        break;
-        case 'Картку зчитано':
-          const number = await updateUserByChatId(chatId, { units: '002288' });
-          if (number) {
-            bot.sendMessage(msg.chat.id, phrases.successVerify, {
-              reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
-            });
-  
-          } else {
-            bot.sendMessage(msg.chat.id, phrases.failVerify, {
-              reply_markup: { keyboard: keyboards.failVerify, resize_keyboard: true, one_time_keyboard: true }
-            });
-  
-          }
-
-
-        break;
-        */
       };
 
 
       switch (dialogueStatus) {
-        /*
-        case 'phoneNumber':
-          if (msg.contact) {
-            console.log('contact')
-            const phone = numberFormatFixing(msg.contact.phone_number);
-            try {
-              await updateUserByChatId(chatId, { phone, dialoguestatus: 'name' });
-              await bot.sendMessage(chatId, phrases.nameRequest);
-            } catch (error) {
-              logger.warn(`Cann't update phone number`);
-            }
-          } else if (msg.text) {
-            if (msg.text.length === 9 && !isNaN(parseFloat(msg.text))) {
-              console.log('phone')
-
-              const phone = numberFormatFixing(msg.text);
-              try {
-                await updateUserByChatId(chatId, { phone, dialoguestatus: 'name' });
-                await bot.sendMessage(chatId, phrases.nameRequest);
-              } catch (error) {
-                logger.warn(`Cann't update phone number`);
-              }  
-            } else {
-              await bot.sendMessage(chatId, phrases.wrongPhone);
-            }
-          }  
-    
-        break;
-
-        case 'name': 
-            await updateUserByChatId(chatId, { firstname: msg.text, dialoguestatus: 'birthdaydate' });
-            await bot.sendMessage(chatId, `Введіть дату народження у форматі ДД.ММ.РРРР`);
-
-        break;
-
-        case 'birthdaydate':
-          if (msg.text.length === 10) {
-            await updateUserByChatId(chatId, { birthdaydate: msg.text, dialoguestatus: '' });
-  
-            const name = userInfo.firstname.split(' ');
-            const newUser = await axios.post('http://soliton.net.ua/water/api/user/add/index.php', {
-                phone_number: userInfo.phone,
-                first_name: name[0],
-                last_name: name[1] ? name[1] : 'не вказано',
-                date_birth: msg.text,
-                email: 'example@gmail.com'
-            });
-            console.log(newUser.data);
-
-            const userCard = await axios.get(`http://soliton.net.ua/water/api/user/index.php?phone=${userInfo.phone}`);
-
-            console.log(userCard.data.user)
-
-            await updateUserByChatId(chatId, { lastname: userCard.data.user.uid });
-
-            const apiUser = await findApiUserByChatId(chatId);
-            
-            apiUser ? await updateApiUserByChatId(chatId, {
-              user_id: userCard.data.user.uid,
-              name: userCard.data.user.name,
-              birthdaydate: userCard.data.user.date_birth,
-              phone: userCard.data.user.phone,
-              cards: userCard.data.user.card[0]?.ID          
-            }) : 
-            await createNewApiUser({
-              user_id: userCard.data.user.uid,
-              chat_id: chatId,
-              name: userCard.data.user.name,
-              birthdaydate: userCard.data.user.date_birth,
-              phone: userCard.data.user.phone,              
-            })
-
-            if (newUser.data.status) {
-
-                logger.info(`USER_ID: ${chatId} registered`);
-
-                await createCardApi(chatId, userInfo.phone);
-
-            }  
-          } else {
-            await bot.sendMessage(chatId, phrases.wrongBirthDate);
-          }
-        break;
-          */
-         /*
-        case 'buyWater':
-            console.log(msg.text)
-            if (msg.location) {
-              logger.info(`USER_ID: ${chatId} share location`);
-              const locations = await axios.get('http://soliton.net.ua/water/api/devices');
-              const targetCoordinate = {lat: msg.location.latitude, lon: msg.location.longitude};
-              console.log(locations.data.devices);
-              const nearest = findNearestCoordinate(locations.data.devices, targetCoordinate);
-              //bot.sendMessage(chatId, `${msg.location.latitude} , ${msg.location.longitude}`);
-              await updateUserByChatId(chatId, { dialoguestatus: 'vendorConfirmation', fathersname: JSON.stringify(nearest) });
-  
-      
-              bot.sendLocation(chatId, nearest.lat, nearest.lon);
-              bot.sendMessage(chatId, `Це автомат "${nearest.id}" "${nearest.name}"?`, {
-                reply_markup: { keyboard: keyboards.binarKeys, resize_keyboard: true, one_time_keyboard: true }
-              });  
-              return;
-            }
-  
-            if (!isNaN(msg.text)) {
-              const locations = await axios.get('http://soliton.net.ua/water/api/devices');
-              const currentVendor = locations.data.devices.find(device => device.id == msg.text);
-              console.log(locations.data.devices)
-              if (!currentVendor) {
-                bot.sendMessage(chatId, phrases.wrongNumber);
-                return;
-              }
-              await updateUserByChatId(chatId, { dialoguestatus: 'vendorConfirmation', fathersname: JSON.stringify(currentVendor) });
-  
-              bot.sendMessage(chatId, `Це автомат "${currentVendor?.id}" "${currentVendor?.name}"?`, {
-                reply_markup: { keyboard: keyboards.binarKeys, resize_keyboard: true, one_time_keyboard: true }
-              });  
-            } else {
-              bot.sendMessage(chatId, phrases.wrongNumber);
-            }
-        break;*/
-/*
-        case 'vendorConfirmation': 
-            const deviceData = JSON.parse(tempData);
-
-            if (msg.text === 'Так' || msg.text === 'Вибрати інший спосіб оплати') {
-              bot.sendMessage(msg.chat.id, `Покупка води на автоматі "${deviceData.id}" за адресою "${deviceData.name}". Оберіть спосіб оплати`, {
-                reply_markup: { keyboard: keyboards.paymantMethod, resize_keyboard: true, one_time_keyboard: true }
-              });
-              await updateUserByChatId(chatId, { dialoguestatus: '' });
-              //тут починається шлях поповнення
-            } else {
-              bot.sendMessage(chatId, phrases.chooseVendor, {
-                reply_markup: { keyboard: keyboards.chooseVendor, resize_keyboard: true, one_time_keyboard: true }
-              });
-              await updateUserByChatId(chatId, { dialoguestatus: 'buyWater' });
-            }
-        break;
-*/
         case 'amountFromBalance':
           if(!isNaN(msg.text)) {
             const balanceAmount = balance - msg.text;
@@ -598,7 +155,7 @@ ${card.WaterQty/10} літрів
             bot.sendMessage(chatId, phrases.wrongNumber);
           }
         break;
-
+/*
         case 'volume':          
           if(!isNaN(msg.text)) {
             const deviceData = JSON.parse(tempData);
@@ -648,7 +205,7 @@ ${card.WaterQty/10} літрів
 
           }
         break;
-
+*/
 
         case 'verifyAddress':
           if (msg.location) {
@@ -681,131 +238,6 @@ ${card.WaterQty/10} літрів
             if (!msg.location) bot.sendMessage(chatId, /*phrases.wrongNumber*/ `WRONG`);            
           }
         break;
-        /*
-        case 'verificationConfirmation':
-          if (msg.text === 'Так') {
-            bot.sendMessage(chatId, phrases.readCard, { reply_markup:  { keyboard: keyboards.readCard, resize_keyboard: true, one_time_keyboard: false } });
-          } else {
-
-          }
-        break;
-        */
-
-/*
-        case 'cardBalanceRefil':
-          if (msg.text === '💳Готівка') {
-            bot.sendMessage(chatId, phrases.chooseVendorRefil, { reply_markup:  { keyboard: keyboards.chooseVendor, resize_keyboard: true, one_time_keyboard: false}});
-
-          }
-          if (msg.text === '💸 Картка Visa/Mastercard') {
-            bot.sendMessage(chatId, phrases.cardRefilCard(cardNumber), { reply_markup:  { keyboard: keyboards.countType, resize_keyboard: true, one_time_keyboard: false}});
-
-          }
-          if(!isNaN(msg.text)) {
-          const locations = await axios.get('http://soliton.net.ua/water/api/devices');
-          const currentVendor = locations.data.devices.find(device => device.id == msg.text);
-            if (currentVendor) {
-              await updateUserByChatId(chatId, { fathersname: JSON.stringify(currentVendor) });
-              bot.sendMessage(chatId, `Це автомат "${currentVendor.id}" "${currentVendor.name}"?`, {
-                reply_markup: { keyboard: keyboards.binarKeys, resize_keyboard: true, one_time_keyboard: true }
-              }); 
-            } else {
-              bot.sendMessage(chatId, `Автомата з ID: "${msg.text}" не знайдено`, {
-                reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
-              }); 
-            }
-          }
-          if (msg.text === 'Так') {
-
-            const deviceData = JSON.parse(tempData);
-
-            console.log(cardCard)
-            
-            await activateDevice(deviceData.id, cardCard, cardNumber);
-
-            bot.sendMessage(chatId, phrases.readCardRefil, { reply_markup:  { keyboard: keyboards.readCardRefil, resize_keyboard: true, one_time_keyboard: false } });
-
-          }
-          if (msg.text === 'Ні') {
-            bot.sendMessage(msg.chat.id, phrases.choosePaymantWay, {
-              reply_markup: { keyboard: keyboards.choosePaymantWay, resize_keyboard: true, one_time_keyboard: true }
-            });
-          }
-          if (msg.text === `на екрані автомату з'явився напис: "на балансі картки х літрів"`) {
-            
-            bot.sendMessage(msg.chat.id, phrases.cashRequest, {
-              reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
-            });
-
-            await checkBalanceChange(chatId, userDatafromApi, apiData?.cards);
-
-          }
-          if (msg.text === `Пройшло понад 30 секунд, але напис на екрані автомату так і не з'явився`) {
-            bot.sendMessage(msg.chat.id, phrases.choosePaymantWay, {
-              reply_markup: { keyboard: keyboards.choosePaymantWay, resize_keyboard: true, one_time_keyboard: true }
-            });
-          }
-          if (msg.location) {
-            logger.info(`USER_ID: ${chatId} share location`);
-            const locations = await axios.get('http://soliton.net.ua/water/api/devices');
-            const targetCoordinate = {lat: msg.location.latitude, lon: msg.location.longitude};
-            const nearest = findNearestCoordinate(locations.data.devices, targetCoordinate);
-            await updateUserByChatId(chatId, { fathersname: JSON.stringify(nearest) });
-
-    
-            bot.sendLocation(chatId, nearest.lat, nearest.lon);
-            bot.sendMessage(chatId, `Це автомат "${nearest.id}" "${nearest.name}"?`, {
-              reply_markup: { keyboard: keyboards.binarKeys, resize_keyboard: true, one_time_keyboard: true }
-            });
-            return;
-          }
-
-
-        break;
-        */
-        /*
-        case 'volumeLink':
-          if(!isNaN(msg.text)) {
-            const amount = Math.round(msg.text * 1.5);
-            const link = `https://easypay.ua/ua/partners/vodoleylviv-card?account=${cardNumber}&amount=${amount}`;
-            await bot.sendMessage(chatId, `Поповнення картки номер "${cardNumber}".`, {
-              reply_markup: { inline_keyboard: [[{
-                  text: 'Оплатити',
-                  url: link,
-                }]] 
-              } 
-            });
-            await bot.sendMessage(chatId, phrases.refilInfo, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
-            
-            checkBalanceChange(chatId, userDatafromApi, apiData?.cards);
-
-          } else {
-            bot.sendMessage(chatId, phrases.wrongNumber);
-          }
-        break;
-        case 'amountLink':
-          if(!isNaN(msg.text)) {
-            const link = `https://easypay.ua/ua/partners/vodoleylviv-card?account=${cardNumber}&amount=${msg.text}`;
-            await bot.sendMessage(chatId, `Поповнення картки номер "${cardNumber}".`, {
-              reply_markup: { inline_keyboard: [[{
-                  text: 'Оплатити',
-                  url: link,
-                }]] 
-              } 
-            });
-            
-
-            checkBalanceChange(chatId, userDatafromApi, apiData?.cards);
-
-            await bot.sendMessage(chatId, phrases.refilInfo, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
-       
-
-
-          } else {
-            bot.sendMessage(chatId, phrases.wrongNumber);
-          }
-        break;
-        */
       }
 
       if (msg.location) {

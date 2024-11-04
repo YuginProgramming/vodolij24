@@ -84,7 +84,7 @@ const buyWater = () => {
   
     switch (msg.text) {
 
-      case 'Змінити автомат':
+      case '🔄 Змінити автомат':
 
         await bot.sendMessage(chatId, phrases.chooseVendor, {
           reply_markup: { keyboard: keyboards.chooseVendor, resize_keyboard: true, one_time_keyboard: true }
@@ -308,66 +308,54 @@ const buyWater = () => {
         }
       break;
 
-      case 'volumeLink':
 
-        if(!isNaN(msg.text)) {
-
-          const amount = Math.round(msg.text * 1.5);
-
-          const link = `https://easypay.ua/ua/partners/vodoleylviv-card?account=${cardNumber}&amount=${amount}`;
-
-          await bot.sendMessage(chatId, `Поповнення картки номер "${cardNumber}".`, {
-            reply_markup: { inline_keyboard: 
-              [[{
-
-                text: 'Оплатити',
-                url: link,
-
-              }]] 
-            } 
-          });
-          await bot.sendMessage(chatId, phrases.refilInfo, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
-            
-          checkBalanceChange(chatId, userDatafromApi, apiData?.cards);
-
-        } else {
-
-          bot.sendMessage(chatId, phrases.wrongNumber);
-
-        }
-
-      break;
-
-      case 'amountLink':
-
-        if(!isNaN(msg.text)) {
-
-          const link = `https://easypay.ua/ua/partners/vodoleylviv-card?account=${cardNumber}&amount=${msg.text}`;
-
-          await bot.sendMessage(chatId, `Поповнення картки номер "${cardNumber}".`, {
-
-            reply_markup: { 
-              inline_keyboard: 
-                [[{
-
+      case 'volume':          
+          if(!isNaN(msg.text)) {
+            const deviceData = JSON.parse(tempData);
+            const deviceActivated = await activateDevice(deviceData.id, cardCard, cardNumber);
+            const link = `https://easypay.ua/ua/partners/vodoleylviv-card?account=${cardNumber}&amount=${msg.text * 1.5}`;
+            await bot.sendMessage(chatId, `Ви купуєте ${msg.text} л води в автоматі №${deviceData.id}.`, {
+              reply_markup: { inline_keyboard: [[{
                   text: 'Оплатити',
                   url: link,
-
                 }]] 
               } 
-          });            
+            });
+            await bot.sendMessage(chatId, phrases.pressStart, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
+            const apiUser = await findApiUserByChatId(chatId);
+            checkBalanceChange(chatId, apiUser.user_id, cardCard);
+                                 
+          } else {
+            bot.sendMessage(chatId, phrases.wrongNumber);
+          }
+        break;
+        
+        case 'amount':
+          if(!isNaN(msg.text)) {
+            const deviceData = JSON.parse(tempData);
+            const deviceActivated = await activateDevice(deviceData.id, cardCard, cardNumber);
+            const link = `https://easypay.ua/ua/partners/vodoleylviv-card?account=${cardNumber}&amount=${msg.text}`;
+            console.log(link);
+            await bot.sendMessage(chatId, `Ви купуєте воду на ${msg.text} грн в автоматі №${deviceData.id}.`, {
+              reply_markup: { inline_keyboard: [[{
+                  text: 'Оплатити',
+                  url: link,
+                }]] 
+              } 
+            });
+            await bot.sendMessage(chatId, phrases.pressStart, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
 
-          checkBalanceChange(chatId, userDatafromApi, apiData?.cards);
+            if (userInfo) console.log(userInfo)
+            
+            const apiUser = await findApiUserByChatId(chatId);
+            checkBalanceChange(chatId, apiUser.user_id, cardCard);
 
-          await bot.sendMessage(chatId, phrases.refilInfo, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
+          } else {
 
-        } else {
+            bot.sendMessage(chatId, phrases.wrongNumber);
 
-          bot.sendMessage(chatId, phrases.wrongNumber);
-
-        }
-
-      break;
+          }
+        break;
 
     };
 

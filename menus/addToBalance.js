@@ -5,6 +5,7 @@ import { findApiUserByChatId } from "../models/api-users.js";
 import { findCardById } from "../models/cards.js";
 import { findUserByChatId, updateUserByChatId } from "../models/users.js";
 import activateDevice from "../modules/activate-device.js";
+import { checkBalanceChange } from "../modules/checkcardAPI.js";
 
 
 const addToBalance = async () => {
@@ -129,6 +130,68 @@ const addToBalance = async () => {
             }  
   
           break;
+
+          case 'volumeLink':
+
+            if(!isNaN(msg.text)) {
+    
+              const amount = Math.round(msg.text * 1.5);
+    
+              const link = `https://easypay.ua/ua/partners/vodoleylviv-card?account=${cardNumber}&amount=${amount}`;
+    
+              await bot.sendMessage(chatId, `Поповнення картки номер "${cardNumber}".`, {
+                reply_markup: { inline_keyboard: 
+                  [[{
+    
+                    text: 'Оплатити',
+                    url: link,
+    
+                  }]] 
+                } 
+              });
+              await bot.sendMessage(chatId, phrases.refilInfo, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
+                
+              checkBalanceChange(chatId, userDatafromApi, apiData?.cards);
+  
+          } else {
+  
+            bot.sendMessage(chatId, phrases.wrongNumber);
+  
+          }
+  
+        break;
+  
+        case 'amountLink':
+  
+          if(!isNaN(msg.text)) {
+  
+            const link = `https://easypay.ua/ua/partners/vodoleylviv-card?account=${cardNumber}&amount=${msg.text}`;
+  
+            await bot.sendMessage(chatId, `Поповнення картки номер "${cardNumber}".`, {
+  
+              reply_markup: { 
+                inline_keyboard: 
+                  [[{
+  
+                    text: 'Оплатити',
+                    url: link,
+  
+                  }]] 
+                } 
+            });            
+  
+            checkBalanceChange(chatId, userDatafromApi, apiData?.cards);
+  
+            await bot.sendMessage(chatId, phrases.refilInfo, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
+  
+          } else {
+  
+            bot.sendMessage(chatId, phrases.wrongNumber);
+  
+          }
+  
+        break;
+  
         }
     });
 
