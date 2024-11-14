@@ -177,8 +177,10 @@ const buyWater = () => {
             bot.sendMessage(chatId, phrases.vendorActivation, {
               reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
             });
+
+            const apiUser = await findApiUserByChatId(chatId);
     
-            checkPayment(chatId, deviceData.id, apiData?.cards, cardNumber);
+            checkPayment(chatId, deviceData.id, apiData?.cards, cardNumber, apiUser.user_id);
   
           } else {
 
@@ -323,7 +325,9 @@ const buyWater = () => {
             });
             await bot.sendMessage(chatId, phrases.pressStart, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
             const apiUser = await findApiUserByChatId(chatId);
-            checkBalanceChange(chatId, apiUser.user_id, cardCard);
+
+            checkPayment(chatId, deviceData.id, cardCard, cardNumber, apiUser.user_id);
+            //checkBalanceChange(chatId, apiUser.user_id, cardCard);
                                  
           } else {
             bot.sendMessage(chatId, phrases.wrongNumber);
@@ -348,7 +352,9 @@ const buyWater = () => {
             if (userInfo) console.log(userInfo)
             
             const apiUser = await findApiUserByChatId(chatId);
-            checkBalanceChange(chatId, apiUser.user_id, cardCard);
+
+            checkPayment(chatId, deviceData.id, cardCard, cardNumber, apiUser.user_id);
+            //checkBalanceChange(chatId, apiUser.user_id, cardCard);
 
           } else {
 

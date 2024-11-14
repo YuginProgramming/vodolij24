@@ -5,6 +5,11 @@ import { createNewUserByChatId, findUserByChatId, updateUserByChatId } from "../
 
 
 const mainMenu = async () => {
+    bot.setMyCommands(
+        [
+            { command: '/start', description: 'Запустити бота' },
+          ]
+    );
     bot.on("callback_query", async (msg) => {
 
         const chatId = msg.message.chat.id;

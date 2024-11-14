@@ -8,7 +8,7 @@ const DEBUG = true;
 
 const logger = {
     now() {
-        return DateTime.now().toFormat('yy-MM-dd HH:mm:ss');
+        return DateTime.now().setZone('Europe/Kyiv').toFormat('yy-MM-dd HH:mm:ss');
     },
 
     async createNewLog(channelId, description) {

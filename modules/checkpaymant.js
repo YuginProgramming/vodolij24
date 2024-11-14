@@ -1,28 +1,56 @@
 import { phrases } from "../language_ua.js";
 import { bot } from "../app.js";
 import getTransaction from '../transactions.js';
-import { createNewBonus } from '../models/bonuses.js'
 import { logger } from "../logger/index.js";
+import { getCardData } from "./checkcardAPI.js";
 
-const checkPayment = async (chatID, deviceId, cardId, phone) => {
+const checkPayment = async (chatID, deviceId, cardId, phone, user_id) => {
 
     setTimeout(async () => {
+
+        const card = await getCardData(user_id, cardId);
+
+        console.log(card);
 
         const transaction = await getTransaction(deviceId, 7, cardId);
         console.log(transaction);
         const paymantAmount = transaction?.cashPaymant||transaction?.cardPaymant||transaction?.onlinePaymant||'null';
-        const boughtVolume = (paymantAmount/1.2).toFixed(2);
-        const bonus = transaction?.waterFullfilled - boughtVolume;
+        const bonus = transaction?.waterFullfilled * card?.Discount/100;
+        const balance = card?.WaterQty;
 
         if (transaction) {
 
-            const bonus = transaction.waterFullfilled * 0.2
+            if (transaction?.cashPaymant) {
 
-            await createNewBonus(chatID, bonus, 'нарахування бонусів')
+                if (transaction?.paymantChange == 0) {
 
-            bot.sendMessage(chatID, `Внесено: ${paymantAmount} грн, куплено: ${boughtVolume} літра за ціною 1,2 грн/літр + бонус ${bonus} літра= ${transaction.waterFullfilled} л разом 💧`);
+                    bot.sendMessage(chatID, `Внесено: ${paymantAmount} грн, куплено: ${transaction?.waterFullfilled} літрів за ціною ${(paymantAmount/transaction?.waterFullfilled).toFixed(2)} грн/літр.
+Плюс на Ваш баланс нараховано бонус ${bonus} літра, загалом баланс складає ${balance} літра. Дякуємо за покупку, пийте на здоров'я 💧`);
+
+                } else {
+
+                    bot.sendMessage(chatID, `Внесено: ${paymantAmount} грн, куплено: ${transaction?.waterFullfilled} літрів за ціною ${(paymantAmount/transaction?.waterFullfilled).toFixed(2)} грн/літр. Решта ${transaction?.paymantChange} зарахована на ваш баланс
+                    Плюс на Ваш баланс нараховано бонус ${bonus} літра, загалом баланс складає ${balance} літра. Дякуємо за покупку, пийте на здоров'я 💧`);
+                    
+                }
+                
+            } if (transaction?.onlinePaymant) {
+
+                if (transaction?.paymantChange == 0) {
+
+                    bot.sendMessage(chatID, `Внесено: ${paymantAmount} грн, куплено: ${transaction?.waterFullfilled} літрів за ціною ${(paymantAmount/transaction?.waterFullfilled).toFixed(2)} грн/літр.
+Плюс на Ваш баланс нараховано бонус ${bonus} літра, загалом баланс складає ${balance} літра. Дякуємо за покупку, пийте на здоров'я 💧`);
+
+                } else {
+
+                    bot.sendMessage(chatID, `Внесено: ${paymantAmount} грн, куплено: ${transaction?.waterFullfilled} літрів за ціною ${(paymantAmount/transaction?.waterFullfilled).toFixed(2)} грн/літр. Решта ${transaction?.paymantChange} зарахована на ваш баланс
+                    Плюс на Ваш баланс нараховано бонус ${bonus} літра, загалом баланс складає ${balance} літра. Дякуємо за покупку, пийте на здоров'я 💧`);
+                    
+                }
+
+            }
             
-            logger.info(`#️⃣ ${chatID} 📱 ${phone} Внесено: ${paymantAmount} грн, куплено: ${boughtVolume} літра за ціною 1,2 грн/літр + бонус ${bonus} літра= ${transaction.waterFullfilled} л разом 💧`)
+            logger.info(`#️⃣ ${chatID} 📱 ${phone} Внесено: ${paymantAmount} грн, куплено: ${transaction?.waterFullfilled} літра за ціною 1,2 грн/літр + бонус ${bonus} літра= ${transaction?.waterFullfilled} л разом 💧`)
 
         } else {
             bot.sendMessage(chatID, phrases.bonusNotificationCardError);
