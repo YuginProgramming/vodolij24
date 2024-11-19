@@ -3,6 +3,7 @@ import { bot } from "../app.js";
 import getTransaction from '../transactions.js';
 import { logger } from "../logger/index.js";
 import { getCardData } from "./checkcardAPI.js";
+import axios from "axios";
 
 const checkPayment = async (chatID, deviceId, cardId, phone, user_id) => {
 
@@ -12,12 +13,26 @@ const checkPayment = async (chatID, deviceId, cardId, phone, user_id) => {
 
         console.log(card);
 
-        const transaction = await getTransaction(deviceId, 7, cardId);
+        const transaction = await getTransaction(deviceId, 4, cardId);
         console.log(transaction);
         const paymantAmount = transaction?.cashPaymant||transaction?.cardPaymant||transaction?.onlinePaymant||'null';
         const bonus = transaction?.waterFullfilled * card?.Discount/100;
         const balance = card?.WaterQty/10;
-        const price = (paymantAmount/transaction?.waterFullfilled).toFixed(1);
+        const deviceData = await axios.post('https://soliton.net.ua/water/api/prices/index.php', 
+            {
+                device_id: deviceId
+            }
+        );
+
+        const devicePrices = deviceData.data?.prices
+
+        console.log(devicePrices)
+
+        console.log('Data :'  + devicePrices?.P_1_std);
+
+        const price = devicePrices?.P_1_std/100;
+
+        console.log('Price :' + price);
 
         if (transaction) {
 
@@ -56,7 +71,7 @@ const checkPayment = async (chatID, deviceId, cardId, phone, user_id) => {
         } else {
             bot.sendMessage(chatID, phrases.bonusNotificationCardError);
         }
-    }, 60 * 1000 * 7);
+    }, 60 * 1000 * 4);
     
 };
 
