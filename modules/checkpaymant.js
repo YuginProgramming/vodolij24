@@ -33,11 +33,11 @@ const checkPayment = async (chatID, deviceId, cardId, phone, user_id) => {
         if (transaction) {
 
 
-            bot.sendMessage(chatID, `Внесено: ${paymantAmount} грн, куплено: ${transaction?.waterFullfilled} літрів за ціною ${price} грн/літр.
-Плюс на Ваш баланс нараховано бонус ${bonus} літра, загалом баланс складає ${balance} літра. Дякуємо за покупку, пийте на здоров'я 💧`);
+            bot.sendMessage(chatID, `Внесено: ${paymantAmount} грн, налито: ${transaction?.waterFullfilled} л. за ціною ${price} грн/літр.
+Плюс на Ваш баланс нараховано бонус ${bonus} л., загалом баланс складає ${balance} л.. Дякуємо за покупку, пийте на здоров'я 💧`);
 
             
-            logger.info(`#️⃣ ${chatID} 📱 ${phone} Внесено: ${paymantAmount} грн, куплено: ${transaction?.waterFullfilled} літра за ціною ${price} грн/літр + бонус ${bonus} літра= ${transaction?.waterFullfilled} л разом 💧`)
+            logger.info(`#️⃣ ${chatID} 📱 ${phone} Внесено: ${paymantAmount} грн, налито: ${transaction?.waterFullfilled} л. за ціною ${price} грн/літр + бонус ${bonus} л.= ${transaction?.waterFullfilled} л разом 💧`)
 
         } else {
 

@@ -117,10 +117,10 @@ export const anketaListiner = async() => {
           Клієнт: ${apiData?.name}          
 Тип картки: ${card.CardGroup}
 💰 Поточний баланс:
-${card.WaterQty/10} літрів
+${card.WaterQty/10} л.
 ✅ Бонусний профіль: ${card.Discount} %
-До наступного бонусного профілю залишилося придбати: ${nextLevel(card.Discount, card.AllQty)}
-🔄 Всього через картку придбано: ${card.AllQty} літрів
+До наступного бонусного профілю залишилося набрати: ${nextLevel(card.Discount, card.AllQty)} л.
+🔄 Всього через картку налито: ${card.AllQty} л.
           `
           bot.sendMessage(msg.chat.id, balanceMessage, {
             reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
