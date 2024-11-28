@@ -141,7 +141,10 @@ const buyWater = () => {
     
           bot.sendMessage(chatId, phrases.useCard, {
             reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
-          });    
+          });  
+          
+          
+          checkPayment(chatId, deviceData.id, apiData?.cards, cardNumber, apiUser.user_id);
     
         } else {
     
@@ -314,8 +317,17 @@ const buyWater = () => {
       case 'volume':          
           if(!isNaN(msg.text)) {
             const deviceData = JSON.parse(tempData);
+            const deviceDataApi = await axios.post('https://soliton.net.ua/water/api/prices/index.php', 
+              {
+                  device_id: deviceId
+              }
+          );
+  
+          const devicePrices = deviceData.data?.prices
+  
+          const price = devicePrices?.P_1_std/100;
             const deviceActivated = await activateDevice(deviceData.id, cardCard, cardNumber);
-            const link = `https://easypay.ua/ua/partners/vodoleylviv-card?account=${cardNumber}&amount=${msg.text * 1.5}`;
+            const link = `https://easypay.ua/ua/partners/vodoleylviv?account=${deviceData.id}&amount=${msg.text * price}`;
             await bot.sendMessage(chatId, `Ви купуєте ${msg.text} л води в автоматі №${deviceData.id}.`, {
               reply_markup: { inline_keyboard: [[{
                   text: 'Оплатити',
@@ -338,7 +350,7 @@ const buyWater = () => {
           if(!isNaN(msg.text)) {
             const deviceData = JSON.parse(tempData);
             const deviceActivated = await activateDevice(deviceData.id, cardCard, cardNumber);
-            const link = `https://easypay.ua/ua/partners/vodoleylviv-card?account=${cardNumber}&amount=${msg.text}`;
+            const link = `https://easypay.ua/ua/partners/vodoleylviv?account=${deviceData.id}&amount=${msg.text}`;
             console.log(link);
             await bot.sendMessage(chatId, `Ви купуєте воду на ${msg.text} грн в автоматі №${deviceData.id}.`, {
               reply_markup: { inline_keyboard: [[{
