@@ -143,11 +143,74 @@ const getUsersTotalbyTheDay = async (cardId) => {
     return res;
 };
 
+const getUsersTotalByWeek = async (cardId) => {
+    let res = 0;
+
+    const today = new Date();
+
+    // Визначаємо початок і кінець попереднього тижня
+    const startOfLastWeek = new Date(today);
+    startOfLastWeek.setDate(today.getDate() - today.getDay() - 7); // Початок попереднього тижня (неділя)
+    startOfLastWeek.setHours(0, 0, 0, 0);
+
+    const endOfLastWeek = new Date(today);
+    endOfLastWeek.setDate(today.getDate() - today.getDay() - 1); // Кінець попереднього тижня (субота)
+    endOfLastWeek.setHours(23, 59, 59, 999);
+
+    try {
+        const totalWaterFulfilled = await Transaction.sum('waterFullfilled', {
+            where: {
+                cardId,
+                date: {
+                    [Op.between]: [startOfLastWeek, endOfLastWeek]
+                }
+            }
+        });
+
+        return totalWaterFulfilled || 0;
+
+    } catch (err) {
+        logger.error(`Impossible to request sum: ${err}`);
+    }
+    return res;
+};
+
+const getUsersTotalByMonth = async (cardId) => {
+    let res = 0;
+
+    const today = new Date();
+
+    // Визначаємо початок і кінець попереднього місяця
+    const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1); // 1-е число попереднього місяця
+    const endOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0); // Останній день попереднього місяця
+    endOfLastMonth.setHours(23, 59, 59, 999);
+
+    try {
+        const totalWaterFulfilled = await Transaction.sum('waterFullfilled', {
+            where: {
+                cardId,
+                date: {
+                    [Op.between]: [startOfLastMonth, endOfLastMonth]
+                }
+            }
+        });
+
+        return totalWaterFulfilled || 0;
+
+    } catch (err) {
+        logger.error(`Impossible to request sum: ${err}`);
+    }
+    return res;
+};
+
+
 
 export {
     Transaction,
     createNewTransaction,
     getWaterTotalbyTheDay,
-    getUsersTotalbyTheDay
+    getUsersTotalbyTheDay,
+    getUsersTotalByWeek,
+    getUsersTotalByMonth
 };   
 

@@ -5,19 +5,10 @@ import { logger } from './logger/index.js';
 
 function getCurrentDateFormatted() {
     const today = new Date();
-    
-    // Отримуємо день з додаванням нуля, якщо він одноцифровий
     const day = String(today.getDate()).padStart(2, '0');
-    
-    // Отримуємо місяць з додаванням нуля, якщо він одноцифровий
     const month = String(today.getMonth() + 1).padStart(2, '0');
-    
-    // Отримуємо рік
     const year = today.getFullYear();
-    
-    // Формуємо дату у форматі 'DD.MM.YYYY'
     const formattedDate = `${day}.${month}.${year}`;
-    
     return formattedDate;
 }
 
