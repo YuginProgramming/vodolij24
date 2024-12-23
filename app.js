@@ -51,6 +51,12 @@ addToBalance();
 
 cron.schedule('0 0 * * *', () => {
     getStatistic();
+}, {
+    scheduled: true,
+    timezone: 'Europe/Kiev' 
+});
+
+cron.schedule('30 0 * * *', () => { //30 хв після опівночі
     botUsersStatistic();
 }, {
     scheduled: true,
