@@ -49,7 +49,6 @@ const createNewApiUser = async (userData) => {
     try {
         res = await Apiuser.create({ ...userData });
         res = res.dataValues;
-        logger.info(`Created Api user with id: ${res.id}`);
     } catch (err) {
         logger.error(`Impossible to create user: ${err}`);
     }

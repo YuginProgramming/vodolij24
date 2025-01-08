@@ -36,7 +36,9 @@ const checkPayment = async (chatID, deviceId, cardId, phone, user_id) => {
 Залишок на балансі складає ${balance} л. Дякуємо, пийте на здоров'я`);                    
                                 
                 logger.info(`#️⃣ ${chatID} 📱 ${phone} З балансу карти налито: ${transaction?.waterFullfilled} л.  за ціною ${price} грн/літр`)
-                    
+                
+            } else if (transaction.cardPaymant == 0 || transaction.cashPaymant == 0 || transaction?.onlinePaymant == 0) {
+                logger.info(`#️⃣ ${chatID} 📱 ${phone} Активував автомат але не завершив оплату`)
             } else {
 
                 bot.sendMessage(chatID, `Внесено: ${paymantAmount} грн, налито: ${transaction?.waterFullfilled} л. за ціною ${price} грн/літр.

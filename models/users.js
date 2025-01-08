@@ -65,7 +65,6 @@ const createNewUser = async (userData) => {
     try {
         res = await User.create({ ...userData });
         res = res.dataValues;
-        logger.info(`Created user with id: ${res.id}`);
     } catch (err) {
         logger.error(`Impossible to create user: ${err}`);
     }
@@ -77,7 +76,6 @@ const createNewUserByChatId = async (chat_id) => {
     try {
         res = await User.create({ chat_id });
         res = res.dataValues;
-        logger.info(`Created user with id: ${res.id}`);
     } catch (err) {
         logger.error(`Impossible to create user: ${err}. Chat id ${chat_id}`);
     }
@@ -99,13 +97,11 @@ const updateUserByChatId = async (chat_id, updateParams) => {
 
 const userLogin = async (chat_id) => {
     const res = await User.update({ isAuthenticated: true }, { where: { chat_id } });
-    if (res) logger.info(`Channel ${chat_id} logging in`);
     return res[0] ? chat_id : undefined;
 };
 
 const userLogout = async (chat_id) => {
     const res = await User.update({ isAuthenticated: false }, { where: { chat_id } });
-    if (res) logger.info(`Channel ${chat_id} logging out`);
     return res[0] ? chat_id : undefined;
 };
 

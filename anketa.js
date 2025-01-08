@@ -209,7 +209,6 @@ ${card.WaterQty/10} л.
 
         case 'verifyAddress':
           if (msg.location) {
-            logger.info(`USER_ID: ${chatId} share location`);
             const locations = await axios.get('http://soliton.net.ua/water/api/devices');
             const targetCoordinate = {lat: msg.location.latitude, lon: msg.location.longitude};
             const nearest = findNearestCoordinate(locations.data.devices, targetCoordinate);
@@ -241,7 +240,6 @@ ${card.WaterQty/10} л.
       }
 
       if (msg.location) {
-        logger.info(`USER_ID: ${chatId} share location`);
         const locations = await axios.get('http://soliton.net.ua/water/api/devices');
         const targetCoordinate = {lat: msg.location.latitude, lon: msg.location.longitude};
         const nearest = findNearestCoordinate(locations.data.devices, targetCoordinate);

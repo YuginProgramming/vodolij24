@@ -3,7 +3,6 @@ import { anketaListiner } from './anketa.js';
 import { dataBot } from './values.js';
 import { decodeQR } from './qrdecode.js';
 import { sequelize } from './models/sequelize.js';
-import { logger } from './logger/index.js';
 import getStatistic from './statistic.js';
 import cron from 'node-cron';
 import { botUsersStatistic, botWeeklyUsersStatistic, botMonthlyUsersStatistic } from './modules/statistic/bot-users-statistic.js';
@@ -34,7 +33,6 @@ const main = async () => {
         console.error(`🚩 Failed to check DB tables, see config.models.list`);
         throw (`Some DB tables are missing`);
     }
-    logger.info('DB connected.');
 }; 
 
 main();

@@ -244,8 +244,6 @@ const buyWater = () => {
 
         if (msg.location) {
 
-          logger.info(`USER_ID: ${chatId} share location`);
-
           const locations = await axios.get('http://soliton.net.ua/water/api/devices');
           const targetCoordinate = {lat: msg.location.latitude, lon: msg.location.longitude};
           const nearest = findNearestCoordinate(locations.data.devices, targetCoordinate);
@@ -319,11 +317,11 @@ const buyWater = () => {
             const deviceData = JSON.parse(tempData);
             const deviceDataApi = await axios.post('https://soliton.net.ua/water/api/prices/index.php', 
               {
-                  device_id: deviceId
+                  device_id: deviceData.id
               }
           );
   
-          const devicePrices = deviceData.data?.prices
+          const devicePrices = deviceDataApi.data?.prices
   
           const price = devicePrices?.P_1_std/100;
             const deviceActivated = await activateDevice(deviceData.id, cardCard, cardNumber);

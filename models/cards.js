@@ -65,7 +65,6 @@ const createCard = async (userData) => {
     try {
         res = await Card.create({ ...userData });
         res = res.dataValues;
-        logger.info(`Created card id: ${res.cardId}`);
     } catch (err) {
         logger.error(`Impossible to create card: ${err}`);
     }

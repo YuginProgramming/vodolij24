@@ -134,7 +134,7 @@ const introduction = async () => {
         
                     if (newUser.data.status) {
         
-                        logger.info(`USER_ID: ${chatId} registered`);
+                        logger.info(`USER_ID: ${chatId} registered. ${userCard.data.user.name}, ${userCard.data.user.date_birth}, ${userCard.data.user.phone}`);
         
                         await createCardApi(chatId, userInfo.phone);
         

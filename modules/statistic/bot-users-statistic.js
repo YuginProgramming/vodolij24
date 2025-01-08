@@ -32,7 +32,7 @@ const botUsersStatistic = async () => {
     }
 
     const string = `Користувачів боту ${usersQuantity},
-                Кількість налитої води, користувачами боту, за добу: ${usersWaterTotal} літрів.`; 
+                Кількість налитої води, користувачами боту, за добу: ${usersWaterTotal.toFixed(0)} літрів.`; 
 
     logger.info(string);
 

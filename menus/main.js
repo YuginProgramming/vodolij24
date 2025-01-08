@@ -1,6 +1,5 @@
 import { bot } from "../app.js";
 import { keyboards, phrases } from "../language_ua.js";
-import { logger } from "../logger/index.js";
 import { createNewUserByChatId, findUserByChatId, updateUserByChatId } from "../models/users.js";
 
 
@@ -55,9 +54,6 @@ const mainMenu = async () => {
                     });
 
                 } else {
-
-                    logger.info(`USER_ID: ${chatId} join BOT`);
-
                     await createNewUserByChatId(chatId);
                     await updateUserByChatId(chatId, { dialoguestatus: 'phoneNumber' });
 
