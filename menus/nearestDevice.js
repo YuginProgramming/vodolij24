@@ -59,7 +59,6 @@ const mainMenu = async () => {
                    reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
                  });
                else {
-                 logger.info(`USER_ID: ${chatId} join BOT`);
                  await createNewUserByChatId(chatId);
                  await updateUserByChatId(chatId, { dialoguestatus: 'phoneNumber' });
                  bot.sendMessage(msg.chat.id, phrases.greetings, {

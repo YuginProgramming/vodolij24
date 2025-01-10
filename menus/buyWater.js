@@ -314,6 +314,7 @@ const buyWater = () => {
 
       case 'volume':          
           if(!isNaN(msg.text)) {
+            
             const deviceData = JSON.parse(tempData);
             const deviceDataApi = await axios.post('https://soliton.net.ua/water/api/prices/index.php', 
               {
@@ -324,8 +325,11 @@ const buyWater = () => {
           const devicePrices = deviceDataApi.data?.prices
   
           const price = devicePrices?.P_1_std/100;
+          const link = `https://easypay.ua/ua/partners/vodoleylviv-card?account=${cardNumber}&amount=${msg.text * price}`;
+          /*
             const deviceActivated = await activateDevice(deviceData.id, cardCard, cardNumber);
             const link = `https://easypay.ua/ua/partners/vodoleylviv?account=${deviceData.id}&amount=${msg.text * price}`;
+            */
             await bot.sendMessage(chatId, `Ви купуєте ${msg.text} л води в автоматі №${deviceData.id}.`, {
               reply_markup: { inline_keyboard: [[{
                   text: 'Оплатити',
@@ -333,15 +337,41 @@ const buyWater = () => {
                 }]] 
               } 
             });
-            await bot.sendMessage(chatId, phrases.pressStart, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
-            const apiUser = await findApiUserByChatId(chatId);
 
+            const result = await checkBalanceChangeForCardPaymant(chatId, userDatafromApi, apiData?.cards);
+
+            if (result) {
+              await bot.sendMessage(chatId, phrases.pressStart, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
+            }
+
+            /*
+            const apiUser = await findApiUserByChatId(chatId);
+            
             checkPayment(chatId, deviceData.id, cardCard, cardNumber, apiUser.user_id);
             //checkBalanceChange(chatId, apiUser.user_id, cardCard);
+            */
                                  
           } else {
             bot.sendMessage(chatId, phrases.wrongNumber);
+          
+            
+    
+            await bot.sendMessage(chatId, `Поповнення картки номер "${cardNumber}".`, {
+              reply_markup: { inline_keyboard: 
+                [[{
+  
+                  text: 'Оплатити',
+                  url: link,
+  
+                }]] 
+              } 
+            });
+            await bot.sendMessage(chatId, phrases.refilInfo, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
+              
+            checkBalanceChange(chatId, userDatafromApi, apiData?.cards);
           }
+            
+           
         break;
         
         case 'amount':

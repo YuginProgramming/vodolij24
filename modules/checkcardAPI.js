@@ -57,6 +57,33 @@ const checkBalanceChange = async (chatId, user_id, card_id) => {
     
 };
 
+const checkBalanceChangeForCardPayment = async (chatId, user_id, card_id) => {
+    const checkInterval = 10000; // Інтервал перевірки - 10 секунд
+    const maxAttempts = 30; // Максимальна кількість спроб (5 хвилин)
+
+    const currentBalance = await getCardData(user_id, card_id);
+    const beforeWater = currentBalance.WaterQty;
+
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        await new Promise(resolve => setTimeout(resolve, checkInterval));
+
+        const balance = await getCardData(user_id, card_id);
+        const afterWater = balance.WaterQty;
+
+        if (beforeWater !== afterWater) {
+            const balanceChange = afterWater - beforeWater;
+            sendResult(chatId, balanceChange, balance.Discount);
+            return true; // Успішно завершено
+        }
+    }
+
+    // Якщо цикл завершився без успіху
+    bot.sendMessage(chatId, phrases.bonusNotificationCardError);
+    logger.warn(`id користувача ${chatId} не завершив оплату ${user_id}, ${card_id}`);
+    return false; // Заключний блок
+};
+
+
 const sendResult = async (chatId, balanceChange, discount) => {    
 
     if (balanceChange > 0) {
@@ -78,7 +105,8 @@ const sendResult = async (chatId, balanceChange, discount) => {
 
 export {
     getCardData,
-    checkBalanceChange
+    checkBalanceChange,
+    checkBalanceChangeForCardPayment
 }
         
     

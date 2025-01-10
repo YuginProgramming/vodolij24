@@ -78,7 +78,7 @@ const getStatistic = async () => {
             const today = getCurrentDateFormatted();
             const string = `${today}
                 Мережа Водолій налічує  автоматів  ${devicesQuantity},
-                Кількість налитої води за добу: ${sum} літрів.`; 
+                Кількість налитої води за добу: ${sum.toFixed(0)} літрів.`; 
             logger.info(string);
         }
     }    
