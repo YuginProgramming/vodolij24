@@ -7,7 +7,7 @@ import { findUserByChatId, updateUserByChatId } from "../models/users.js";
 import activateDevice from "../modules/activate-device.js";
 import checkPayment from "../modules/checkpaymant.js";
 import { findNearestCoordinate } from "../modules/locations.js";
-import { checkBalanceChange } from "../modules/checkcardAPI.js";
+import { checkBalanceChange, checkBalanceChangeForCardPayment } from "../modules/checkcardAPI.js";
 import { logger } from "../logger/index.js";
 
 const buyWater = () => {
@@ -338,7 +338,7 @@ const buyWater = () => {
               } 
             });
 
-            const result = await checkBalanceChangeForCardPaymant(chatId, userDatafromApi, apiData?.cards);
+            const result = await checkBalanceChangeForCardPayment(chatId, userDatafromApi, apiData?.cards);
 
             if (result) {
               await bot.sendMessage(chatId, phrases.pressStart, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
