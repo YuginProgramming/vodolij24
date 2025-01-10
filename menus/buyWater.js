@@ -143,8 +143,8 @@ const buyWater = () => {
             reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
           });  
           
-          
-          checkPayment(chatId, deviceData.id, apiData?.cards, cardNumber, apiUser.user_id);
+
+          checkPayment(chatId, deviceData.id, apiData?.cards, cardNumber, apiData.user_id);
     
         } else {
     
@@ -183,7 +183,7 @@ const buyWater = () => {
 
             const apiUser = await findApiUserByChatId(chatId);
     
-            checkPayment(chatId, deviceData.id, apiData?.cards, cardNumber, apiUser.user_id);
+            checkPayment(chatId, deviceData.id, apiData?.cards, cardNumber, apiData.user_id);
   
           } else {
 
@@ -393,7 +393,7 @@ const buyWater = () => {
             
             const apiUser = await findApiUserByChatId(chatId);
 
-            checkPayment(chatId, deviceData.id, cardCard, cardNumber, apiUser.user_id);
+            checkPayment(chatId, deviceData.id, cardCard, cardNumber, apiData.user_id);
             //checkBalanceChange(chatId, apiUser.user_id, cardCard);
 
           } else {
