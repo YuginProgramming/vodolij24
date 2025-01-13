@@ -97,11 +97,11 @@ const introduction = async () => {
             break;
     
             case 'birthdaydate':
-                if (msg.text.length === 10) {
+                if (msg.text && msg.text.length === 10) {
 
                     await updateUserByChatId(chatId, { birthdaydate: msg.text, dialoguestatus: '' });
         
-                    const name = userInfo.firstname.split(' ');
+                    const name = userInfo.firstname.includes(' ') ? userInfo.firstname.split(' ') : [userInfo.firstname];
 
                     const newUser = await axios.post('http://soliton.net.ua/water/api/user/add/index.php', {
                         phone_number: userInfo.phone,

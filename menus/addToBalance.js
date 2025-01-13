@@ -6,6 +6,7 @@ import { findCardById } from "../models/cards.js";
 import { findUserByChatId, updateUserByChatId } from "../models/users.js";
 import activateDevice from "../modules/activate-device.js";
 import { checkBalanceChange } from "../modules/checkcardAPI.js";
+import { findNearestCoordinate } from "../modules/locations.js";
 
 
 const addToBalance = async () => {

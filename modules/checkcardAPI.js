@@ -3,6 +3,7 @@ import { bot } from "../app.js";
 import { phrases } from "../language_ua.js";
 import { createNewBonus } from "../models/bonuses.js";
 import { logger } from "../logger/index.js";
+import { findUserByChatId } from "../models/users.js";
 
 const waterPrice = 1.5;
 
@@ -94,9 +95,11 @@ const sendResult = async (chatId, balanceChange, discount) => {
 
         const totalWithoutBonus = (liters - bonusAmount);
         
-        const litersPrice = (totalWithoutBonus * waterPrice).toFixed(0);  
+        const litersPrice = (totalWithoutBonus * waterPrice).toFixed(0); 
+        
+        const userData = await findUserByChatId(chatId);
 
-        logger.info(`Внесено: ${litersPrice} грн, куплено: ${liters} літра`)
+        logger.info(`Внесено: ${litersPrice} грн, куплено: ${liters} літра. Користувач ${userData.phone}`)
 
         bot.sendMessage(chatId, phrases.bonusNotificationCard(totalWithoutBonus, litersPrice, bonusAmount, waterPrice, liters));
     
