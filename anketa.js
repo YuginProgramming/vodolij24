@@ -6,11 +6,9 @@ import {
 } from './models/users.js';
 import axios from 'axios';
 import { findNearestCoordinate } from './modules/locations.js';
-import { logger } from "./logger/index.js";
 import { findApiUserByChatId } from './models/api-users.js';
 import { findCardById, updateCardById } from "./models/cards.js";
-import { getCardData, checkBalanceChange } from './modules/checkcardAPI.js';
-import activateDevice from "./modules/activate-device.js";
+import { getCardData } from './modules/checkcardAPI.js';
 import createCardApi from "./modules/createCard.js";
 
 export const anketaListiner = async() => {
@@ -155,57 +153,6 @@ ${card.WaterQty/10} л.
             bot.sendMessage(chatId, phrases.wrongNumber);
           }
         break;
-/*
-        case 'volume':          
-          if(!isNaN(msg.text)) {
-            const deviceData = JSON.parse(tempData);
-            const deviceActivated = await activateDevice(deviceData.id, cardCard, cardNumber);
-            const link = `https://easypay.ua/ua/partners/vodoleylviv-card?account=${cardNumber}&amount=${msg.text * 1.5}`;
-            await bot.sendMessage(chatId, `Ви купуєте ${msg.text} л води в автоматі №${deviceData.id}.`, {
-              reply_markup: { inline_keyboard: [[{
-                  text: 'Оплатити',
-                  url: link,
-                }]] 
-              } 
-            });
-            await bot.sendMessage(chatId, phrases.pressStart, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
-            const apiUser = await findApiUserByChatId(chatId);
-            checkBalanceChange(chatId, apiUser.user_id, cardCard);
-                     
-            //checkPayment(chatId, deviceData.id, apiData?.cards, cardNumber);
-            
-          } else {
-            bot.sendMessage(chatId, phrases.wrongNumber);
-          }
-        break;
-        case 'amount':
-          if(!isNaN(msg.text)) {
-            const deviceData = JSON.parse(tempData);
-            const deviceActivated = await activateDevice(deviceData.id, cardCard, cardNumber);
-            const link = `https://easypay.ua/ua/partners/vodoleylviv-card?account=${cardNumber}&amount=${msg.text}`;
-            console.log(link);
-            await bot.sendMessage(chatId, `Ви купуєте воду на ${msg.text} грн в автоматі №${deviceData.id}.`, {
-              reply_markup: { inline_keyboard: [[{
-                  text: 'Оплатити',
-                  url: link,
-                }]] 
-              } 
-            });
-            await bot.sendMessage(chatId, phrases.pressStart, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
-
-            if (userInfo) console.log(userInfo)
-            
-            const apiUser = await findApiUserByChatId(chatId);
-            checkBalanceChange(chatId, apiUser.user_id, cardCard);
-            //checkPayment(chatId, deviceData.id, apiData?.cards, cardNumber);
-
-          } else {
-
-            bot.sendMessage(chatId, phrases.wrongNumber);
-
-          }
-        break;
-*/
 
         case 'verifyAddress':
           if (msg.location) {
