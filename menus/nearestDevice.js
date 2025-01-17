@@ -54,11 +54,12 @@ const mainMenu = async () => {
             
              case '/start':
                if(userInfo) await updateUserByChatId(chatId, { dialoguestatus: '' });
-               if (isAuthenticated) 
+               if (isAuthenticated) {
                  bot.sendMessage(msg.chat.id, phrases.mainMenu, {
                    reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
-                 });
-               else {
+                 }); 
+                } else {
+                  
                  await createNewUserByChatId(chatId);
                  await updateUserByChatId(chatId, { dialoguestatus: 'phoneNumber' });
                  bot.sendMessage(msg.chat.id, phrases.greetings, {
