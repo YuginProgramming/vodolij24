@@ -5,7 +5,7 @@ import { findApiUserByChatId } from "../models/api-users.js";
 import { findCardById } from "../models/cards.js";
 import { findUserByChatId, updateUserByChatId } from "../models/users.js";
 import activateDevice from "../modules/activate-device.js";
-import checkPayment from "../modules/checkpaymant.js";
+import { checkPayment, checkPaymentCard } from "../modules/checkpaymant.js";
 import { findNearestCoordinate } from "../modules/locations.js";
 import { checkBalanceChangeForCardPayment } from "../modules/checkcardAPI.js";
 import { logger } from "../logger/index.js";
@@ -144,7 +144,7 @@ const buyWater = () => {
           });  
           
 
-          checkPayment(chatId, deviceData.id, apiData?.cards, cardNumber, apiData.user_id);
+          checkPaymentCard(chatId, deviceData.id, apiData?.cards, cardNumber, apiData.user_id);
     
         } else {
     
