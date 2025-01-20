@@ -65,7 +65,7 @@ const botWeeklyUsersStatistic = async () => {
     }
 
     const string = `Користувачів боту ${usersQuantity},
-                Кількість налитої води, користувачами боту, за тиждень: ${usersWaterTotal} літрів.`; 
+                Кількість налитої води, користувачами боту, за тиждень: ${usersWaterTotal.toFixed(0)} літрів.`; 
 
     logger.info(string);
 
@@ -98,7 +98,7 @@ const botMonthlyUsersStatistic = async () => {
     }
 
     const string = `Користувачів боту ${usersQuantity},
-                Кількість налитої води, користувачами боту, за місяць: ${usersWaterTotal} літрів.`; 
+                Кількість налитої води, користувачами боту, за місяць: ${usersWaterTotal.toFixed(0)} літрів.`; 
 
     logger.info(string);
 
