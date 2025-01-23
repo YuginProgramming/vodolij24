@@ -338,14 +338,7 @@ const buyWater = () => {
             const result = await checkBalanceChangeForCardPayment(chatId, userDatafromApi, apiData?.cards);
 
             if (result) {
-              const deviceActivated = await activateDevice(deviceData.id, cardCard, cardNumber);
-
               await bot.sendMessage(chatId, phrases.pressStart, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
-
-              const user = await findUserByChatId(chatId);
-
-              logger.info(`#️⃣ ${chatId} 📱 ${user?.phone} Онлайн кредиткою куплено ${result} л.`);
-
             }
 
           } else {
@@ -358,9 +351,8 @@ const buyWater = () => {
         
         case 'amount':
           if(!isNaN(msg.text)) {
-
             const deviceData = JSON.parse(tempData);
-            
+            const deviceActivated = await activateDevice(deviceData.id, cardCard, cardNumber);
             const link = `https://easypay.ua/ua/partners/vodoleylviv?account=${deviceData.id}&amount=${msg.text}`;
             console.log(link);
             await bot.sendMessage(chatId, `Ви купуєте воду на ${msg.text} грн в автоматі №${deviceData.id}.`, {
@@ -370,20 +362,14 @@ const buyWater = () => {
                 }]] 
               } 
             });
+            await bot.sendMessage(chatId, phrases.pressStart, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
 
-            const result = await checkBalanceChangeForCardPayment(chatId, userDatafromApi, apiData?.cards);
+            if (userInfo) console.log(userInfo)
+            
+            const apiUser = await findApiUserByChatId(chatId);
 
-            if (result) {
-
-              const deviceActivated = await activateDevice(deviceData.id, cardCard, cardNumber);
-
-              await bot.sendMessage(chatId, phrases.pressStart, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
-
-              const user = await findUserByChatId(chatId);
-
-              logger.info(`#️⃣ ${chatId} 📱 ${user?.phone} Онлайн кредиткою куплено ${result} л.`);
-
-            }
+            checkPayment(chatId, deviceData.id, cardCard, cardNumber, apiData.user_id);
+            //checkBalanceChange(chatId, apiUser.user_id, cardCard);
 
           } else {
 
