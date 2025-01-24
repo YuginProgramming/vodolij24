@@ -51,7 +51,6 @@ export const anketaListiner = async() => {
           }
           
       }
-      //Незрозуміло чи це працюючий код закоментю 
 
       if (msg.text) {
         
@@ -63,80 +62,6 @@ export const anketaListiner = async() => {
   
         }
       }
-
-      
-      
-      switch (msg.text) {
-        case 'Ввести номер автомата': 
-          bot.sendMessage(msg.chat.id, phrases.selectGoods, {
-            reply_markup: keyboards.twoWaters
-          });
-        break;
-        case 'Ввести номер автомата': 
-          bot.sendMessage(msg.chat.id, phrases.enterVendorNum);
-          break;
-        case '💳 Рахунок':
-          bot.sendMessage(msg.chat.id, phrases.accountStatus, {
-            reply_markup: { keyboard: keyboards.accountStatus, resize_keyboard: true, one_time_keyboard: true }
-          });
-          break;
-        case '👤 Мій профіль':
-
-        const cardId = apiData?.cards;
-
-        console.log(`user Data API ${userDatafromApi}, card ID ${cardId}`)
-
-        const card = await getCardData(userDatafromApi, cardId)
-
-        console.log(card)
-
-          await updateCardById( cardId,
-            {
-              WaterQty: card.WaterQty,
-              AllQty: card.AllQty,
-              MoneyPerMonth: card.MoneyPerMonth,
-              LitersPerDay: card.LitersPerDay,
-              Discount:  card.Discount,
-            }
-          )
-          
-          const nextLevel = (discount, turnover) => {
-            if (discount == 20) {
-              return 1000 - turnover;
-            } else if (discount == 25) {
-              return 2000 - turnover;
-            } else {
-              return 'максимальна знижка';
-            }
-          }
-          
-         
-          const balanceMessage = `
-          Клієнт: ${apiData?.name}          
-Тип картки: ${card.CardGroup}
-💰 Поточний баланс:
-${card.WaterQty/10} л.
-✅ Бонусний профіль: ${card.Discount} %
-До наступного бонусного профілю залишилося набрати: ${nextLevel(card.Discount, card.AllQty)} л.
-🔄 Всього через картку налито: ${card.AllQty} л.
-          `
-          bot.sendMessage(msg.chat.id, balanceMessage, {
-            reply_markup: { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: true }
-          });
-          break;
-        case '⭐️ Бонуси': 
-          let userBonusAcc = phrases.userBonusAcc;
-          bot.sendMessage(msg.chat.id, userBonusAcc, {
-            reply_markup: { keyboard: keyboards.accountStatus, resize_keyboard: true, one_time_keyboard: true }
-          });
-        break;
-        case '📊 Історія операцій':
-          bot.sendMessage(msg.chat.id, phrases.userHistory, {
-            reply_markup: { keyboard: keyboards.historyMenu, resize_keyboard: true, one_time_keyboard: true }
-          });
-        break;
-      };
-
 
       switch (dialogueStatus) {
         case 'amountFromBalance':
