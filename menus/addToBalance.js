@@ -135,7 +135,7 @@ const addToBalance = async () => {
 
             if(!isNaN(msg.text)) {
     
-              const amount = Math.round(msg.text * 1.5);
+              const amount = Math.round(msg.text * 2);
     
               const link = `https://easypay.ua/ua/partners/vodoleylviv-card?account=${cardNumber}&amount=${amount}`;
     

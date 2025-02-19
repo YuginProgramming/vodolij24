@@ -2,10 +2,9 @@ import { bot } from "../app.js";
 import { keyboards, phrases } from "../language_ua.js";
 import { findApiUserByChatId } from "../models/api-users.js";
 import { findCardById, updateCardById } from "../models/cards.js";
-import { getUsersTotalByWeek, getUsersTotalbyTheDay } from "../models/transactions";
+import { getUsersTotalByWeek, getUsersTotalbyTheDay } from "../models/transactions.js";
 import { findUserByChatId } from "../models/users.js";
-import { getCardData } from "../modules/checkcardAPI";
-import createCardApi from "../modules/createCard.js";
+import { getCardData } from "../modules/checkcardAPI.js";
 
 
 const profile = async () => {
@@ -92,8 +91,7 @@ const profile = async () => {
 
 💳 *Тип картки:* _${card.CardGroup}_
 
-💰 *Поточний баланс:*
-${card.WaterQty / 10} л.
+💰 *Поточний баланс:* ${card.WaterQty / 10} л.
 
 🎁 *Бонусний профіль:* _${card.Discount}%_
 📈 *До наступного бонусного профілю залишилося набрати:* ${nextLevel(card.Discount, card.AllQty)} л.
@@ -117,7 +115,7 @@ ${card.WaterQty / 10} л.
         const userMonthlyTotal = await getUsersTotalByWeek(cardId);
 
         const usageMessage = `
-📊 *Статистика використання пального:*
+📊 *Статистика набраної води:*
 
 🗓️ *Сьогодні:* ${userDaylyTotal} л.
 📅 *За останній тиждень:* ${userWeeklyTotal} л.
