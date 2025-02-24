@@ -91,9 +91,10 @@ const sendResult = async (chatId, balanceChange, discount, price) => {
 
         const liters = (balanceChange / 10).toFixed(2);   
 
+        const totalWithoutBonus = liters/ (1 + (discount/100)).toFixed(2);
+
         const bonusAmount = (liters - totalWithoutBonus).toFixed(2);
 
-        const totalWithoutBonus = liters/ (1 + (discount/100)).toFixed(2);
         
         const litersPrice = (totalWithoutBonus / price).toFixed(0); 
         

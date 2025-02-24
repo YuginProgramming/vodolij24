@@ -391,7 +391,7 @@ const buyWater = () => {
 
               const user = await findUserByChatId(chatId);
 
-              logger.info(`#️⃣ ${chatId} 📱 ${user?.phone} Онлайн кредиткою куплено ${result} л.`);
+              logger.info(`#️⃣ ${chatId} 📱 ${user?.phone} Онлайн кредиткою куплено ${result/10} л.`);
 
             }
 
