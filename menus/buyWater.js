@@ -335,7 +335,7 @@ const buyWater = () => {
               } 
             });
 
-            const result = await checkBalanceChangeForCardPayment(chatId, userDatafromApi, apiData?.cards);
+            const result = await checkBalanceChangeForCardPayment(chatId, userDatafromApi, apiData?.cards, price);
 
             if (result) {
               const deviceActivated = await activateDevice(deviceData.id, cardCard, cardNumber);
@@ -360,6 +360,16 @@ const buyWater = () => {
           if(!isNaN(msg.text)) {
 
             const deviceData = JSON.parse(tempData);
+
+            const deviceDataApi = await axios.post('https://soliton.net.ua/water/api/prices/index.php', 
+              {
+                  device_id: deviceData.id
+              }
+            );
+  
+            const devicePrices = deviceDataApi.data?.prices
+  
+            const price = devicePrices?.P_1_std/100;
             
             const link = `https://easypay.ua/ua/partners/vodoleylviv?account=${deviceData.id}&amount=${msg.text}`;
             console.log(link);
@@ -371,7 +381,7 @@ const buyWater = () => {
               } 
             });
 
-            const result = await checkBalanceChangeForCardPayment(chatId, userDatafromApi, apiData?.cards);
+            const result = await checkBalanceChangeForCardPayment(chatId, userDatafromApi, apiData?.cards, price);
 
             if (result) {
 

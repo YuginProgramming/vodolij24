@@ -73,7 +73,7 @@ const checkBalanceChangeForCardPayment = async (chatId, user_id, card_id) => {
 
         if (beforeWater !== afterWater) {
             const balanceChange = afterWater - beforeWater;
-            sendResult(chatId, balanceChange, balance.Discount);
+            sendResult(chatId, balanceChange, balance.Discount, price);
             return balanceChange; // Успішно завершено
         }
     }
@@ -85,23 +85,23 @@ const checkBalanceChangeForCardPayment = async (chatId, user_id, card_id) => {
 };
 
 
-const sendResult = async (chatId, balanceChange, discount) => {    
+const sendResult = async (chatId, balanceChange, discount, price) => {    
 
     if (balanceChange > 0) {
 
         const liters = (balanceChange / 10).toFixed(2);   
 
-        const bonusAmount = (liters * (discount/100)).toFixed(2);
+        const bonusAmount = (liters - totalWithoutBonus).toFixed(2);
 
-        const totalWithoutBonus = (liters - bonusAmount);
+        const totalWithoutBonus = liters/ (1 + (discount/100)).toFixed(2);
         
-        const litersPrice = (totalWithoutBonus * waterPrice).toFixed(0); 
+        const litersPrice = (totalWithoutBonus / price).toFixed(0); 
         
         const userData = await findUserByChatId(chatId);
 
         logger.info(`Внесено: ${litersPrice} грн, куплено: ${liters} літра. Користувач ${userData.phone}`)
 
-        bot.sendMessage(chatId, phrases.bonusNotificationCard(totalWithoutBonus, litersPrice, bonusAmount, waterPrice, liters));
+        bot.sendMessage(chatId, phrases.bonusNotificationCard(totalWithoutBonus, litersPrice, bonusAmount, price, liters));
     
     };
 }
