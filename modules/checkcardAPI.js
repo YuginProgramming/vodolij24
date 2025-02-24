@@ -58,7 +58,7 @@ const checkBalanceChange = async (chatId, user_id, card_id) => {
     
 };
 
-const checkBalanceChangeForCardPayment = async (chatId, user_id, card_id) => {
+const checkBalanceChangeForCardPayment = async (chatId, user_id, card_id, price) => {
     const checkInterval = 10000; // Інтервал перевірки - 10 секунд
     const maxAttempts = 30; // Максимальна кількість спроб (5 хвилин)
 
