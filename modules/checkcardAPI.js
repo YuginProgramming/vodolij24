@@ -96,7 +96,7 @@ const sendResult = async (chatId, balanceChange, discount, price) => {
         const bonusAmount = (liters - totalWithoutBonus).toFixed(2);
 
         
-        const litersPrice = (totalWithoutBonus / price).toFixed(0); 
+        const litersPrice = (totalWithoutBonus * price).toFixed(0); 
         
         const userData = await findUserByChatId(chatId);
 
