@@ -87,16 +87,18 @@ const checkBalanceChangeForCardPayment = async (chatId, user_id, card_id, price)
 
 const sendResult = async (chatId, balanceChange, discount, price) => {    
 
-    if (balanceChange > 0) {
+    if (balanceChange > 0) {        
 
         const liters = (balanceChange / 10).toFixed(2);   
+
+        console.log(liters);
 
         const totalWithoutBonus = liters/ (1 + (discount/100)).toFixed(2);
 
         const bonusAmount = (liters - totalWithoutBonus).toFixed(2);
 
         
-        const litersPrice = (totalWithoutBonus * price).toFixed(0); 
+        const litersPrice = (totalWithoutBonus * price).toFixed(2); 
         
         const userData = await findUserByChatId(chatId);
 
