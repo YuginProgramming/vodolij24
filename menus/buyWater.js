@@ -341,11 +341,13 @@ const buyWater = () => {
             if (result) {
               const deviceActivated = await activateDevice(deviceData.id, cardCard, cardNumber);
 
+              console.log(deviceActivated);
+
               await bot.sendMessage(chatId, phrases.pressStart, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
 
               const user = await findUserByChatId(chatId);
 
-              logger.info(`#️⃣ ${chatId} 📱 ${user?.phone} Онлайн кредиткою куплено ${result} л.`);
+              logger.info(`#️⃣ ${chatId} 📱 ${user?.phone} Онлайн кредиткою куплено ${result/10} л.`);
 
             }
 
@@ -387,6 +389,8 @@ const buyWater = () => {
             if (result) {
 
               const deviceActivated = await activateDevice(deviceData.id, cardCard, cardNumber);
+
+              console.log(deviceActivated);
 
               await bot.sendMessage(chatId, phrases.pressStart, { reply_markup:  { keyboard: keyboards.mainMenuButton, resize_keyboard: true, one_time_keyboard: false } });
 
