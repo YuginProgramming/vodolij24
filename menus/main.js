@@ -45,7 +45,7 @@ const mainMenu = async () => {
             
             case '/start':
 
-                if(userInfo) await updateUserByChatId(chatId, { dialoguestatus: '' });
+                if (userInfo) await updateUserByChatId(chatId, { dialoguestatus: '' });
 
                 if (isAuthenticated) {
                     
@@ -54,7 +54,9 @@ const mainMenu = async () => {
                     });
 
                 } else {
-                    await createNewUserByChatId(chatId);
+                    
+                    if (!userInfo) await createNewUserByChatId(chatId);
+                    
                     await updateUserByChatId(chatId, { dialoguestatus: 'phoneNumber' });
 
                     bot.sendMessage(msg.chat.id, phrases.greetings, {
@@ -84,26 +86,27 @@ const mainMenu = async () => {
                     });  
                 }
             break;
-
+/*
             case 'Зареєструватись':
             case '/register':
 
-            if(userInfo) {
+                if(userInfo) {
 
-                bot.sendMessage(chatId, `Ви вже зареєстровані, будь ласка, авторизуйтесь`,{
-                    reply_markup: { keyboard: keyboards.login, resize_keyboard: true, one_time_keyboard: true }
-                });
+                    bot.sendMessage(chatId, `Ви вже зареєстровані, будь ласка, авторизуйтесь`,{
+                        reply_markup: { keyboard: keyboards.login, resize_keyboard: true, one_time_keyboard: true }
+                    });
 
-            } else {
+                } else {
+                        
+                    await createNewUserByChatId(chatId);
+                    bot.sendMessage(msg.chat.id, phrases.contactRequest, {
+                        reply_markup: { keyboard: keyboards.contactRequest, resize_keyboard: true, one_time_keyboard: true }
+                    });  
                     
-                await createNewUserByChatId(chatId);
-                bot.sendMessage(msg.chat.id, phrases.contactRequest, {
-                    reply_markup: { keyboard: keyboards.contactRequest, resize_keyboard: true, one_time_keyboard: true }
-                });  
-            }
+                }
 
-            break;
-            
+                break;
+            */
             case '💬 Служба підтримки':
 
                 bot.sendSticker(chatId, 'CAACAgIAAxkBAAIDQGcXsA9C246bIHxqWBMR0VzdEvCcAAK0AANSiZEjLSU_B-Skc_o2BA');

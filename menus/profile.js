@@ -1,90 +1,142 @@
+import { bot } from "../app.js";
+import { keyboards, phrases } from "../language_ua.js";
+import { findApiUserByChatId } from "../models/api-users.js";
+import { findCardById, updateCardById } from "../models/cards.js";
+import { getUsersTotalByWeek, getUsersTotalbyTheDay } from "../models/transactions.js";
+import { findUserByChatId } from "../models/users.js";
+import { getCardData } from "../modules/checkcardAPI.js";
 
 
-const mainMenu = async () => {
-    bot.on('message', async (msg) => {
-        const chatId = msg.chat.id; 
+const profile = async () => {
+  bot.on('message', async (msg) => {
+
+    const chatId = msg.chat.id; 
         
-        console.log(`chat ID ${chatId}`)
-            
-        const apiData = await findApiUserByChatId(chatId); 
-  
-        console.log(`apiData ${apiData}`)
-  
-        let card = {};
-  
-        if (apiData?.cards) {
-          card = await findCardById(apiData?.cards);
-        }
-          
-        const userInfo = await findUserByChatId(chatId);
-          
-  
-        let dialogueStatus, isAuthenticated, birthDaydate, tempData, userDatafromApi, balance, cardNumber, firstname, cardCard;
+    const apiData = await findApiUserByChatId(chatId); 
 
-        if (userInfo) {
-            dialogueStatus = userInfo.dialoguestatus;
-            isAuthenticated = userInfo.isAuthenticated;
-            birthDaydate = userInfo.birthdaydate;
-  
-            if (userInfo.hasOwnProperty("lastname")) {
-              console.log(userInfo.lastname)
-              const data = JSON.parse(userInfo.lastname);
-              console.log(data)
-              userDatafromApi = data;
-            }
-            if (userInfo.hasOwnProperty("fathersname")) {
-              tempData = userInfo.fathersname;
-            }
-            if (userInfo.hasOwnProperty("goods")) {
-              balance = userInfo.goods;
-            }
-            if (card.hasOwnProperty("Number")) {
-              cardNumber = card?.Number;
-            }
-            if (userInfo.hasOwnProperty("firstname")) {
-              firstname = userInfo.firstname;
-            }
-            if (card.hasOwnProperty("Card")) {
-              cardCard = card.cardId;
-            }
-            
-        }
+    let card = {};
 
-        switch (msg.text) {
-            
-             case '/start':
-               if(userInfo) await updateUserByChatId(chatId, { dialoguestatus: '' });
-               if (isAuthenticated) 
-                 bot.sendMessage(msg.chat.id, phrases.mainMenu, {
-                   reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
-                 });
-               else {
-                 await createNewUserByChatId(chatId);
-                 await updateUserByChatId(chatId, { dialoguestatus: 'phoneNumber' });
-                 bot.sendMessage(msg.chat.id, phrases.greetings, {
-                   reply_markup: { keyboard: keyboards.contactRequest, resize_keyboard: true, one_time_keyboard: true }
-                 });  
-     
-               }
-             break;
-     
-             case 'Повернутися до головного меню':
-             case 'До головного меню':
-               await updateUserByChatId(chatId, { dialoguestatus: '' });
-               if (isAuthenticated) {
-                 bot.sendMessage(msg.chat.id, phrases.mainMenu, {
-                   reply_markup: { keyboard: keyboards.mainMenu, resize_keyboard: true, one_time_keyboard: true }
-                 });  
-                 return;
-               } else {
-                 bot.sendMessage(msg.chat.id, 'Ви не авторизовані', {
-                   reply_markup: { keyboard: keyboards.login, resize_keyboard: true, one_time_keyboard: true }
-                 });  
-               }
-             break;
+    if (apiData?.cards) {
+      card = await findCardById(apiData?.cards);
+    }
+      
+    const userInfo = await findUserByChatId(chatId);
+
+    let dialogueStatus, tempData, userDatafromApi, balance, cardNumber, cardCard;
+
+    if (userInfo) {
+        dialogueStatus = userInfo.dialoguestatus;
+
+        if (userInfo.hasOwnProperty("lastname")) {
+          console.log(userInfo.lastname)
+          const data = JSON.parse(userInfo.lastname);
+          console.log(data)
+          userDatafromApi = data;
         }
-    });
+        if (userInfo.hasOwnProperty("fathersname")) {
+          tempData = userInfo.fathersname;
+        }
+        if (userInfo.hasOwnProperty("goods")) {
+          balance = userInfo.goods;
+        }
+        if (card.hasOwnProperty("Number")) {
+          cardNumber = card?.Number;
+        }          
+        if (card.hasOwnProperty("Card")) {
+          cardCard = card.cardId;
+        }
+        
+    }
+   
+    
+    switch (msg.text) {
+
+      case 'Ввести номер автомата': 
+        bot.sendMessage(msg.chat.id, phrases.enterVendorNum);
+        break;
+        
+      case '👤 Мій профіль':
+
+      const cardId = apiData?.cards;
+
+      console.log(`user Data API ${userDatafromApi}, card ID ${cardId}`)
+
+      const card = await getCardData(userDatafromApi, cardId)
+
+      console.log(card)
+
+        await updateCardById( cardId,
+          {
+            WaterQty: card.WaterQty,
+            AllQty: card.AllQty,
+            MoneyPerMonth: card.MoneyPerMonth,
+            LitersPerDay: card.LitersPerDay,
+            Discount:  card.Discount,
+          }
+        )
+        
+        const nextLevel = (discount, turnover) => {
+          if (discount == 20) {
+            return 1000 - turnover;
+          } else if (discount == 25) {
+            return 2000 - turnover;
+          } else {
+            return 'максимальна знижка';
+          }
+        }
+        
+       
+        const balanceMessage = `
+👤 *Клієнт:* _${apiData?.name}_
+
+💳 *Тип картки:* _${card.CardGroup}_
+
+💰 *Поточний баланс:* ${card.WaterQty / 10} л.
+
+🎁 *Бонусний профіль:* _${card.Discount}%_
+📈 *До наступного бонусного профілю залишилося набрати:* ${nextLevel(card.Discount, card.AllQty)} л.
+
+🔄 *Всього через картку налито:* ${card.AllQty} л.
+`;
+
+        bot.sendMessage(msg.chat.id, balanceMessage, {
+          parse_mode: 'Markdown',
+          reply_markup: {
+            keyboard: keyboards.mainMenuButton,
+            resize_keyboard: true,
+            one_time_keyboard: true,
+          },
+        });
+
+        const userDaylyTotal = await getUsersTotalbyTheDay(cardId);
+
+        const userWeeklyTotal = await getUsersTotalByWeek(cardId);
+
+        const userMonthlyTotal = await getUsersTotalByWeek(cardId);
+
+        const usageMessage = `
+📊 *Статистика набраної води:*
+
+🗓️ *Сьогодні:* ${userDaylyTotal} л.
+📅 *За останній тиждень:* ${userWeeklyTotal} л.
+🗓️ *За останній місяць:* ${userMonthlyTotal} л.
+`;
+
+        bot.sendMessage(msg.chat.id, usageMessage, {
+          parse_mode: 'Markdown',
+          reply_markup: {
+            keyboard: keyboards.mainMenuButton,
+            resize_keyboard: true,
+            one_time_keyboard: true,
+          },
+        });
+
+        break;        
+
+    };    
+
+  });
 
 };
 
-export default mainMenu;
+export default profile;

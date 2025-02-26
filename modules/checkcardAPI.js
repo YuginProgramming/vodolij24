@@ -74,7 +74,7 @@ const checkBalanceChangeForCardPayment = async (chatId, user_id, card_id) => {
         if (beforeWater !== afterWater) {
             const balanceChange = afterWater - beforeWater;
             sendResult(chatId, balanceChange, balance.Discount);
-            return balanceChange; // Успішно завершено
+            return (balanceChange/10).toFixed(2); // Успішно завершено
         }
     }
 

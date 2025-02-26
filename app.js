@@ -10,6 +10,7 @@ import mainMenu from './menus/main.js';
 import introduction from './menus/introduction.js';
 import buyWater from './menus/buyWater.js';
 import addToBalance from './menus/addToBalance.js';
+import profile from './menus/profile.js';
 
 const bot = new TelegramBot(dataBot.telegramBotToken, { polling: true });
 
@@ -44,23 +45,25 @@ mainMenu();
 introduction();
 buyWater();
 addToBalance();
+profile();
 
 
-
-cron.schedule('0 0 * * *', () => {
-    getStatistic();
-}, {
-    scheduled: true,
-    timezone: 'Europe/Kiev' 
-});
-
+if (dataBot?.statistic === undefined || dataBot?.statistic === true) {
+    cron.schedule('0 0 * * *', () => {
+        getStatistic();
+    }, {
+        scheduled: true,
+        timezone: 'Europe/Kiev'
+    });
+}
+/* не робим щоденну статистику
 cron.schedule('30 0 * * *', () => { //30 хв після опівночі
     botUsersStatistic();
 }, {
     scheduled: true,
     timezone: 'Europe/Kiev' 
 });
-
+*/
 cron.schedule('0 0 * * 0', () => { // Щонеділі о 00:00
     botWeeklyUsersStatistic();
 }, {
