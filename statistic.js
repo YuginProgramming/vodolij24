@@ -2,6 +2,8 @@ import axios from 'axios';
 import moment from 'moment';
 import { createNewTransaction, getWaterTotalbyTheDay } from './models/transactions.js'
 import { logger } from './logger/index.js';
+import { bot } from './app.js';
+import { dataBot } from './values.js';
 
 function getCurrentDateFormatted() {
     const today = new Date();
@@ -79,7 +81,7 @@ const getStatistic = async () => {
             const string = `${today}
                 Мережа Водолій налічує  автоматів  ${devicesQuantity},
                 Кількість налитої води за добу: ${sum.toFixed(0)} літрів.`; 
-            logger.info(string);
+            bot.sendMessage(dataBot.topId, string);
         }
     }    
 };

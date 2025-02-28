@@ -48,13 +48,29 @@ addToBalance();
 profile();
 
 
-if (dataBot?.statistic === undefined || dataBot?.statistic === true) {
+if (dataBot?.statistic === true) {
     cron.schedule('0 0 * * *', () => {
         getStatistic();
     }, {
         scheduled: true,
         timezone: 'Europe/Kiev'
     });
+
+    cron.schedule('0 0 * * 0', () => { // Щонеділі о 00:00
+        botWeeklyUsersStatistic();
+    }, {
+        scheduled: true,
+        timezone: 'Europe/Kiev'
+    });
+    
+    cron.schedule('0 0 1 * *', () => { // 1-го числа кожного місяця о 00:00
+        getStatistic();
+        botMonthlyUsersStatistic();
+    }, {
+        scheduled: true,
+        timezone: 'Europe/Kiev'
+    });
+
 }
 /* не робим щоденну статистику
 cron.schedule('30 0 * * *', () => { //30 хв після опівночі
@@ -64,18 +80,5 @@ cron.schedule('30 0 * * *', () => { //30 хв після опівночі
     timezone: 'Europe/Kiev' 
 });
 */
-cron.schedule('0 0 * * 0', () => { // Щонеділі о 00:00
-    botWeeklyUsersStatistic();
-}, {
-    scheduled: true,
-    timezone: 'Europe/Kiev'
-});
 
-cron.schedule('0 0 1 * *', () => { // 1-го числа кожного місяця о 00:00
-    getStatistic();
-    botMonthlyUsersStatistic();
-}, {
-    scheduled: true,
-    timezone: 'Europe/Kiev'
-});
 
