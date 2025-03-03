@@ -39,14 +39,14 @@ const botUsersStatistic = async () => {
         return `ID: ${user.id}, Імя: ${user.name}, ДН: ${user.birthdayDate}, ТЕЛ: ${user.phone}, Карта: ${user.cards}, Набрано: ${user.userTotal.toFixed(0)} літрів`;
     }).join('\n');
 
-    logger.info(`Топ 10 користувачів:\n${topUsersMessage}`);
+    bot.sendMessage(dataBot.topId, `Топ 10 користувачів:\n${topUsersMessage}`);
 
     // Логуюємо загальну кількість користувачів та воду
     const usersQuantity = users.length;
     const usersWaterTotal = usersWithTotals.reduce((sum, user) => sum + user.userTotal, 0);
 
     const summaryString = `Користувачів боту: ${usersQuantity},\nКількість налитої води, користувачами боту, за добу: ${usersWaterTotal.toFixed(0)} літрів.`;
-    logger.info(summaryString);
+    bot.sendMessage(dataBot.topId, summaryString);
 };
 
 const botWeeklyUsersStatistic = async () => {
