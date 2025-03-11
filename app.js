@@ -71,14 +71,14 @@ if (dataBot?.statistic === true) {
         timezone: 'Europe/Kiev'
     });
 
-    
+    /*
     cron.schedule('30 0 * * *', () => { //30 хв після опівночі
         botUsersStatistic();
     }, {
         scheduled: true,
         timezone: 'Europe/Kiev' 
     });
-
+*/
 }
 
 

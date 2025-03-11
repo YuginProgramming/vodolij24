@@ -74,14 +74,14 @@ const botWeeklyUsersStatistic = async () => {
     // Сортуємо користувачів за userTotal у порядку спадання
     const topUsers = usersWithTotals
         .sort((a, b) => b.userTotal - a.userTotal)
-        .slice(0, 10); // Отримуємо топ-10
+        .slice(0, 5); // Отримуємо топ-5
 
-    // Формуємо повідомлення для топ-10 користувачів
+    // Формуємо повідомлення для топ-5 користувачів
     const topUsersMessage = topUsers.map(user => {
-        return `ID: ${user.id}, Імя: ${user.name}, ДН: ${user.birthdayDate}, ТЕЛ: ${user.phone}, Карта: ${user.cards}, Набрано: ${user.userTotal.toFixed(0)} літрів`;
+        return `ID: ${user.id}, Імя: ${user.name}, ТЕЛ: ${user.phone}, Карта: ${user.cards}, Набрано: ${user.userTotal.toFixed(0)} літрів`;
     }).join('\n');
 
-    bot.sendMessage(dataBot.topId, `Топ 10 користувачів за тиждень:\n${topUsersMessage}`);
+    bot.sendMessage(dataBot.topId, `Топ 5 користувачів за тиждень:\n${topUsersMessage}`);
 
     // Логуюємо загальну кількість користувачів та воду
     const usersQuantity = users.length;
@@ -116,14 +116,14 @@ const botMonthlyUsersStatistic = async () => {
     // Сортуємо користувачів за userTotal у порядку спадання
     const topUsers = usersWithTotals
         .sort((a, b) => b.userTotal - a.userTotal)
-        .slice(0, 10); // Отримуємо топ-10
+        .slice(0, 5); // Отримуємо топ-5
 
     // Формуємо повідомлення для топ-10 користувачів
     const topUsersMessage = topUsers.map(user => {
-        return `ID: ${user.id}, Імя: ${user.name}, ДН: ${user.birthdayDate}, ТЕЛ: ${user.phone}, Карта: ${user.cards}, Набрано: ${user.userTotal.toFixed(0)} літрів`;
+        return `ID: ${user.id}, Імя: ${user.name}, ТЕЛ: ${user.phone}, Карта: ${user.cards}, Набрано: ${user.userTotal.toFixed(0)} літрів`;
     }).join('\n');
 
-    bot.sendMessage(dataBot.topId, `Топ 10 користувачів за місяць:\n${topUsersMessage}`);
+    bot.sendMessage(dataBot.topId, `Топ 5 користувачів за місяць:\n${topUsersMessage}`);
 
     // Логуюємо загальну кількість користувачів та воду
     const usersQuantity = users.length;
