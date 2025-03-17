@@ -2,9 +2,10 @@ import { bot } from "../app.js";
 import { keyboards, phrases } from "../language_ua.js";
 import { findApiUserByChatId } from "../models/api-users.js";
 import { findCardById, updateCardById } from "../models/cards.js";
-import { getUsersTotalByWeek, getUsersTotalbyTheDay } from "../models/transactions.js";
+import { getUsersTotalByWeek, getUsersTotalCurrentMonth, getUsersTotalbyTheDay } from "../models/transactions.js";
 import { findUserByChatId } from "../models/users.js";
 import { getCardData } from "../modules/checkcardAPI.js";
+import { getPersonalRankMessage } from "../modules/statistic/bot-users-statistic.js";
 
 
 const profile = async () => {
@@ -114,12 +115,16 @@ const profile = async () => {
 
         const userMonthlyTotal = await getUsersTotalByWeek(cardId);
 
+        const userRating = await getPersonalRankMessage(cardId)
+
         const usageMessage = `
 📊 *Статистика набраної води:*
 
 🗓️ *Сьогодні:* ${userDaylyTotal} л.
 📅 *За останній тиждень:* ${userWeeklyTotal} л.
 🗓️ *За останній місяць:* ${userMonthlyTotal} л.
+
+${userRankMessage}
 `;
 
         bot.sendMessage(msg.chat.id, usageMessage, {

@@ -1,7 +1,7 @@
 import { bot } from "../../app.js";
 import { logger } from "../../logger/index.js";
 import { findAllUsers } from "../../models/api-users.js";
-import { getUsersTotalbyTheDay, getUsersTotalByWeek, getUsersTotalByMonth } from "../../models/transactions.js";
+import { getUsersTotalbyTheDay, getUsersTotalByWeek, getUsersTotalByMonth, getUsersTotalCurrentMonth } from "../../models/transactions.js";
 import { dataBot } from "../../values.js";
 
 
@@ -133,10 +133,46 @@ const botMonthlyUsersStatistic = async () => {
     bot.sendMessage(dataBot.topId, summaryString);
 };
 
+const getPersonalRankMessage = async (cardId) => {
+    const users = await findAllUsers();
+
+    // Отримуємо список користувачів із загальною кількістю набраної води
+    const usersWithTotals = await Promise.all(users.map(async user => ({
+        id: user.id,
+        name: user.name,
+        phone: user.phone,
+        cards: user.cards,
+        userTotal: user.cards ? await getUsersTotalCurrentMonth(user.cards) : 0
+    })));
+
+    // Сортуємо за userTotal у порядку спадання
+    usersWithTotals.sort((a, b) => b.userTotal - a.userTotal);
+
+    // Отримуємо місце користувача в рейтингу
+    const userIndex = usersWithTotals.findIndex(user => user.cards === cardId);
+    const user = usersWithTotals[userIndex];
+
+    let rankMessage = '';
+
+    if (!user || user.userTotal === 0) {
+        rankMessage = `❌ *Рейтинг:* Ви не набрали жодного літра цього місяця.`;
+    } else if (userIndex < 10) {
+        rankMessage = `🏆 *Рейтинг:* Ви *#${userIndex + 1}* у рейтингу користувачів цього місяця!`;
+    } else {
+        const betterThanPercent = ((users.length - userIndex) / users.length * 100).toFixed(1);
+        rankMessage = `📈 *Рейтинг:* Ви набрали більше води, ніж *${betterThanPercent}%* користувачів.`;
+    }
+
+    return rankMessage;
+};
+
+
+
 
 export  {
     botUsersStatistic,
     botWeeklyUsersStatistic,
-    botMonthlyUsersStatistic
+    botMonthlyUsersStatistic,
+    getPersonalRankMessage,
 } 
 

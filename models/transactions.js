@@ -203,6 +203,33 @@ const getUsersTotalByMonth = async (cardId) => {
     return res;
 };
 
+const getUsersTotalCurrentMonth = async (cardId) => {
+    let res = 0;
+
+    const today = new Date();
+
+    // Визначаємо початок поточного місяця
+    const startOfCurrentMonth = new Date(today.getFullYear(), today.getMonth(), 1); // 1-е число поточного місяця
+
+    try {
+        const totalWaterFulfilled = await Transaction.sum('waterFullfilled', {
+            where: {
+                cardId,
+                date: {
+                    [Op.between]: [startOfCurrentMonth, today] // Від початку місяця до поточного моменту
+                }
+            }
+        });
+
+        return totalWaterFulfilled || 0;
+
+    } catch (err) {
+        logger.error(`Помилка отримання суми за поточний місяць: ${err}`);
+    }
+    return res;
+};
+
+
 
 
 export {
@@ -211,6 +238,7 @@ export {
     getWaterTotalbyTheDay,
     getUsersTotalbyTheDay,
     getUsersTotalByWeek,
-    getUsersTotalByMonth
+    getUsersTotalByMonth,
+    getUsersTotalCurrentMonth
 };   
 
