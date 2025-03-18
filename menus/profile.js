@@ -2,7 +2,7 @@ import { bot } from "../app.js";
 import { keyboards, phrases } from "../language_ua.js";
 import { findApiUserByChatId } from "../models/api-users.js";
 import { findCardById, updateCardById } from "../models/cards.js";
-import { getUsersTotalByWeek, getUsersTotalCurrentMonth, getUsersTotalbyTheDay } from "../models/transactions.js";
+import { getLastTransactions, getUsersTotalByWeek, getUsersTotalCurrentMonth, getUsersTotalbyTheDay } from "../models/transactions.js";
 import { findUserByChatId } from "../models/users.js";
 import { getCardData } from "../modules/checkcardAPI.js";
 import { getPersonalRankMessage } from "../modules/statistic/bot-users-statistic.js";
@@ -103,7 +103,7 @@ const profile = async () => {
         bot.sendMessage(msg.chat.id, balanceMessage, {
           parse_mode: 'Markdown',
           reply_markup: {
-            keyboard: keyboards.mainMenuButton,
+            keyboard: keyboards.statisticButtons,
             resize_keyboard: true,
             one_time_keyboard: true,
           },
@@ -115,7 +115,7 @@ const profile = async () => {
 
         const userMonthlyTotal = await getUsersTotalByWeek(cardId);
 
-        const userRating = await getPersonalRankMessage(cardId)
+        //const userRankMessage = await getPersonalRankMessage(cardId)
 
         const usageMessage = `
 📊 *Статистика набраної води:*
@@ -124,19 +124,31 @@ const profile = async () => {
 📅 *За останній тиждень:* ${userWeeklyTotal} л.
 🗓️ *За останній місяць:* ${userMonthlyTotal} л.
 
-${userRankMessage}
+
 `;
 
         bot.sendMessage(msg.chat.id, usageMessage, {
           parse_mode: 'Markdown',
           reply_markup: {
-            keyboard: keyboards.mainMenuButton,
+            keyboard: keyboards.statisticButtons,
             resize_keyboard: true,
             one_time_keyboard: true,
           },
         });
 
-        break;        
+        break;
+      case '📜 Історія налитої води':
+          const transactionsString = await getLastTransactions(cardCard);
+          console.log(transactionsString)
+          bot.sendMessage(msg.chat.id, transactionsString, {
+            parse_mode: 'Markdown',
+            reply_markup: {
+              keyboard: keyboards.transactionsNavigation,
+              resize_keyboard: true,
+              one_time_keyboard: true,
+            },
+          });
+      break;        
 
     };    
 

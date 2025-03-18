@@ -229,7 +229,19 @@ const getUsersTotalCurrentMonth = async (cardId) => {
     return res;
 };
 
+const getLastTransactions = async (cardId) => {
+    const transactions = await Transaction.findAll({
+        where: { cardId },
+        order: [['createdAt', 'DESC']],
+        limit: 10
+    });
 
+    if (!transactions.length) return "❌ Транзакції не знайдено.";
+
+    return transactions.map(t => (
+        `📅 ${t.date}\n💳 Карта: ${t.cardId || 'N/A'}\n💧 Запитано: ${t.waterRequested || 0}л\n✅ Виконано: ${t.waterFullfilled || 0}л\n💵 Готівка: ${t.cashPaymant || 0} грн\n🏦 Карта: ${t.cardPaymant || 0} грн\n🌐 Онлайн: ${t.onlinePaymant || 0} грн\n🔄 Здача: ${t.paymantChange || 0} грн\n------------------------`
+    )).join('\n\n');
+};
 
 
 export {
@@ -239,6 +251,7 @@ export {
     getUsersTotalbyTheDay,
     getUsersTotalByWeek,
     getUsersTotalByMonth,
-    getUsersTotalCurrentMonth
+    getUsersTotalCurrentMonth,
+    getLastTransactions
 };   
 
