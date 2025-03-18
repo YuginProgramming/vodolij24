@@ -4,6 +4,7 @@ import { createNewTransaction, getWaterTotalbyTheDay } from './models/transactio
 import { logger } from './logger/index.js';
 import { bot } from './app.js';
 import { dataBot } from './values.js';
+import { collectDailyStatistics } from './models/daily-statistic.js';
 
 function getCurrentDateFormatted() {
     const today = new Date();
@@ -83,7 +84,8 @@ const getStatistic = async () => {
                 Кількість налитої води за добу: ${sum.toFixed(0)} літрів.`; 
             bot.sendMessage(dataBot.topId, string);
         }
-    }    
+    };
+    collectDailyStatistics();  
 };
 
 //getStatistic();

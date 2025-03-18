@@ -2,6 +2,7 @@ import { bot } from "../app.js";
 import { keyboards, phrases } from "../language_ua.js";
 import { findApiUserByChatId } from "../models/api-users.js";
 import { findCardById, updateCardById } from "../models/cards.js";
+import { collectDailyStatistics } from "../models/daily-statistic.js";
 import { getLastTransactions, getUsersTotalByWeek, getUsersTotalCurrentMonth, getUsersTotalbyTheDay } from "../models/transactions.js";
 import { findUserByChatId } from "../models/users.js";
 import { getCardData } from "../modules/checkcardAPI.js";
@@ -139,7 +140,6 @@ const profile = async () => {
         break;
       case '📜 Історія налитої води':
           const transactionsString = await getLastTransactions(cardCard);
-          console.log(transactionsString)
           bot.sendMessage(msg.chat.id, transactionsString, {
             parse_mode: 'Markdown',
             reply_markup: {
@@ -148,6 +148,7 @@ const profile = async () => {
               one_time_keyboard: true,
             },
           });
+          collectDailyStatistics(); 
       break;        
 
     };    
