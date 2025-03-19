@@ -143,6 +143,37 @@ const getUsersTotalbyTheDay = async (cardId) => {
     return res;
 };
 
+const copyUsersTransactionsbyTheDay = async (cardId) => {
+    let res = 0;
+    
+    const today = new Date();
+    
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const startOfYesterday = new Date(yesterday.setHours(0, 0, 0, 0));
+    const endOfYesterday = new Date(yesterday.setHours(23, 59, 59, 999));
+    
+    try {
+        const totalWaterFulfilled = await Transaction.sum('waterFullfilled', {
+            where: {
+
+                cardId,
+
+                date: {
+                    [Op.between]: [startOfYesterday, endOfYesterday]
+                }
+
+            }
+        });
+
+        return totalWaterFulfilled || 0; 
+    
+    } catch (err) {
+        logger.error(`Impossible to request sum: ${err}`);
+    }
+    return res;
+};
+
 const getUsersTotalByWeek = async (cardId) => {
     let res = 0;
 

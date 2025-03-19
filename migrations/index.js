@@ -5,6 +5,7 @@ import { Bonus } from '../models/bonuses.js';
 import { Apiuser, createNewApiUser } from '../models/api-users.js';
 import { Card } from '../models/cards.js';
 import { DailyStatistic } from '../models/daily-statistic.js';
+import { BotTransaction } from '../models/bot-transactions.js';
 
 const DEBUG = true;
 
@@ -16,7 +17,8 @@ const main = async () => {
             Bonus.sync(),
             Apiuser.sync(),
             Card.sync(),
-            DailyStatistic.sync()
+            DailyStatistic.sync(),
+            BotTransaction.sync()
         ]);
         
         

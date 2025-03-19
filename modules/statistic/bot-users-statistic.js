@@ -1,6 +1,7 @@
 import { bot } from "../../app.js";
 import { logger } from "../../logger/index.js";
 import { findAllUsers } from "../../models/api-users.js";
+import { copyUsersTransactionsByTheDay } from "../../models/bot-transactions.js";
 import { getUsersTotalbyTheDay, getUsersTotalByWeek, getUsersTotalByMonth, getUsersTotalCurrentMonth } from "../../models/transactions.js";
 import { dataBot } from "../../values.js";
 
@@ -11,12 +12,18 @@ const botUsersStatistic = async () => {
     const users = await findAllUsers();
     const usersWithTotals = [];
 
+    
+
     for (let user of users) {
         const cardId = user?.cards;
         let userTotal = 0;
 
         if (cardId) {
+
+            //Виправти на тотал з нової таблиці
             userTotal = await getUsersTotalbyTheDay(cardId);
+
+            await copyUsersTransactionsByTheDay(cardId)
         }
 
         usersWithTotals.push({

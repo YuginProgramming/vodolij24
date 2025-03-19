@@ -85,7 +85,6 @@ const getStatistic = async () => {
             bot.sendMessage(dataBot.topId, string);
         }
     };
-    collectDailyStatistics();  
 };
 
 //getStatistic();

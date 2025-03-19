@@ -2,6 +2,7 @@ import { Model, DataTypes } from "sequelize";
 import { sequelize } from './sequelize.js';
 import { logger } from '../logger/index.js';
 import { Transaction } from "./transactions.js";
+import { Op } from "sequelize";
 
 
 class DailyStatistic extends Model {}
@@ -73,21 +74,34 @@ DailyStatistic.init({
 
 
 const collectDailyStatistics = async () => {
-    const getYesterdayDateFormatted = () => {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        return yesterday.toISOString().split('T')[0]; // YYYY-MM-DD
-    };
+    const getYesterdayDateRange = () => {
+        const now = new Date();
+        now.setHours(0, 0, 0, 0); // Скидаємо години, хвилини, секунди
+        const startOfYesterday = new Date(now);
+        startOfYesterday.setDate(startOfYesterday.getDate() - 1);
 
-    const yesterday = getYesterdayDateFormatted();
+        const endOfYesterday = new Date(startOfYesterday);
+        endOfYesterday.setHours(23, 59, 59, 999);
+
+        // Форматуємо дату без часу (YYYY-MM-DD)
+        const statDate = startOfYesterday.toISOString().split('T')[0];
+
+        return { startOfYesterday, endOfYesterday, statDate };
+    };
+   
+    const { startOfYesterday, endOfYesterday, statDate } = getYesterdayDateRange();
     
-    // Отримуємо всі транзакції за сьогодні
+    // Отримуємо всі транзакції за вчора
     const transactions = await Transaction.findAll({
-        where: { date: yesterday }
+        where: {
+            date: {
+                [Op.between]: [startOfYesterday, endOfYesterday]
+            }
+        }
     });
 
     if (!transactions.length) {
-        console.log("❌ Немає транзакцій за сьогодні.");
+        console.log("❌ Немає транзакцій за учора.");
         return;
     }
 
@@ -125,7 +139,7 @@ const collectDailyStatistics = async () => {
 
     // Записуємо дані у таблицю daily_statistics
     await DailyStatistic.create({
-        date: today,
+        date: statDate,
         totalWater,
         totalTransactions,
         uniqueUsers: Object.keys(userStats).length,
@@ -145,6 +159,6 @@ const collectDailyStatistics = async () => {
 
 export {
     collectDailyStatistics,
-    DailyStatistic
+    DailyStatistic,
 }
 

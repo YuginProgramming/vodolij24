@@ -6,7 +6,7 @@ import { collectDailyStatistics } from "../models/daily-statistic.js";
 import { getLastTransactions, getUsersTotalByWeek, getUsersTotalCurrentMonth, getUsersTotalbyTheDay } from "../models/transactions.js";
 import { findUserByChatId } from "../models/users.js";
 import { getCardData } from "../modules/checkcardAPI.js";
-import { getPersonalRankMessage } from "../modules/statistic/bot-users-statistic.js";
+import { botUsersStatistic, getPersonalRankMessage } from "../modules/statistic/bot-users-statistic.js";
 
 
 const profile = async () => {
@@ -148,7 +148,7 @@ const profile = async () => {
               one_time_keyboard: true,
             },
           });
-          collectDailyStatistics(); 
+          botUsersStatistic();
       break;        
 
     };    
