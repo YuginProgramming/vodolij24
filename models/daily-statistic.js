@@ -1,8 +1,10 @@
-import { Model, DataTypes } from "sequelize";
+import { Model, DataTypes, Sequelize } from "sequelize";
 import { sequelize } from './sequelize.js';
 import { logger } from '../logger/index.js';
 import { Transaction } from "./transactions.js";
 import { Op } from "sequelize";
+import { BotTransaction } from "./bot-transactions.js";
+import { Card, findCardById } from "./cards.js";
 
 
 class DailyStatistic extends Model {}
@@ -92,7 +94,7 @@ const collectDailyStatistics = async () => {
     const { startOfYesterday, endOfYesterday, statDate } = getYesterdayDateRange();
     
     // Отримуємо всі транзакції за вчора
-    const transactions = await Transaction.findAll({
+    const transactions = await BotTransaction.findAll({
         where: {
             date: {
                 [Op.between]: [startOfYesterday, endOfYesterday]
@@ -117,14 +119,29 @@ const collectDailyStatistics = async () => {
     // Визначаємо топового користувача за обсягом налитої води
     const userStats = {};
     transactions.forEach(t => {
-        if (t.user_id) {
-            userStats[t.user_id] = (userStats[t.user_id] || 0) + (t.waterFullfilled || 0);
+        if (t.cardId) {
+            userStats[t.cardId] = (userStats[t.cardId] || 0) + (t.waterFullfilled || 0);
         }
     });
+
+   
+    for (const cardId of Object.keys(userStats)) {
+        await Card.update(
+            { LitersPerDay: Sequelize.literal(`COALESCE("LitersPerDay", 0) + ${userStats[cardId]}`) },
+            { where: { cardId } }
+        );
+
+       const increment = await Card.increment('LitersPerDay', {
+            by: userStats[cardId],
+            where: { cardId }
+        });
+        
+    }
 
     const topUserId = Object.keys(userStats).length ? Object.keys(userStats).reduce((a, b) => userStats[a] > userStats[b] ? a : b) : null;
     const topUserVolume = topUserId ? userStats[topUserId] : 0;
 
+    
     // Визначаємо топовий автомат
     const deviceStats = {};
     transactions.forEach(t => {

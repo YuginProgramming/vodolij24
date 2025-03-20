@@ -2,6 +2,8 @@ import { bot } from "../../app.js";
 import { logger } from "../../logger/index.js";
 import { findAllUsers } from "../../models/api-users.js";
 import { copyUsersTransactionsByTheDay } from "../../models/bot-transactions.js";
+import { Card } from "../../models/cards.js";
+import { collectDailyStatistics } from "../../models/daily-statistic.js";
 import { getUsersTotalbyTheDay, getUsersTotalByWeek, getUsersTotalByMonth, getUsersTotalCurrentMonth } from "../../models/transactions.js";
 import { dataBot } from "../../values.js";
 
@@ -23,7 +25,9 @@ const botUsersStatistic = async () => {
             //Виправти на тотал з нової таблиці
             userTotal = await getUsersTotalbyTheDay(cardId);
 
-            await copyUsersTransactionsByTheDay(cardId)
+            await copyUsersTransactionsByTheDay(cardId);
+
+            collectDailyStatistics();
         }
 
         usersWithTotals.push({
@@ -136,42 +140,48 @@ const botMonthlyUsersStatistic = async () => {
     const usersQuantity = users.length;
     const usersWaterTotal = usersWithTotals.reduce((sum, user) => sum + user.userTotal, 0);
 
+    const monthlyAmountUpdate = await Card.update(
+        { LitersPerDay: 0 }, 
+        { where: {} }
+    );
+
     const summaryString = `Користувачів боту: ${usersQuantity},\nКількість налитої води, користувачами боту, за місяць: ${usersWaterTotal.toFixed(0)} літрів.`;
     bot.sendMessage(dataBot.topId, summaryString);
+
+
 };
 
 const getPersonalRankMessage = async (cardId) => {
-    const users = await findAllUsers();
+    // Отримуємо всі карти, що належать користувачам
+    const cards = await Card.findAll();
 
-    // Отримуємо список користувачів із загальною кількістю набраної води
-    const usersWithTotals = await Promise.all(users.map(async user => ({
-        id: user.id,
-        name: user.name,
-        phone: user.phone,
-        cards: user.cards,
-        userTotal: user.cards ? await getUsersTotalCurrentMonth(user.cards) : 0
-    })));
+    // Отримуємо список користувачів із їхнім рейтингом (LitersPerDay)
+    const cardsWithTotals = cards.map(card => ({
+        cardId: card.cardId,
+        litersPerDay: card.LitersPerDay
+    }));
 
-    // Сортуємо за userTotal у порядку спадання
-    usersWithTotals.sort((a, b) => b.userTotal - a.userTotal);
+    // Сортуємо карти за LitersPerDay у порядку спадання
+    cardsWithTotals.sort((a, b) => b.litersPerDay - a.litersPerDay);
 
-    // Отримуємо місце користувача в рейтингу
-    const userIndex = usersWithTotals.findIndex(user => user.cards === cardId);
-    const user = usersWithTotals[userIndex];
+    // Знаходимо місце картки у рейтингу
+    const cardIndex = cardsWithTotals.findIndex(card => card.cardId === cardId);
+    const card = cardsWithTotals[cardIndex];
 
     let rankMessage = '';
 
-    if (!user || user.userTotal === 0) {
+    if (!card || card.litersPerDay === 0) {
         rankMessage = `❌ *Рейтинг:* Ви не набрали жодного літра цього місяця.`;
-    } else if (userIndex < 10) {
-        rankMessage = `🏆 *Рейтинг:* Ви *#${userIndex + 1}* у рейтингу користувачів цього місяця!`;
+    } else if (cardIndex < 10) {
+        rankMessage = `🏆 *Рейтинг:* Ви *#${cardIndex + 1}* у рейтингу користувачів цього місяця!`;
     } else {
-        const betterThanPercent = ((users.length - userIndex) / users.length * 100).toFixed(1);
+        const betterThanPercent = ((cards.length - cardIndex) / cards.length * 100).toFixed(1);
         rankMessage = `📈 *Рейтинг:* Ви набрали більше води, ніж *${betterThanPercent}%* користувачів.`;
     }
 
     return rankMessage;
 };
+
 
 
 

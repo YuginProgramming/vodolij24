@@ -3,7 +3,7 @@ import { keyboards, phrases } from "../language_ua.js";
 import { findApiUserByChatId } from "../models/api-users.js";
 import { findCardById, updateCardById } from "../models/cards.js";
 import { collectDailyStatistics } from "../models/daily-statistic.js";
-import { getLastTransactions, getUsersTotalByWeek, getUsersTotalCurrentMonth, getUsersTotalbyTheDay } from "../models/transactions.js";
+import { getLastTransactions, getUsersTotalByMonth, getUsersTotalByWeek, getUsersTotalCurrentMonth, getUsersTotalbyTheDay } from "../models/transactions.js";
 import { findUserByChatId } from "../models/users.js";
 import { getCardData } from "../modules/checkcardAPI.js";
 import { botUsersStatistic, getPersonalRankMessage } from "../modules/statistic/bot-users-statistic.js";
@@ -114,9 +114,9 @@ const profile = async () => {
 
         const userWeeklyTotal = await getUsersTotalByWeek(cardId);
 
-        const userMonthlyTotal = await getUsersTotalByWeek(cardId);
+        const userMonthlyTotal = await getUsersTotalByMonth(cardId);
 
-        //const userRankMessage = await getPersonalRankMessage(cardId)
+        const userRankMessage = await getPersonalRankMessage(cardId)
 
         const usageMessage = `
 📊 *Статистика набраної води:*
@@ -125,7 +125,7 @@ const profile = async () => {
 📅 *За останній тиждень:* ${userWeeklyTotal} л.
 🗓️ *За останній місяць:* ${userMonthlyTotal} л.
 
-
+${userRankMessage}
 `;
 
         bot.sendMessage(msg.chat.id, usageMessage, {
@@ -148,7 +148,6 @@ const profile = async () => {
               one_time_keyboard: true,
             },
           });
-          botUsersStatistic();
       break;        
 
     };    

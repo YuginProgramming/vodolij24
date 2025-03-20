@@ -41,7 +41,8 @@ Card.init({
     },
     LitersPerDay: {
         type: DataTypes.INTEGER,
-        allowNull: true
+        allowNull: true,
+        defaultValue: 0
     },
     Discount: {
         type: DataTypes.INTEGER,
