@@ -72,7 +72,6 @@ const profile = async () => {
             WaterQty: card.WaterQty,
             AllQty: card.AllQty,
             MoneyPerMonth: card.MoneyPerMonth,
-            LitersPerDay: card.LitersPerDay,
             Discount:  card.Discount,
           }
         )

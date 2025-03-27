@@ -1,7 +1,7 @@
 import { bot } from "../../app.js";
 import { logger } from "../../logger/index.js";
 import { findAllUsers } from "../../models/api-users.js";
-import { copyUsersTransactionsByTheDay } from "../../models/bot-transactions.js";
+import { copyUsersTransactionsByTheDay, getBotUserTotalbyTheDay } from "../../models/bot-transactions.js";
 import { Card } from "../../models/cards.js";
 import { collectDailyStatistics } from "../../models/daily-statistic.js";
 import { getUsersTotalbyTheDay, getUsersTotalByWeek, getUsersTotalByMonth, getUsersTotalCurrentMonth } from "../../models/transactions.js";
@@ -20,14 +20,17 @@ const botUsersStatistic = async () => {
         const cardId = user?.cards;
         let userTotal = 0;
 
-        if (cardId) {
-
-            //Виправти на тотал з нової таблиці
-            userTotal = await getUsersTotalbyTheDay(cardId);
+        if (cardId) {            
 
             await copyUsersTransactionsByTheDay(cardId);
 
-            collectDailyStatistics();
+            userTotal = await getBotUserTotalbyTheDay(cardId);
+
+            const increment = await Card.increment('LitersPerDay', {
+                by: userTotal,
+                where: { cardId }
+            });
+
         }
 
         usersWithTotals.push({
@@ -38,19 +41,9 @@ const botUsersStatistic = async () => {
             cards: cardId,
             userTotal
         });
-    }
+    };
 
-    // Сортуємо користувачів за userTotal у порядку спадання
-    const topUsers = usersWithTotals
-        .sort((a, b) => b.userTotal - a.userTotal)
-        .slice(0, 10); // Отримуємо топ-10
-
-    // Формуємо повідомлення для топ-10 користувачів
-    const topUsersMessage = topUsers.map(user => {
-        return `ID: ${user.id}, Імя: ${user.name}, ДН: ${user.birthdayDate}, ТЕЛ: ${user.phone}, Карта: ${user.cards}, Набрано: ${user.userTotal.toFixed(0)} літрів`;
-    }).join('\n');
-
-    //bot.sendMessage(dataBot.topId, `Топ 10 користувачів:\n${topUsersMessage}`);
+    await collectDailyStatistics();
 
     // Логуюємо загальну кількість користувачів та воду
     const usersQuantity = users.length;
@@ -58,6 +51,7 @@ const botUsersStatistic = async () => {
 
     const summaryString = `Користувачів боту: ${usersQuantity},\nКількість налитої води, користувачами боту, за добу: ${usersWaterTotal.toFixed(0)} літрів.`;
     bot.sendMessage(dataBot.topId, summaryString);
+    
 };
 
 const botWeeklyUsersStatistic = async () => {

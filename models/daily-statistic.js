@@ -102,11 +102,6 @@ const collectDailyStatistics = async () => {
         }
     });
 
-    if (!transactions.length) {
-        console.log("❌ Немає транзакцій за учора.");
-        return;
-    }
-
     // Загальні підрахунки
     const totalTransactions = transactions.length;
     const totalWater = transactions.reduce((sum, t) => sum + (t.waterFullfilled || 0), 0);
@@ -122,21 +117,7 @@ const collectDailyStatistics = async () => {
         if (t.cardId) {
             userStats[t.cardId] = (userStats[t.cardId] || 0) + (t.waterFullfilled || 0);
         }
-    });
-
-   
-    for (const cardId of Object.keys(userStats)) {
-        await Card.update(
-            { LitersPerDay: Sequelize.literal(`COALESCE("LitersPerDay", 0) + ${userStats[cardId]}`) },
-            { where: { cardId } }
-        );
-
-       const increment = await Card.increment('LitersPerDay', {
-            by: userStats[cardId],
-            where: { cardId }
-        });
-        
-    }
+    });   
 
     const topUserId = Object.keys(userStats).length ? Object.keys(userStats).reduce((a, b) => userStats[a] > userStats[b] ? a : b) : null;
     const topUserVolume = topUserId ? userStats[topUserId] : 0;
