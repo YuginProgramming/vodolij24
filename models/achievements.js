@@ -2,29 +2,29 @@ import { Model, DataTypes } from "sequelize";
 import { sequelize } from './sequelize.js';
 import { logger } from '../logger/index.js';
 
-class Bonus extends Model {}
-Bonus.init({
-    user_id: {
+class Achievements extends Model {}
+Achievements.init({
+    code: {
         type: DataTypes.INTEGER,
         allowNull: true
     },
-    balance: {
-        type: DataTypes.INTEGER,
+    title: {
+        type: DataTypes.STRING,
         allowNull: true
     },
-    transactionAmount: {
-        type: DataTypes.INTEGER,
+    description: {
+        type: DataTypes.STRING,
         allowNull: true
     },
-    transactionType: {
+    icon: {
         type: DataTypes.STRING,
         allowNull: true
     }
 
 }, {
     freezeTableName: false,
-    timestamps: true,
-    modelName: 'bonuses',
+    timestamps: false,
+    modelName: 'achievements',
     sequelize
 });
 
@@ -58,7 +58,7 @@ const findBalanceByChatId = async (user_id) => {
 
 
 export {
-    Bonus,
+    Achievements,
     createNewBonus,
     findBalanceByChatId
 };   

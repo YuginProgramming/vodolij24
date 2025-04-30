@@ -1,7 +1,6 @@
 import axios from "axios";
 import { bot } from "../app.js";
 import { phrases } from "../language_ua.js";
-import { createNewBonus } from "../models/bonuses.js";
 import { logger } from "../logger/index.js";
 import { findUserByChatId } from "../models/users.js";
 

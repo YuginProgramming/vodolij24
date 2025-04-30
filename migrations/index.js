@@ -1,9 +1,10 @@
 import { User, createNewUser } from '../models/users.js';
 import { logger } from '../logger/index.js';
 import { Transaction } from '../models/transactions.js';
-import { Bonus } from '../models/bonuses.js';
 import { Apiuser, createNewApiUser } from '../models/api-users.js';
 import { Card } from '../models/cards.js';
+import { Achievements } from '../models/achievements.js';
+import { UserAchievements } from '../models/user_achievements.js';
 
 const DEBUG = true;
 
@@ -12,9 +13,10 @@ const main = async () => {
         const syncState = await Promise.all([
             User.sync(),
             Transaction.sync(),
-            Bonus.sync(),
             Apiuser.sync(),
-            Card.sync()
+            Card.sync(),
+            Achievements.sync(),
+            UserAchievements.sync()
         ]);
         
         
