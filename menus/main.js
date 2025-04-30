@@ -1,5 +1,6 @@
 import { bot } from "../app.js";
 import { keyboards, phrases } from "../language_ua.js";
+import { createNewAchievement } from "../models/user_achievements.js";
 import { createNewUserByChatId, findUserByChatId, updateUserByChatId } from "../models/users.js";
 
 
@@ -25,7 +26,7 @@ const mainMenu = async () => {
 
     bot.on("sticker", async (sticker) => {
         const stickerID = sticker.sticker.file_id;
-
+        createNewAchievement(429789892, 1);
         console.log(stickerID)
     })
 

@@ -44,12 +44,12 @@ const createNewBonus = async (user_id, transactionAmount, transactionType) => {
     return res;
 };
 
-const findBalanceByChatId = async (user_id) => {
-    const res = await Bonus.findAll({ where: { user_id } });
+const findAchievementById = async (id) => {
+    const res = await Achievements.findOne({ where: { id } });
     if (res.length > 0) {
+        console.log(res)
         const transactions = res.map(el => el.dataValues);
-        const sum = transactions.reduce((total, obj) => total + obj.transactionAmount, 0);
-        return sum;
+        return transactions;
     } 
     return res;
 };
@@ -60,6 +60,6 @@ const findBalanceByChatId = async (user_id) => {
 export {
     Achievements,
     createNewBonus,
-    findBalanceByChatId
+    findAchievementById
 };   
 
