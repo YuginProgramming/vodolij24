@@ -7,6 +7,7 @@ import { getLastTransactions, getUsersTotalByMonth, getUsersTotalByWeek, getUser
 import { findUserByChatId } from "../models/users.js";
 import { getCardData } from "../modules/checkcardAPI.js";
 import { botUsersStatistic, getPersonalRankMessage } from "../modules/statistic/bot-users-statistic.js";
+import updateAchievements from "../modules/update-achievements.js";
 
 
 const profile = async () => {
@@ -147,7 +148,10 @@ ${userRankMessage}
               one_time_keyboard: true,
             },
           });
-      break;        
+      break; 
+      case '🏆 Досягнення':
+        const achievementsInfo = await updateAchievements(chatId);
+      break;       
 
     };    
 
