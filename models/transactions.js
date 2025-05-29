@@ -143,6 +143,8 @@ const getUsersTotalbyTheDay = async (cardId) => {
     return res;
 };
 
+
+/*
 const copyUsersTransactionsbyTheDay = async (cardId) => {
     let res = 0;
     
@@ -173,7 +175,7 @@ const copyUsersTransactionsbyTheDay = async (cardId) => {
     }
     return res;
 };
-
+*/
 const getUsersTotalByWeek = async (cardId) => {
     let res = 0;
 

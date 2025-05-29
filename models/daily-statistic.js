@@ -104,7 +104,7 @@ const collectDailyStatistics = async () => {
 
     // Загальні підрахунки
     const totalTransactions = transactions.length;
-    const totalWater = transactions.reduce((sum, t) => sum + (t.waterFullfilled || 0), 0);
+    const totalWater = transactions.reduce((sum, t) => sum + (t.waterFullfilled || 0), 0).toFixed(0);
     const totalRevenue = transactions.reduce((sum, t) => sum + (t.cashPaymant || 0) + (t.cardPaymant || 0) + (t.onlinePaymant || 0), 0);
     const cashRevenue = transactions.reduce((sum, t) => sum + (t.cashPaymant || 0), 0);
     const cardRevenue = transactions.reduce((sum, t) => sum + (t.cardPaymant || 0), 0);
@@ -120,7 +120,7 @@ const collectDailyStatistics = async () => {
     });   
 
     const topUserId = Object.keys(userStats).length ? Object.keys(userStats).reduce((a, b) => userStats[a] > userStats[b] ? a : b) : null;
-    const topUserVolume = topUserId ? userStats[topUserId] : 0;
+    const topUserVolume = topUserId ? userStats[topUserId].toFixed(0) : 0;
 
     
     // Визначаємо топовий автомат

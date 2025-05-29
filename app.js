@@ -64,7 +64,6 @@ if (dataBot?.statistic === true) {
     });
     
     cron.schedule('0 0 1 * *', () => { // 1-го числа кожного місяця о 00:00
-        getStatistic();
         botMonthlyUsersStatistic();
     }, {
         scheduled: true,

@@ -2,12 +2,11 @@ import { bot } from "../app.js";
 import { keyboards, phrases } from "../language_ua.js";
 import { findApiUserByChatId } from "../models/api-users.js";
 import { findCardById, updateCardById } from "../models/cards.js";
-import { collectDailyStatistics } from "../models/daily-statistic.js";
 import { getLastTransactions, getUsersTotalByMonth, getUsersTotalByWeek, getUsersTotalCurrentMonth, getUsersTotalbyTheDay } from "../models/transactions.js";
 import { findUserByChatId } from "../models/users.js";
 import { getCardData } from "../modules/checkcardAPI.js";
-import { botUsersStatistic, getPersonalRankMessage } from "../modules/statistic/bot-users-statistic.js";
-import { showAchievements, updateAchievements } from "../modules/update-achievements.js";
+import { getPersonalRankMessage } from "../modules/statistic/bot-users-statistic.js";
+import { showAchievements } from "../modules/update-achievements.js";
 
 
 const profile = async () => {

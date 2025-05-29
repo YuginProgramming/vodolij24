@@ -4,7 +4,6 @@ import { createNewTransaction, getWaterTotalbyTheDay } from './models/transactio
 import { logger } from './logger/index.js';
 import { bot } from './app.js';
 import { dataBot } from './values.js';
-import { collectDailyStatistics } from './models/daily-statistic.js';
 
 function getCurrentDateFormatted() {
     const today = new Date();
@@ -87,7 +86,6 @@ const getStatistic = async () => {
     };
 };
 
-//getStatistic();
 
 export default getStatistic;
 

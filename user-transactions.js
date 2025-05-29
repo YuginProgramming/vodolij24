@@ -3,7 +3,7 @@ import moment from 'moment';
 import { createNewTransaction } from './models/transactions.js'
 import { logger } from './logger/index.js';
 
-const getTransactions = async (device, substract, cardId) => {
+const getUserTransactions = async (device, substract, cardId) => {
 
     const currentTime = moment();
 
@@ -54,8 +54,9 @@ const getTransactions = async (device, substract, cardId) => {
                     isAutorized: lastTransaction.logdelayed === 'Y' && true,
                     cardId: lastTransaction.cardid
                 };
-
-                createNewTransaction(transactionData);
+                //Тут ми записували транзакцію в реальному часі але це призводило до задвоювання данних в базі і відповідно статистиці. Поки потушим 
+                //Але памятаємо про те що можна повернути данні в реальному часі що може бути корисно в багатьох речах
+                //createNewTransaction(transactionData);
 
                 return transactionData
             }
@@ -64,4 +65,4 @@ const getTransactions = async (device, substract, cardId) => {
         logger.warn(`Transaction reqest unknown error ${error}`)
     }
 };
-export default getTransactions       
+export default getUserTransactions       
