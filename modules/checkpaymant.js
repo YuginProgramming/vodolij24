@@ -1,6 +1,6 @@
 import { phrases } from "../language_ua.js";
 import { bot } from "../app.js";
-import getTransaction from '../transactions.js';
+import getUserTransactions from '../user-transactions.js';
 import { logger } from "../logger/index.js";
 import { getCardData } from "./checkcardAPI.js";
 import axios from "axios";
@@ -13,7 +13,7 @@ const checkPayment = async (chatID, deviceId, cardId, phone, user_id) => {
 
         console.log(card);
 
-        const transaction = await getTransaction(deviceId, 4, cardId);
+        const transaction = await getUserTransactions(deviceId, 4, cardId);
         console.log(transaction);
         const paymantAmount = transaction?.cashPaymant||transaction?.cardPaymant||transaction?.onlinePaymant||'null';
         
