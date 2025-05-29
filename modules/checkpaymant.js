@@ -12,7 +12,7 @@ const checkPayment = async (chatID, deviceId, cardId, phone, user_id) => {
         const card = await getCardData(user_id, cardId);
 
         console.log(card);
-
+        
         const transaction = await getUserTransactions(deviceId, 4, cardId);
         console.log(transaction);
         const paymantAmount = transaction?.cashPaymant||transaction?.cardPaymant||transaction?.onlinePaymant||'null';
