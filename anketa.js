@@ -130,7 +130,7 @@ export const anketaListiner = async() => {
             origin,
             destination,
             mode: 'walking',
-            key: gapiKey
+            key: dataBot.gapiKey
           }
         });
 
@@ -140,7 +140,7 @@ export const anketaListiner = async() => {
             origin,
             destination,
             mode: 'driving',
-            key: gapiKey
+            key: dataBot.gapiKey
           }
         });
 
