@@ -10,6 +10,7 @@ import { findApiUserByChatId } from './models/api-users.js';
 import { findCardById, updateCardById } from "./models/cards.js";
 import { getCardData } from './modules/checkcardAPI.js';
 import createCardApi from "./modules/createCard.js";
+import { dataBot } from "./values.js";
 
 export const anketaListiner = async() => {
 
@@ -118,6 +119,52 @@ export const anketaListiner = async() => {
         bot.sendMessage(chatId, `${nearest.name} `);
 
         bot.sendLocation(chatId, nearest.lat, nearest.lon);
+
+        const origin = msg.location.latitude + ',' + msg.location.longitude;
+
+        const destination = nearest.lat + ',' + nearest.lon;
+
+                // 🚶‍♂️ Пішки
+        const walkingResponse = await axios.get('https://maps.googleapis.com/maps/api/directions/json', {
+          params: {
+            origin,
+            destination,
+            mode: 'walking',
+            key: apiKey
+          }
+        });
+
+        // 🚗 Авто
+        const drivingResponse = await axios.get('https://maps.googleapis.com/maps/api/directions/json', {
+          params: {
+            origin,
+            destination,
+            mode: 'driving',
+            key: apiKey
+          }
+        });
+
+        const walkingRoute = walkingResponse.data.routes[0].legs[0];
+        const drivingRoute = drivingResponse.data.routes[0].legs[0];
+
+        const walkingDistance = walkingRoute.distance.text;     // напр. "4.2 km"
+        const walkingDuration = walkingRoute.duration.text;     // напр. "52 mins"
+
+        const drivingDistance = drivingRoute.distance.text;     // напр. "5.1 km"
+        const drivingDuration = drivingRoute.duration.text;     // напр. "12 mins"
+
+        const walkingLink = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=walking`;
+        const drivingLink = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=driving`;
+
+        const message = `🚶‍♂️ <a href="${walkingLink}">Відправитись пішки</a>: ${walkingDistance} ${walkingDuration}
+🚗 <a href="${drivingLink}">Відправитись на авто</a>: ${drivingDistance} ${drivingDuration}`;
+
+        await bot.sendMessage(chatId, message, {
+          parse_mode: 'HTML',
+          disable_web_page_preview: true
+        });
+
+
       }
 
   });
