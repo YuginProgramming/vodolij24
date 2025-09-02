@@ -64,12 +64,6 @@ const updateApiUserByChatId = async (chat_id, updateParams) => {
   return undefined;
 };
 
-const findApiUserByUserId = async (user_id) => {
-  const res = await Apiuser.findAll({ where: { user_id } });
-  if (res.length > 0) return res.map((el) => el.dataValues);
-  return;
-};
-
 const findAllUsers = async () => {
   const res = await Apiuser.findAll({ where: {} });
   if (res.length > 0) return res.map((el) => el.dataValues);
