@@ -255,7 +255,7 @@ const getUsersTotalCurrentMonth = async (cardId) => {
 const getLastTransactions = async (cardId) => {
   const transactions = await Transaction.findAll({
     where: { cardId },
-    order: [["createdAt", "DESC"]],
+    order: [["date", "DESC"]],
     limit: 10,
   });
 
