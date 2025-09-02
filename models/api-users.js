@@ -80,7 +80,6 @@ export {
   Apiuser,
   createNewApiUser,
   updateApiUserByChatId,
-  findApiUserByUserId,
   findApiUserByChatId,
   findAllUsers,
 };
