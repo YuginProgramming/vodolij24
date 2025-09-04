@@ -3,3 +3,4 @@ credentials.json
 values.js
 db.db
 test.js
+/models/sequelize.js
