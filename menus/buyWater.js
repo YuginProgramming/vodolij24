@@ -383,7 +383,7 @@ const buyWater = () => {
             cardCard,
             cardNumber
           );
-          const link = `https://easypay.ua/ua/partners/vodoleylviv?account=${
+          const link = `https://easypay.ua/ua/partners/vodolii1/VODOLII_1_FOP_KMIT?account=${
             deviceData.id
           }&amount=${msg.text * price}`;
           await bot.sendMessage(
@@ -432,7 +432,7 @@ const buyWater = () => {
             cardCard,
             cardNumber
           );
-          const link = `https://easypay.ua/ua/partners/vodoleylviv?account=${deviceData.id}&amount=${msg.text}`;
+          const link = `https://easypay.ua/ua/partners/vodolii1/VODOLII_1_FOP_KMIT?account=${deviceData.id}&amount=${msg.text}`;
           console.log(link);
           await bot.sendMessage(
             chatId,
