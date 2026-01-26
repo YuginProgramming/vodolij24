@@ -199,7 +199,7 @@ const addToBalance = async () => {
         if (!isNaN(msg.text)) {
           const amount = Math.round(msg.text * 2);
 
-          const link = `https://easypay.ua/ua/partners/vodoleylviv-card?account=${cardNumber}&amount=${amount}`;
+          const link = `https://easypay.ua/ua/partners/vodolii1/VODOLII_1_FOP_KMIT-PAY?account=${cardNumber}&amount=${msg.text}`;
 
           await bot.sendMessage(
             chatId,
@@ -234,7 +234,7 @@ const addToBalance = async () => {
 
       case "amountLink":
         if (!isNaN(msg.text)) {
-          const link = `https://easypay.ua/ua/partners/vodoleylviv-card?account=${cardNumber}&amount=${msg.text}`;
+          const link = `https://easypay.ua/ua/partners/vodolii1/VODOLII_1_FOP_KMIT-PAY?account=${cardNumber}&amount=${msg.text}`;
 
           await bot.sendMessage(
             chatId,
