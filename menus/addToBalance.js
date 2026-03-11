@@ -138,7 +138,7 @@ const addToBalance = async () => {
         }
         if (
           msg.text ===
-          `на екрані автомату з'явився напис: "на балансі картки х літрів"`
+          `на екрані автомата з'явився напис: "на балансі картки х літрів"`
         ) {
           bot.sendMessage(chatId, phrases.cashRequest, {
             reply_markup: {
@@ -152,7 +152,7 @@ const addToBalance = async () => {
         }
         if (
           msg.text ===
-          `Пройшло понад 30 секунд, але напис на екрані автомату так і не з'явився`
+          `Пройшло понад 30 секунд, але напис на екрані автомата так і не з'явився`
         ) {
           bot.sendMessage(msg.chat.id, phrases.choosePaymantWay, {
             reply_markup: {
