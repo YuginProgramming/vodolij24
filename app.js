@@ -1,7 +1,6 @@
 import TelegramBot from "node-telegram-bot-api";
 import { anketaListiner } from "./anketa.js";
 import { dataBot } from "./values.js";
-import { decodeQR } from "./qrdecode.js";
 import { sequelize } from "./models/sequelize.js";
 import getStatistic from "./statistic.js";
 import cron from "node-cron";
@@ -43,7 +42,6 @@ const main = async () => {
 main();
 
 anketaListiner();
-decodeQR();
 mainMenu();
 introduction();
 buyWater();
