@@ -67,7 +67,9 @@ const createNewUser = async (userData) => {
     res = await User.create({ ...userData });
     res = res.dataValues;
   } catch (err) {
-    logger.error(`Impossible to create BOT user: ${err}`);
+    logger.error(
+      `Impossible to create BOT user : ${err}` + JSON.stringify(userData)
+    );
   }
   return res;
 };
