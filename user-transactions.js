@@ -58,7 +58,9 @@ const getUserTransactions = async (device, substract, cardId) => {
       }
     }
   } catch (error) {
-    logger.warn(`Transaction reqest unknown error ${error}`);
+    logger.warn(
+      `Current transaction reqest unknown error ${error} , ${transactionData}`
+    );
   }
 };
 export default getUserTransactions;
