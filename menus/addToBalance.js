@@ -60,7 +60,6 @@ const addToBalance = async () => {
     switch (dialogueStatus) {
       case "cardBalanceRefil":
         if (msg.text === "💸 Готівка") {
-          console.log("GOTIVKA");
           bot.sendMessage(chatId, phrases.chooseVendorRefil, {
             reply_markup: {
               keyboard: keyboards.chooseVendor,

@@ -35,9 +35,7 @@ const buyWater = () => {
       dialogueStatus = userInfo.dialoguestatus;
 
       if (userInfo.hasOwnProperty("lastname")) {
-        console.log(userInfo.lastname);
         const data = JSON.parse(userInfo.lastname);
-        console.log(data);
         userDatafromApi = data;
       }
 
@@ -348,8 +346,6 @@ const buyWater = () => {
             dialoguestatus: "",
             favoriteDevice: deviceData.id,
           });
-          console.log("update");
-          console.log(update);
 
           //тут починається шлях поповнення
         } else {
@@ -433,7 +429,6 @@ const buyWater = () => {
             cardNumber
           );
           const link = `https://easypay.ua/ua/partners/vodolii1/VODOLII_1_FOP_KMIT?account=${deviceData.id}&amount=${msg.text}`;
-          console.log(link);
           await bot.sendMessage(
             chatId,
             `Ви купуєте воду на ${msg.text} грн в автоматі №${deviceData.id}.`,
@@ -457,8 +452,6 @@ const buyWater = () => {
               one_time_keyboard: false,
             },
           });
-
-          if (userInfo) console.log(userInfo);
 
           const apiUser = await findApiUserByChatId(chatId);
 

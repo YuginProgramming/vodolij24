@@ -34,9 +34,7 @@ const profile = async () => {
       dialogueStatus = userInfo.dialoguestatus;
 
       if (userInfo.hasOwnProperty("lastname")) {
-        console.log(userInfo.lastname);
         const data = JSON.parse(userInfo.lastname);
-        console.log(data);
         userDatafromApi = data;
       }
       if (userInfo.hasOwnProperty("fathersname")) {
@@ -61,11 +59,7 @@ const profile = async () => {
       case "👤 Мій профіль":
         const cardId = apiData?.cardId;
 
-        console.log(`user Data API ${userDatafromApi}, card ID ${cardId}`);
-
         const card = await getCardData(userDatafromApi, cardId);
-
-        console.log(card);
 
         await updateCardById(cardId, {
           WaterQty: card.WaterQty,
