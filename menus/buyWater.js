@@ -61,6 +61,7 @@ const buyWater = () => {
       const command = msg.text.split("%");
 
       if (command && command[0] === "linkCard") {
+        console.log(msg.text + "IDK why create card code there");
         await createCardApi(command[1], command[2]);
       }
     }
