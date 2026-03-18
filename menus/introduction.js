@@ -116,10 +116,13 @@ const introduction = async () => {
           const userCard = await axios.get(
             `http://soliton.net.ua/water/api/user/index.php?phone=${userInfo.phone}`
           );
-
-          await updateUserByChatId(chatId, {
-            lastname: userCard.data.user.uid,
-          });
+          try {
+            await updateUserByChatId(chatId, {
+              lastname: userCard.data.user?.uid,
+            });
+          } catch (error) {
+            logger.warn(chatId + "user ID update error" + userInfo.phone);
+          }
 
           const apiUser = await findApiUserByChatId(chatId);
 
