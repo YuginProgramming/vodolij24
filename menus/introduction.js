@@ -118,7 +118,7 @@ const introduction = async () => {
           );
           try {
             await updateUserByChatId(chatId, {
-              lastname: userCard.data.user?.uid,
+              lastname: userCard.data.user.uid,
             });
           } catch (error) {
             logger.warn(chatId + "user ID update error" + userInfo.phone);
