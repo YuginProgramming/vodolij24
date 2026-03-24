@@ -31,12 +31,14 @@ const mainMenu = async () => {
 
     if (userInfo) isAuthenticated = userInfo.isAuthenticated;
 
+    const busyStatuses = ["name", "birthdaydate"];
+
     switch (msg.text) {
       case "/start":
         if (userInfo) {
-          if (userInfo?.dialoguestatus == "name" || "birthdaydate") {
+          if (!busyStatuses.includes(userInfo?.dialoguestatus)) {
+            await updateUserByChatId(chatId, { dialoguestatus: "" });
           }
-          await updateUserByChatId(chatId, { dialoguestatus: "" });
         }
 
         if (isAuthenticated) {
@@ -50,8 +52,7 @@ const mainMenu = async () => {
         } else {
           if (!userInfo) await createNewUserByChatId(chatId);
 
-          if (userInfo?.dialoguestatus == "name" || "birthdaydate") {
-          } else {
+          if (!busyStatuses.includes(userInfo?.dialoguestatus)) {
             await updateUserByChatId(chatId, { dialoguestatus: "phoneNumber" });
 
             bot.sendMessage(msg.chat.id, phrases.greetings, {
