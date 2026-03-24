@@ -34,7 +34,7 @@ const mainMenu = async () => {
     switch (msg.text) {
       case "/start":
         if (userInfo) {
-          if (userInfo.dialoguestatus == "name" || "birthdaydate") {
+          if (userInfo?.dialoguestatus == "name" || "birthdaydate") {
           }
           await updateUserByChatId(chatId, { dialoguestatus: "" });
         }
@@ -50,7 +50,7 @@ const mainMenu = async () => {
         } else {
           if (!userInfo) await createNewUserByChatId(chatId);
 
-          if (userInfo.dialoguestatus == "name" || "birthdaydate") {
+          if (userInfo?.dialoguestatus == "name" || "birthdaydate") {
           } else {
             await updateUserByChatId(chatId, { dialoguestatus: "phoneNumber" });
 
