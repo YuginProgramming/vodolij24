@@ -33,7 +33,11 @@ const mainMenu = async () => {
 
     switch (msg.text) {
       case "/start":
-        if (userInfo) await updateUserByChatId(chatId, { dialoguestatus: "" });
+        if (userInfo) {
+          if (userInfo.dialoguestatus == "name" || "birthdaydate") {
+          }
+          await updateUserByChatId(chatId, { dialoguestatus: "" });
+        }
 
         if (isAuthenticated) {
           bot.sendMessage(msg.chat.id, phrases.mainMenu, {
@@ -46,15 +50,18 @@ const mainMenu = async () => {
         } else {
           if (!userInfo) await createNewUserByChatId(chatId);
 
-          await updateUserByChatId(chatId, { dialoguestatus: "phoneNumber" });
+          if (userInfo.dialoguestatus == "name" || "birthdaydate") {
+          } else {
+            await updateUserByChatId(chatId, { dialoguestatus: "phoneNumber" });
 
-          bot.sendMessage(msg.chat.id, phrases.greetings, {
-            reply_markup: {
-              keyboard: keyboards.contactRequest,
-              resize_keyboard: true,
-              one_time_keyboard: true,
-            },
-          });
+            bot.sendMessage(msg.chat.id, phrases.greetings, {
+              reply_markup: {
+                keyboard: keyboards.contactRequest,
+                resize_keyboard: true,
+                one_time_keyboard: true,
+              },
+            });
+          }
         }
 
         break;
