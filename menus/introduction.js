@@ -60,7 +60,8 @@ const introduction = async () => {
             logger.warn(`Cann't update phone number`);
           }
         } else if (msg.text) {
-          if (msg.text.length === 9 && !isNaN(parseFloat(msg.text))) {
+          const rawPhone = msg.text.replace(/\D/g, "");
+          if (rawPhone.length >= 9 && rawPhone.length <= 13) {
             const phone = numberFormatFixing(msg.text);
 
             try {
