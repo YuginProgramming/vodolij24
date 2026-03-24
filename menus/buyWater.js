@@ -383,6 +383,14 @@ const buyWater = () => {
           const link = `https://easypay.ua/ua/partners/vodolii1/VODOLII_1_FOP_KMIT?account=${
             deviceData.id
           }&amount=${msg.text * price}`;
+          await bot.sendMessage(chatId, phrases.pressStart, {
+            reply_markup: {
+              keyboard: keyboards.mainMenuButton,
+              resize_keyboard: true,
+              one_time_keyboard: false,
+            },
+          });
+
           await bot.sendMessage(
             chatId,
             `Ви купуєте ${msg.text} л води в автоматі №${deviceData.id}.`,
@@ -391,7 +399,7 @@ const buyWater = () => {
                 inline_keyboard: [
                   [
                     {
-                      text: "Оплатити",
+                      text: "✨ ОПЛАТИТИ ✨",
                       url: link,
                     },
                   ],
@@ -399,13 +407,6 @@ const buyWater = () => {
               },
             }
           );
-          await bot.sendMessage(chatId, phrases.pressStart, {
-            reply_markup: {
-              keyboard: keyboards.mainMenuButton,
-              resize_keyboard: true,
-              one_time_keyboard: false,
-            },
-          });
           const apiUser = await findApiUserByChatId(chatId);
 
           checkPayment(
