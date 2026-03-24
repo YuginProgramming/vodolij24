@@ -199,7 +199,13 @@ const addToBalance = async () => {
           const amount = Math.round(msg.text * 2);
 
           const link = `https://easypay.ua/ua/partners/vodolii1/VODOLII_1_FOP_KMIT-PAY?account=${cardNumber}&amount=${msg.text}`;
-
+          await bot.sendMessage(chatId, phrases.refilInfo, {
+            reply_markup: {
+              keyboard: keyboards.mainMenuButton,
+              resize_keyboard: true,
+              one_time_keyboard: false,
+            },
+          });
           await bot.sendMessage(
             chatId,
             `Поповнення картки номер "${cardNumber}".`,
@@ -208,7 +214,7 @@ const addToBalance = async () => {
                 inline_keyboard: [
                   [
                     {
-                      text: "Оплатити",
+                      text: "✨ ОПЛАТИТИ ✨",
                       url: link,
                     },
                   ],
@@ -216,13 +222,6 @@ const addToBalance = async () => {
               },
             }
           );
-          await bot.sendMessage(chatId, phrases.refilInfo, {
-            reply_markup: {
-              keyboard: keyboards.mainMenuButton,
-              resize_keyboard: true,
-              one_time_keyboard: false,
-            },
-          });
 
           checkBalanceChange(chatId, userDatafromApi, apiData?.cardId);
         } else {
@@ -234,7 +233,13 @@ const addToBalance = async () => {
       case "amountLink":
         if (!isNaN(msg.text)) {
           const link = `https://easypay.ua/ua/partners/vodolii1/VODOLII_1_FOP_KMIT-PAY?account=${cardNumber}&amount=${msg.text}`;
-
+          await bot.sendMessage(chatId, phrases.refilInfo, {
+            reply_markup: {
+              keyboard: keyboards.mainMenuButton,
+              resize_keyboard: true,
+              one_time_keyboard: false,
+            },
+          });
           await bot.sendMessage(
             chatId,
             `Поповнення картки номер "${cardNumber}".`,
@@ -243,7 +248,7 @@ const addToBalance = async () => {
                 inline_keyboard: [
                   [
                     {
-                      text: "Оплатити",
+                      text: "✨ ОПЛАТИТИ ✨",
                       url: link,
                     },
                   ],
@@ -253,14 +258,6 @@ const addToBalance = async () => {
           );
 
           checkBalanceChange(chatId, userDatafromApi, apiData?.cardId);
-
-          await bot.sendMessage(chatId, phrases.refilInfo, {
-            reply_markup: {
-              keyboard: keyboards.mainMenuButton,
-              resize_keyboard: true,
-              one_time_keyboard: false,
-            },
-          });
         } else {
           bot.sendMessage(chatId, phrases.wrongNumber);
         }
