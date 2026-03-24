@@ -38,23 +38,26 @@ const getUserTransactions = async (device, substract, cardId) => {
       if (log.length > 0) {
         const lastTransaction = log.find((item) => item.cardid == cardId);
 
-        const transactionData = {
-          device,
-          date: lastTransaction.date,
-          waterRequested: lastTransaction.wz,
-          waterFullfilled: lastTransaction.wg,
-          cashPaymant: lastTransaction.mt,
-          cardPaymant: lastTransaction.mt_bn,
-          onlinePaymant: lastTransaction.mt_www,
-          paymantChange: lastTransaction.sd,
-          isAutorized: lastTransaction.logdelayed === "Y" && true,
-          cardId: lastTransaction.cardid,
-        };
-        //Тут ми записували транзакцію в реальному часі але це призводило до задвоювання данних в базі і відповідно статистиці. Поки потушим
-        //Але памятаємо про те що можна повернути данні в реальному часі що може бути корисно в багатьох речах
-        //createNewTransaction(transactionData);
+        if (lastTransaction) {
+          const transactionData = {
+            device,
+            date: lastTransaction.date,
+            waterRequested: lastTransaction.wz,
+            waterFullfilled: lastTransaction.wg,
+            cashPaymant: lastTransaction.mt,
+            cardPaymant: lastTransaction.mt_bn,
+            onlinePaymant: lastTransaction.mt_www,
+            paymantChange: lastTransaction.sd,
+            isAutorized: lastTransaction.logdelayed === "Y" && true,
+            cardId: lastTransaction.cardid,
+          };
+          //Тут ми записували транзакцію в реальному часі але це призводило до задвоювання данних в базі і відповідно статистиці. Поки потушим
+          //Але памятаємо про те що можна повернути данні в реальному часі що може бути корисно в багатьох речах
+          //createNewTransaction(transactionData);
 
-        return transactionData;
+          return transactionData;
+        }
+        return;
       }
     }
   } catch (error) {
