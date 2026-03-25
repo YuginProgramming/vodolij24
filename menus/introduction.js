@@ -163,9 +163,15 @@ const introduction = async () => {
             dialoguestatus: "",
           });
 
-          const name = userInfo.firstname.includes(" ")
-            ? userInfo.firstname.split(" ")
-            : [userInfo.firstname];
+          let name;
+
+          if (userInfo.firstname) {
+            name = userInfo.firstname.includes(" ")
+              ? userInfo.firstname.split(" ")
+              : [userInfo.firstname];
+          } else {
+            name = ["немає", "імені"];
+          }
 
           const newUser = await axios.post(
             "http://soliton.net.ua/water/api/user/add/index.php",
