@@ -13,7 +13,7 @@ import createCardApi from "../modules/createCard.js";
 const removeApostrophes = (text) => {
   if (!text) return "";
   // Регулярний вираз шукає: ' (звичайний), ’ (курсивний), ` (бекток)
-  return text.replace(/['’`]/g, "");
+  return text.replace(/['’`ʼ]/g, "");
 };
 
 const formatBirthDate = (input) => {
