@@ -10,6 +10,12 @@ import {
 import { findUserByChatId, updateUserByChatId } from "../models/users.js";
 import createCardApi from "../modules/createCard.js";
 
+const removeApostrophes = (text) => {
+  if (!text) return "";
+  // Регулярний вираз шукає: ' (звичайний), ’ (курсивний), ` (бекток)
+  return text.replace(/['’`]/g, "");
+};
+
 const numberFormatFixing = (phone) => {
   if (phone.length == 12) {
     return phone;
@@ -81,8 +87,9 @@ const introduction = async () => {
         break;
 
       case "name":
+        const fixedName = removeApostrophes(msg.text);
         await updateUserByChatId(chatId, {
-          firstname: msg.text,
+          firstname: fixedName,
           dialoguestatus: "birthdaydate",
         });
         await bot.sendMessage(
