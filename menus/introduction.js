@@ -142,6 +142,7 @@ const introduction = async () => {
 
       case "name":
         const fixedName = removeApostrophes(msg.text);
+        console.log(fixedName);
         await updateUserByChatId(chatId, {
           firstname: fixedName,
           dialoguestatus: "birthdaydate",
