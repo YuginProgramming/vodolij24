@@ -16,6 +16,60 @@ const removeApostrophes = (text) => {
   return text.replace(/['’`]/g, "");
 };
 
+const formatBirthDate = (input) => {
+  // 1. Витягуємо тільки цифри
+  const digits = input.replace(/\D/g, "");
+
+  // 2. Якщо це явно номер телефону (починається на 0 та довгий) — ігноруємо
+  if (
+    digits.length >= 10 &&
+    (digits.startsWith("0") || digits.startsWith("380"))
+  ) {
+    return null;
+  }
+
+  let day, month, year;
+
+  // Варіант: 19921009 (РРРРММДД)
+  if (
+    (digits.length === 8 && digits.startsWith("19")) ||
+    digits.startsWith("20")
+  ) {
+    if (parseInt(digits.substring(4, 6)) <= 12) {
+      // перевірка що посередині місяць
+      year = digits.substring(0, 4);
+      month = digits.substring(4, 6);
+      day = digits.substring(6, 8);
+    }
+  }
+
+  // Варіант: 20011995 (ДДММРРРР) — найчастіший
+  if (!day && digits.length === 8) {
+    day = digits.substring(0, 2);
+    month = digits.substring(2, 4);
+    year = digits.substring(4, 8);
+  }
+
+  // Варіант: 1503 (ДДММ без року) — повертаємо як є або ігноруємо
+  if (digits.length === 4) {
+    return null; // замало даних для валідної дати
+  }
+
+  // 3. Фінальна збірка та валідація
+  if (day && month && year) {
+    // Перевірка на адекватність
+    const d = parseInt(day);
+    const m = parseInt(month);
+    const y = parseInt(year);
+
+    if (d > 0 && d <= 31 && m > 0 && m <= 12 && y > 1920 && y < 2027) {
+      return `${day.padStart(2, "0")}.${month.padStart(2, "0")}.${year}`;
+    }
+  }
+
+  return null; // Якщо не вдалося розпізнати
+};
+
 const numberFormatFixing = (phone) => {
   if (phone.length == 12) {
     return phone;
@@ -101,8 +155,10 @@ const introduction = async () => {
 
       case "birthdaydate":
         if (msg.text && msg.text.length === 10) {
+          const validDate = formatBirthDate(msg.text);
+
           await updateUserByChatId(chatId, {
-            birthdaydate: msg.text,
+            birthdaydate: validDate,
             dialoguestatus: "",
           });
 
