@@ -66,7 +66,7 @@ const getTransactions = async (device, substract) => {
       }
     }
   } catch (error) {
-    logger.warn(`Transaction reqest unknown error ${error}`);
+    logger.warn(`Transaction reqest unknown error ${error}` + error.message);
   }
 };
 

@@ -90,7 +90,13 @@ const buyWater = () => {
           );
 
           if (!currentVendor) {
-            bot.sendMessage(chatId, phrases.wrongNumber);
+            bot.sendMessage(chatId, phrases.wrongNumber, {
+              reply_markup: {
+                keyboard: keyboards.chooseVendor,
+                resize_keyboard: true,
+                one_time_keyboard: true,
+              },
+            });
             return;
           }
 
