@@ -97,6 +97,8 @@ const buyWater = () => {
                 one_time_keyboard: true,
               },
             });
+
+            await updateUserByChatId(chatId, { dialoguestatus: "buyWater" });
             return;
           }
 
