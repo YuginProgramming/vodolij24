@@ -2,11 +2,7 @@ const mainMenu = async () => {
   bot.on("message", async (msg) => {
     const chatId = msg.chat.id;
 
-    console.log(`chat ID ${chatId}`);
-
     const apiData = await findApiUserByChatId(chatId);
-
-    console.log(`apiData ${apiData}`);
 
     let card = {};
 
@@ -32,9 +28,7 @@ const mainMenu = async () => {
       birthDaydate = userInfo.birthdaydate;
 
       if (userInfo.hasOwnProperty("lastname")) {
-        console.log(userInfo.lastname);
         const data = JSON.parse(userInfo.lastname);
-        console.log(data);
         userDatafromApi = data;
       }
       if (userInfo.hasOwnProperty("fathersname")) {

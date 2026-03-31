@@ -60,7 +60,6 @@ const addToBalance = async () => {
     switch (dialogueStatus) {
       case "cardBalanceRefil":
         if (msg.text === "💸 Готівка") {
-          console.log("GOTIVKA");
           bot.sendMessage(chatId, phrases.chooseVendorRefil, {
             reply_markup: {
               keyboard: keyboards.chooseVendor,
@@ -138,7 +137,7 @@ const addToBalance = async () => {
         }
         if (
           msg.text ===
-          `на екрані автомату з'явився напис: "на балансі картки х літрів"`
+          `на екрані автомата з'явився напис: "на балансі картки х літрів"`
         ) {
           bot.sendMessage(chatId, phrases.cashRequest, {
             reply_markup: {
@@ -152,7 +151,7 @@ const addToBalance = async () => {
         }
         if (
           msg.text ===
-          `Пройшло понад 30 секунд, але напис на екрані автомату так і не з'явився`
+          `Пройшло понад 30 секунд, але напис на екрані автомата так і не з'явився`
         ) {
           bot.sendMessage(msg.chat.id, phrases.choosePaymantWay, {
             reply_markup: {
@@ -200,7 +199,13 @@ const addToBalance = async () => {
           const amount = Math.round(msg.text * 2);
 
           const link = `https://easypay.ua/ua/partners/vodolii1/VODOLII_1_FOP_KMIT-PAY?account=${cardNumber}&amount=${msg.text}`;
-
+          await bot.sendMessage(chatId, phrases.refilInfo, {
+            reply_markup: {
+              keyboard: keyboards.mainMenuButton,
+              resize_keyboard: true,
+              one_time_keyboard: false,
+            },
+          });
           await bot.sendMessage(
             chatId,
             `Поповнення картки номер "${cardNumber}".`,
@@ -209,7 +214,7 @@ const addToBalance = async () => {
                 inline_keyboard: [
                   [
                     {
-                      text: "Оплатити",
+                      text: "✨ ОПЛАТИТИ ✨",
                       url: link,
                     },
                   ],
@@ -217,13 +222,6 @@ const addToBalance = async () => {
               },
             }
           );
-          await bot.sendMessage(chatId, phrases.refilInfo, {
-            reply_markup: {
-              keyboard: keyboards.mainMenuButton,
-              resize_keyboard: true,
-              one_time_keyboard: false,
-            },
-          });
 
           checkBalanceChange(chatId, userDatafromApi, apiData?.cardId);
         } else {
@@ -235,7 +233,13 @@ const addToBalance = async () => {
       case "amountLink":
         if (!isNaN(msg.text)) {
           const link = `https://easypay.ua/ua/partners/vodolii1/VODOLII_1_FOP_KMIT-PAY?account=${cardNumber}&amount=${msg.text}`;
-
+          await bot.sendMessage(chatId, phrases.refilInfo, {
+            reply_markup: {
+              keyboard: keyboards.mainMenuButton,
+              resize_keyboard: true,
+              one_time_keyboard: false,
+            },
+          });
           await bot.sendMessage(
             chatId,
             `Поповнення картки номер "${cardNumber}".`,
@@ -244,7 +248,7 @@ const addToBalance = async () => {
                 inline_keyboard: [
                   [
                     {
-                      text: "Оплатити",
+                      text: "✨ ОПЛАТИТИ ✨",
                       url: link,
                     },
                   ],
@@ -254,14 +258,6 @@ const addToBalance = async () => {
           );
 
           checkBalanceChange(chatId, userDatafromApi, apiData?.cardId);
-
-          await bot.sendMessage(chatId, phrases.refilInfo, {
-            reply_markup: {
-              keyboard: keyboards.mainMenuButton,
-              resize_keyboard: true,
-              one_time_keyboard: false,
-            },
-          });
         } else {
           bot.sendMessage(chatId, phrases.wrongNumber);
         }
