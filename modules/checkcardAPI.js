@@ -5,7 +5,7 @@ import { logger } from "../logger/index.js";
 import { findUserByChatId } from "../models/users.js";
 import { dataBot } from "../values.js";
 
-const waterPrice = dataBot.topUpPrice;
+const waterPrice = 2.5;
 
 const getCardData = async (user_id, card_id) => {
   const url = "https://soliton.net.ua/water/api/card/query/index.php";
