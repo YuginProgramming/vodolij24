@@ -1,4 +1,5 @@
 import { generateKeyboard } from "./src/plugins.js";
+import { dataBot } from "./values.js";
 
 const phrases = {
   greetings:
