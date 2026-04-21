@@ -199,7 +199,7 @@ const addToBalance = async () => {
         if (!isNaN(msg.text)) {
           const amount = Math.round(msg.text * dataBot.topUpPrice);
 
-          const link = `https://easypay.ua/ua/partners/vodolii1/VODOLII_1_FOP_KMIT-PAY?account=${cardNumber}&amount=${msg.text}`;
+          const link = `https://easypay.ua/ua/partners/vodolii1/VODOLII_1_FOP_KMIT-PAY?account=${cardNumber}&amount=${amount}`;
           await bot.sendMessage(chatId, phrases.refilInfo, {
             reply_markup: {
               keyboard: keyboards.mainMenuButton,
