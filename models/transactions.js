@@ -114,12 +114,10 @@ const getWaterTotalbyTheDay = async () => {
 const getUsersTotalbyTheDay = async (cardId) => {
   let res = 0;
 
-  const today = new Date();
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0); // Встановлюємо 00:00:00 сьогоднішнього дня
 
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-  const startOfYesterday = new Date(yesterday.setHours(0, 0, 0, 0));
-  const endOfYesterday = new Date(yesterday.setHours(23, 59, 59, 999));
+  const now = new Date(); // Поточний момент (дата і час прямо зараз)
 
   try {
     const totalWaterFulfilled = await Transaction.sum("waterFullfilled", {
@@ -127,7 +125,7 @@ const getUsersTotalbyTheDay = async (cardId) => {
         cardId,
 
         date: {
-          [Op.between]: [startOfYesterday, endOfYesterday],
+          [Op.between]: [startOfToday, now],
         },
       },
     });
