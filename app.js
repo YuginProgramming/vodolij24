@@ -5,11 +5,7 @@ import { decodeQR } from "./qrdecode.js";
 import { sequelize } from "./models/sequelize.js";
 import getStatistic from "./statistic.js";
 import cron from "node-cron";
-import {
-  botUsersStatistic,
-  botWeeklyUsersStatistic,
-  botMonthlyUsersStatistic,
-} from "./modules/statistic/bot-users-statistic.js";
+
 import mainMenu from "./menus/main.js";
 import introduction from "./menus/introduction.js";
 import buyWater from "./menus/buyWater.js";
@@ -49,41 +45,3 @@ introduction();
 buyWater();
 addToBalance();
 profile();
-
-if (dataBot?.statistic === true) {
-  cron.schedule(
-    "0 0 * * *",
-    () => {
-      getStatistic();
-    },
-    {
-      scheduled: true,
-      timezone: "Europe/Kiev",
-    }
-  );
-
-  cron.schedule(
-    "0 0 * * 0",
-    () => {
-      // Щонеділі о 00:00
-      botWeeklyUsersStatistic();
-    },
-    {
-      scheduled: true,
-      timezone: "Europe/Kiev",
-    }
-  );
-
-  cron.schedule(
-    "0 0 1 * *",
-    () => {
-      // 1-го числа кожного місяця о 00:00
-      getStatistic();
-      botMonthlyUsersStatistic();
-    },
-    {
-      scheduled: true,
-      timezone: "Europe/Kiev",
-    }
-  );
-}
