@@ -167,7 +167,7 @@ const getUsersTotalByWeek = async (cardId) => {
   }
   return res;
 };
-*/
+*/ /*
 const getUsersTotalByMonth = async (cardId) => {
   let res = 0;
 
@@ -198,12 +198,12 @@ const getUsersTotalByMonth = async (cardId) => {
   }
   return res;
 };
-
+*/
 export {
   Transaction,
   createNewTransaction,
   getWaterTotalbyTheDay,
   //getUsersTotalbyTheDay,
   //getUsersTotalByWeek,
-  getUsersTotalByMonth,
+  //getUsersTotalByMonth,
 };

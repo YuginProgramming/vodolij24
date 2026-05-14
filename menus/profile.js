@@ -3,10 +3,6 @@ import { bot } from "../app.js";
 import { keyboards, phrases } from "../language_ua.js";
 import { findApiUserByChatId } from "../models/api-users.js";
 import { findCardById, updateCardById } from "../models/cards.js";
-import {
-  getUsersTotalByWeek,
-  getUsersTotalbyTheDay,
-} from "../models/transactions.js";
 import { findUserByChatId } from "../models/users.js";
 import { getCardData } from "../modules/checkcardAPI.js";
 
