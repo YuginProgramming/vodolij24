@@ -203,7 +203,7 @@ export {
   Transaction,
   createNewTransaction,
   getWaterTotalbyTheDay,
-  getUsersTotalbyTheDay,
-  getUsersTotalByWeek,
+  //getUsersTotalbyTheDay,
+  //getUsersTotalByWeek,
   getUsersTotalByMonth,
 };
