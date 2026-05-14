@@ -110,7 +110,7 @@ const getWaterTotalbyTheDay = async () => {
   }
   return res;
 };
-
+/*
 const getUsersTotalbyTheDay = async (cardId) => {
   let res = 0;
 
@@ -167,7 +167,7 @@ const getUsersTotalByWeek = async (cardId) => {
   }
   return res;
 };
-
+*/
 const getUsersTotalByMonth = async (cardId) => {
   let res = 0;
 

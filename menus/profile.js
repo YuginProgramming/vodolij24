@@ -1,3 +1,4 @@
+import axios from "axios";
 import { bot } from "../app.js";
 import { keyboards, phrases } from "../language_ua.js";
 import { findApiUserByChatId } from "../models/api-users.js";
@@ -104,28 +105,34 @@ const profile = async () => {
           },
         });
 
-        const userDaylyTotal = await getUsersTotalbyTheDay(cardId);
+        try {
+          const userStatistic = await axios.get(
+            `http://localhost:8080/statistic/${cardId}`
+          ).data;
 
-        const userWeeklyTotal = await getUsersTotalByWeek(cardId);
-
-        const userMonthlyTotal = await getUsersTotalByWeek(cardId);
-
-        const usageMessage = `
+          const usageMessage = `
 📊 *Статистика набраної води:*
 
-🗓️ *Сьогодні:* ${userDaylyTotal} л.
-📅 *За останній тиждень:* ${userWeeklyTotal} л.
-🗓️ *За останній місяць:* ${userMonthlyTotal} л.
+🗓️ *Сьогодні:* ${userStatistic.day} л.
+📅 *За останній тиждень:* ${userStatistic.week} л.
+🗓️ *За останній місяць:* ${userStatistic.month} л.
 `;
 
-        bot.sendMessage(msg.chat.id, usageMessage, {
-          parse_mode: "Markdown",
-          reply_markup: {
-            keyboard: keyboards.mainMenuButton,
-            resize_keyboard: true,
-            one_time_keyboard: true,
-          },
-        });
+          bot.sendMessage(msg.chat.id, usageMessage, {
+            parse_mode: "Markdown",
+            reply_markup: {
+              keyboard: keyboards.mainMenuButton,
+              resize_keyboard: true,
+              one_time_keyboard: true,
+            },
+          });
+        } catch (error) {
+          console.log("Error user statistic cardID : " + cardId);
+        }
+
+        //  const userWeeklyTotal = await getUsersTotalByWeek(cardId);
+
+        //  const userMonthlyTotal = await getUsersTotalByWeek(cardId);
 
         break;
     }
