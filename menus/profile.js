@@ -102,16 +102,18 @@ const profile = async () => {
         });
 
         try {
-          const userStatistic = await axios.get(
+          const response = await axios.get(
             `http://localhost:8080/statistic/${cardId}`
-          ).data;
+          );
+
+          const { day, week, month } = response.data;
 
           const usageMessage = `
 📊 *Статистика набраної води:*
 
-🗓️ *Сьогодні:* ${userStatistic.day} л.
-📅 *За останній тиждень:* ${userStatistic.week} л.
-🗓️ *За останній місяць:* ${userStatistic.month} л.
+🗓️ *Сьогодні:* ${day} л.
+📅 *За останній тиждень:* ${week} л.
+🗓️ *За останній місяць:* ${month} л.
 `;
 
           bot.sendMessage(msg.chat.id, usageMessage, {
