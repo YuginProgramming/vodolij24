@@ -9,6 +9,7 @@ import { checkPayment, checkPaymentCard } from "../modules/checkpaymant.js";
 import { findNearestCoordinate } from "../modules/locations.js";
 import { checkBalanceChangeForCardPayment } from "../modules/checkcardAPI.js";
 import { logger } from "../logger/index.js";
+import { checkRedirectAndParams } from "../modules/get-device-paymant-link.js";
 
 const buyWater = () => {
   bot.on("message", async (msg) => {
@@ -438,7 +439,16 @@ const buyWater = () => {
             cardCard,
             cardNumber
           );
-          const link = `https://easypay.ua/ua/partners/soliton/VODOLEYLVIV?account=${deviceData.id}&amount=${msg.text}`;
+          const baseUrl = await checkRedirectAndParams(deviceData.id);
+          const link =
+            baseUrl +
+            "?account=" +
+            deviceData.id +
+            "&amount=" +
+            msg.text +
+            "&readonly=account";
+
+          //const link = `https://easypay.ua/ua/partners/soliton/VODOLEYLVIV?account=${deviceData.id}&amount=${msg.text}`;
           await bot.sendMessage(chatId, phrases.pressStart, {
             reply_markup: {
               keyboard: keyboards.mainMenuButton,
