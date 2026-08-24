@@ -36,7 +36,11 @@ const getUserTransactions = async (device, substract, cardId) => {
       const log = response.data?.log;
 
       if (log.length > 0) {
-        const lastTransaction = log.find((item) => item.cardid == cardId);
+        // Soliton returns ascending log — take the latest matching card tx
+        const matching = log.filter(
+          (item) => String(item.cardid) === String(cardId)
+        );
+        const lastTransaction = matching[matching.length - 1];
 
         if (lastTransaction) {
           const transactionData = {
@@ -50,6 +54,10 @@ const getUserTransactions = async (device, substract, cardId) => {
             paymantChange: lastTransaction.sd,
             isAutorized: lastTransaction.logdelayed === "Y" && true,
             cardId: lastTransaction.cardid,
+            // Some devices (e.g. 247) report balance pours only via bonus delta,
+            // while mt_bn stays 0 — keep these for recognition in checkpaymant
+            bonusBefore: lastTransaction.bonus_on_card_before,
+            bonusAfter: lastTransaction.bonus_on_card_after,
           };
           //Тут ми записували транзакцію в реальному часі але це призводило до задвоювання данних в базі і відповідно статистиці. Поки потушим
           //Але памятаємо про те що можна повернути данні в реальному часі що може бути корисно в багатьох речах
