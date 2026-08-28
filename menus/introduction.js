@@ -10,6 +10,66 @@ import {
 import { findUserByChatId, updateUserByChatId } from "../models/users.js";
 import createCardApi from "../modules/createCard.js";
 
+const removeApostrophes = (text) => {
+  if (!text) return "";
+  // Регулярний вираз шукає: ' (звичайний), ’ (курсивний), ` (бекток)
+  return text.replace(/['’`ʼ]/g, "");
+};
+
+const formatBirthDate = (input) => {
+  // 1. Витягуємо тільки цифри
+  const digits = input.replace(/\D/g, "");
+
+  // 2. Якщо це явно номер телефону (починається на 0 та довгий) — ігноруємо
+  if (
+    digits.length >= 10 &&
+    (digits.startsWith("0") || digits.startsWith("380"))
+  ) {
+    return null;
+  }
+
+  let day, month, year;
+
+  // Варіант: 19921009 (РРРРММДД)
+  if (
+    (digits.length === 8 && digits.startsWith("19")) ||
+    digits.startsWith("20")
+  ) {
+    if (parseInt(digits.substring(4, 6)) <= 12) {
+      // перевірка що посередині місяць
+      year = digits.substring(0, 4);
+      month = digits.substring(4, 6);
+      day = digits.substring(6, 8);
+    }
+  }
+
+  // Варіант: 20011995 (ДДММРРРР) — найчастіший
+  if (!day && digits.length === 8) {
+    day = digits.substring(0, 2);
+    month = digits.substring(2, 4);
+    year = digits.substring(4, 8);
+  }
+
+  // Варіант: 1503 (ДДММ без року) — повертаємо як є або ігноруємо
+  if (digits.length === 4) {
+    return null; // замало даних для валідної дати
+  }
+
+  // 3. Фінальна збірка та валідація
+  if (day && month && year) {
+    // Перевірка на адекватність
+    const d = parseInt(day);
+    const m = parseInt(month);
+    const y = parseInt(year);
+
+    if (d > 0 && d <= 31 && m > 0 && m <= 12 && y > 1920 && y < 2027) {
+      return `${day.padStart(2, "0")}.${month.padStart(2, "0")}.${year}`;
+    }
+  }
+
+  return null; // Якщо не вдалося розпізнати
+};
+
 const numberFormatFixing = (phone) => {
   if (phone.length == 12) {
     return phone;
@@ -60,7 +120,8 @@ const introduction = async () => {
             logger.warn(`Cann't update phone number`);
           }
         } else if (msg.text) {
-          if (msg.text.length === 9 && !isNaN(parseFloat(msg.text))) {
+          const rawPhone = msg.text.replace(/\D/g, "");
+          if (rawPhone.length >= 9 && rawPhone.length <= 13) {
             const phone = numberFormatFixing(msg.text);
 
             try {
@@ -80,8 +141,10 @@ const introduction = async () => {
         break;
 
       case "name":
+        const fixedName = removeApostrophes(msg.text);
+        console.log(fixedName);
         await updateUserByChatId(chatId, {
-          firstname: msg.text,
+          firstname: fixedName,
           dialoguestatus: "birthdaydate",
         });
         await bot.sendMessage(
@@ -93,14 +156,22 @@ const introduction = async () => {
 
       case "birthdaydate":
         if (msg.text && msg.text.length === 10) {
+          const validDate = formatBirthDate(msg.text);
+
           await updateUserByChatId(chatId, {
-            birthdaydate: msg.text,
+            birthdaydate: validDate,
             dialoguestatus: "",
           });
 
-          const name = userInfo.firstname.includes(" ")
-            ? userInfo.firstname.split(" ")
-            : [userInfo.firstname];
+          let name;
+
+          if (userInfo.firstname) {
+            name = userInfo.firstname.includes(" ")
+              ? userInfo.firstname.split(" ")
+              : [userInfo.firstname];
+          } else {
+            name = ["немає", "імені"];
+          }
 
           const newUser = await axios.post(
             "http://soliton.net.ua/water/api/user/add/index.php",
@@ -116,10 +187,13 @@ const introduction = async () => {
           const userCard = await axios.get(
             `http://soliton.net.ua/water/api/user/index.php?phone=${userInfo.phone}`
           );
-
-          await updateUserByChatId(chatId, {
-            lastname: userCard.data.user.uid,
-          });
+          try {
+            await updateUserByChatId(chatId, {
+              lastname: userCard.data.user.uid,
+            });
+          } catch (error) {
+            logger.warn(chatId + "user ID update error" + userInfo.phone);
+          }
 
           const apiUser = await findApiUserByChatId(chatId);
 

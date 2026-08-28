@@ -9,6 +9,7 @@ import { checkPayment, checkPaymentCard } from "../modules/checkpaymant.js";
 import { findNearestCoordinate } from "../modules/locations.js";
 import { checkBalanceChangeForCardPayment } from "../modules/checkcardAPI.js";
 import { logger } from "../logger/index.js";
+import { checkRedirectAndParams } from "../modules/get-device-paymant-link.js";
 
 const buyWater = () => {
   bot.on("message", async (msg) => {
@@ -35,9 +36,7 @@ const buyWater = () => {
       dialogueStatus = userInfo.dialoguestatus;
 
       if (userInfo.hasOwnProperty("lastname")) {
-        console.log(userInfo.lastname);
         const data = JSON.parse(userInfo.lastname);
-        console.log(data);
         userDatafromApi = data;
       }
 
@@ -63,6 +62,7 @@ const buyWater = () => {
       const command = msg.text.split("%");
 
       if (command && command[0] === "linkCard") {
+        console.log(msg.text + "IDK why create card code there");
         await createCardApi(command[1], command[2]);
       }
     }
@@ -91,7 +91,15 @@ const buyWater = () => {
           );
 
           if (!currentVendor) {
-            bot.sendMessage(chatId, phrases.wrongNumber);
+            bot.sendMessage(chatId, phrases.wrongNumber, {
+              reply_markup: {
+                keyboard: keyboards.chooseVendor,
+                resize_keyboard: true,
+                one_time_keyboard: true,
+              },
+            });
+
+            await updateUserByChatId(chatId, { dialoguestatus: "buyWater" });
             return;
           }
 
@@ -348,8 +356,6 @@ const buyWater = () => {
             dialoguestatus: "",
             favoriteDevice: deviceData.id,
           });
-          console.log("update");
-          console.log(update);
 
           //тут починається шлях поповнення
         } else {
@@ -383,9 +389,24 @@ const buyWater = () => {
             cardCard,
             cardNumber
           );
-          const link = `https://easypay.ua/ua/partners/vodolii1/VODOLII_1_FOP_KMIT?account=${
-            deviceData.id
-          }&amount=${msg.text * price}`;
+
+          const baseUrl = await checkRedirectAndParams(deviceData.id);
+          const link =
+            baseUrl +
+            "?account=" +
+            deviceData.id +
+            "&amount=" +
+            msg.text * price +
+            "&readonly=account";
+
+          await bot.sendMessage(chatId, phrases.pressStart, {
+            reply_markup: {
+              keyboard: keyboards.mainMenuButton,
+              resize_keyboard: true,
+              one_time_keyboard: false,
+            },
+          });
+
           await bot.sendMessage(
             chatId,
             `Ви купуєте ${msg.text} л води в автоматі №${deviceData.id}.`,
@@ -394,7 +415,7 @@ const buyWater = () => {
                 inline_keyboard: [
                   [
                     {
-                      text: "Оплатити",
+                      text: "✨ ОПЛАТИТИ ✨",
                       url: link,
                     },
                   ],
@@ -402,13 +423,6 @@ const buyWater = () => {
               },
             }
           );
-          await bot.sendMessage(chatId, phrases.pressStart, {
-            reply_markup: {
-              keyboard: keyboards.mainMenuButton,
-              resize_keyboard: true,
-              one_time_keyboard: false,
-            },
-          });
           const apiUser = await findApiUserByChatId(chatId);
 
           checkPayment(
@@ -432,8 +446,22 @@ const buyWater = () => {
             cardCard,
             cardNumber
           );
-          const link = `https://easypay.ua/ua/partners/vodolii1/VODOLII_1_FOP_KMIT?account=${deviceData.id}&amount=${msg.text}`;
-          console.log(link);
+          const baseUrl = await checkRedirectAndParams(deviceData.id);
+          const link =
+            baseUrl +
+            "?account=" +
+            deviceData.id +
+            "&amount=" +
+            msg.text +
+            "&readonly=account";
+
+          await bot.sendMessage(chatId, phrases.pressStart, {
+            reply_markup: {
+              keyboard: keyboards.mainMenuButton,
+              resize_keyboard: true,
+              one_time_keyboard: false,
+            },
+          });
           await bot.sendMessage(
             chatId,
             `Ви купуєте воду на ${msg.text} грн в автоматі №${deviceData.id}.`,
@@ -442,7 +470,7 @@ const buyWater = () => {
                 inline_keyboard: [
                   [
                     {
-                      text: "Оплатити",
+                      text: "✨ ОПЛАТИТИ ✨",
                       url: link,
                     },
                   ],
@@ -450,15 +478,6 @@ const buyWater = () => {
               },
             }
           );
-          await bot.sendMessage(chatId, phrases.pressStart, {
-            reply_markup: {
-              keyboard: keyboards.mainMenuButton,
-              resize_keyboard: true,
-              one_time_keyboard: false,
-            },
-          });
-
-          if (userInfo) console.log(userInfo);
 
           const apiUser = await findApiUserByChatId(chatId);
 
