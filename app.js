@@ -36,7 +36,7 @@ const main = async () => {
   }
 };
 
-const maintenanceMode = true;
+const maintenanceMode = false;
 
 const maintenanceText =
   "На жаль, зараз бот тимчасово недоступний через затяжні атаки дронів. Незабаром плануємо відновити його роботу. Раніше куплені літри води збережено і скоро знову будуть доступні.";
