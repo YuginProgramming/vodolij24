@@ -36,12 +36,30 @@ const main = async () => {
   }
 };
 
-main();
+const maintenanceMode = true;
 
-anketaListiner();
-//decodeQR();
-mainMenu();
-introduction();
-buyWater();
-addToBalance();
-profile();
+const maintenanceText =
+  "На жаль, зараз бот тимчасово недоступний через затяжні атаки дронів. Незабаром плануємо відновити його роботу. Раніше куплені літри води збережено і скоро знову будуть доступні.";
+
+if (maintenanceMode) {
+  bot.on("message", (msg) => {
+    bot.sendMessage(msg.chat.id, maintenanceText).catch(() => {});
+  });
+  bot.on("callback_query", async (query) => {
+    try {
+      await bot.answerCallbackQuery(query.id);
+    } catch {
+      // ignore expired button presses
+    }
+    bot.sendMessage(query.message.chat.id, maintenanceText).catch(() => {});
+  });
+} else {
+  main();
+  anketaListiner();
+  //decodeQR();
+  mainMenu();
+  introduction();
+  buyWater();
+  addToBalance();
+  profile();
+}
