@@ -1,11 +1,8 @@
+import axios from "axios";
 import { bot } from "../app.js";
 import { keyboards, phrases } from "../language_ua.js";
 import { findApiUserByChatId } from "../models/api-users.js";
 import { findCardById, updateCardById } from "../models/cards.js";
-import {
-  getUsersTotalByWeek,
-  getUsersTotalbyTheDay,
-} from "../models/transactions.js";
 import { findUserByChatId } from "../models/users.js";
 import { getCardData } from "../modules/checkcardAPI.js";
 
@@ -34,9 +31,7 @@ const profile = async () => {
       dialogueStatus = userInfo.dialoguestatus;
 
       if (userInfo.hasOwnProperty("lastname")) {
-        console.log(userInfo.lastname);
         const data = JSON.parse(userInfo.lastname);
-        console.log(data);
         userDatafromApi = data;
       }
       if (userInfo.hasOwnProperty("fathersname")) {
@@ -61,11 +56,7 @@ const profile = async () => {
       case "👤 Мій профіль":
         const cardId = apiData?.cardId;
 
-        console.log(`user Data API ${userDatafromApi}, card ID ${cardId}`);
-
         const card = await getCardData(userDatafromApi, cardId);
-
-        console.log(card);
 
         await updateCardById(cardId, {
           WaterQty: card.WaterQty,
@@ -110,28 +101,36 @@ const profile = async () => {
           },
         });
 
-        const userDaylyTotal = await getUsersTotalbyTheDay(cardId);
+        try {
+          const response = await axios.get(
+            `http://localhost:8080/statistic/${cardId}`
+          );
 
-        const userWeeklyTotal = await getUsersTotalByWeek(cardId);
+          const { day, week, month } = response.data;
 
-        const userMonthlyTotal = await getUsersTotalByWeek(cardId);
-
-        const usageMessage = `
+          const usageMessage = `
 📊 *Статистика набраної води:*
 
-🗓️ *Сьогодні:* ${userDaylyTotal} л.
-📅 *За останній тиждень:* ${userWeeklyTotal} л.
-🗓️ *За останній місяць:* ${userMonthlyTotal} л.
+🗓️ *Сьогодні:* ${day} л.
+📅 *За останній тиждень:* ${week} л.
+🗓️ *За останній місяць:* ${month} л.
 `;
 
-        bot.sendMessage(msg.chat.id, usageMessage, {
-          parse_mode: "Markdown",
-          reply_markup: {
-            keyboard: keyboards.mainMenuButton,
-            resize_keyboard: true,
-            one_time_keyboard: true,
-          },
-        });
+          bot.sendMessage(msg.chat.id, usageMessage, {
+            parse_mode: "Markdown",
+            reply_markup: {
+              keyboard: keyboards.mainMenuButton,
+              resize_keyboard: true,
+              one_time_keyboard: true,
+            },
+          });
+        } catch (error) {
+          console.log("Error user statistic cardID : " + cardId);
+        }
+
+        //  const userWeeklyTotal = await getUsersTotalByWeek(cardId);
+
+        //  const userMonthlyTotal = await getUsersTotalByWeek(cardId);
 
         break;
     }

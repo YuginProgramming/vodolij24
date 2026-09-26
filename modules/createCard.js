@@ -45,15 +45,15 @@ const createCardApi = async (chatId, phone) => {
     });
 
     await updateUserByChatId(chatId, { lastname: userData.user_id });
-  }
 
-  bot.sendMessage(chatId, phrases.welcomeNoCard, {
-    reply_markup: {
-      keyboard: keyboards.mainMenu,
-      resize_keyboard: true,
-      one_time_keyboard: true,
-    },
-  });
+    bot.sendMessage(chatId, phrases.welcomeNoCard, {
+      reply_markup: {
+        keyboard: keyboards.mainMenu,
+        resize_keyboard: true,
+        one_time_keyboard: true,
+      },
+    });
+  }
 };
 
 export default createCardApi;
