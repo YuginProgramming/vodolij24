@@ -147,17 +147,18 @@ const introduction = async () => {
           firstname: fixedName,
           dialoguestatus: "birthdaydate",
         });
-        await bot.sendMessage(
-          chatId,
-          `Введіть дату народження у форматі ДД.ММ.РРРР`
-        );
+        await bot.sendMessage(chatId, phrases.birthDateRequest);
 
         break;
 
       case "birthdaydate":
-        if (msg.text && msg.text.length === 10) {
-          const validDate = formatBirthDate(msg.text);
+        if (msg.text === "/start") {
+          await bot.sendMessage(chatId, phrases.birthDateRequest);
+          break;
+        }
 
+        const validDate = formatBirthDate(msg.text || "");
+        if (validDate) {
           await updateUserByChatId(chatId, {
             birthdaydate: validDate,
             dialoguestatus: "",
@@ -179,7 +180,7 @@ const introduction = async () => {
               phone_number: userInfo.phone,
               first_name: name[0],
               last_name: name[1] ? name[1] : "не вказано",
-              date_birth: msg.text,
+              date_birth: validDate,
               email: "example@gmail.com",
             }
           );
