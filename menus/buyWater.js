@@ -120,7 +120,10 @@ const buyWater = () => {
             }
           );
 
-          await updateUserByChatId(chatId, { dialoguestatus: "" });
+          await updateUserByChatId(chatId, {
+            dialoguestatus: "",
+            fathersname: JSON.stringify(currentVendor),
+          });
         } else {
           await bot.sendMessage(chatId, phrases.chooseVendor, {
             reply_markup: {
