@@ -1,3 +1,4 @@
+import axios from "axios";
 import TelegramBot from "node-telegram-bot-api";
 import { anketaListiner } from "./anketa.js";
 import { dataBot } from "./values.js";
@@ -11,6 +12,9 @@ import introduction from "./menus/introduction.js";
 import buyWater from "./menus/buyWater.js";
 import addToBalance from "./menus/addToBalance.js";
 import profile from "./menus/profile.js";
+
+axios.defaults.headers.common["User-Agent"] =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
 const bot = new TelegramBot(dataBot.telegramBotToken, { polling: true });
 
